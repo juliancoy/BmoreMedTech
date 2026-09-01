@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical System Map | Baltimore MedTech</title>
+    <meta
+      name="description"
+      content="Baltimore MedTech map of public hospital, health infrastructure, healthy housing, and medical-system risk layers for Baltimore and Maryland."
+    />
+    <script>
+      (() => {
+        const key = 'bmore-medtech.theme';
+        const stored = (() => { try { return localStorage.getItem(key); } catch { return null; } })();
+        const mode = stored === 'light' || stored === 'dark' ? stored : 'system';
+        const resolved = mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : mode === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.dataset.theme = resolved;
+      })();
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script type="module" src="/assets/theme.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+    <script type="module" src="/assets/med-map.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">
+        <img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=32,height=32/uploads/gx/e8fdf4fb-b1ba-4269-8e6f-38103e820ff9.png" alt="" />
+        <span>Baltimore MedTech</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/calendar.html">Calendar</a>
+        <a aria-current="page" href="/map.html">Map</a>
+        <label class="theme-control">
+          <span class="visually-hidden">Theme</span>
+          <select id="theme-mode" aria-label="Theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <a class="button" href="https://codecollective.us/p/?portalProfile=baltimore-medtech">Login</a>
+      </nav>
+    </header>
+
+    <main class="map-page">
+      <section class="map-workbench" aria-label="Baltimore MedTech medical system map">
+        <aside class="map-panel" aria-labelledby="map-title">
+          <div class="map-panel-heading">
+            <p class="eyebrow">Medical system map</p>
+            <h1 id="map-title">Baltimore and Maryland Health Layers</h1>
+          </div>
+
+          <label class="map-field" for="region-select">Region
+            <select id="region-select">
+              <option value="baltimore-city" selected>Baltimore City</option>
+              <option value="maryland">Maryland</option>
+              <option value="state">Other U.S. state</option>
+              <option value="us">United States</option>
+              <option value="worldwide">Worldwide view</option>
+            </select>
+          </label>
+
+          <label id="state-field" class="map-field" for="state-select" hidden>State
+            <select id="state-select" aria-label="U.S. state"></select>
+          </label>
+
+          <label class="map-field" for="size-mode-select">Marker size
+            <select id="size-mode-select">
+              <option value="volume" selected>Capacity / activity volume</option>
+              <option value="uniform">Uniform</option>
+            </select>
+          </label>
+
+          <div id="layer-controls" class="map-layer-controls" aria-label="Medical map layers"></div>
+          <div id="map-status" class="map-status" aria-live="polite">Loading map...</div>
+        </aside>
+
+        <section class="map-stage">
+          <div id="medical-map" class="medical-map" role="region" aria-label="Interactive medical system map"></div>
+        </section>
+
+        <aside id="map-inspector" class="map-inspector" aria-live="polite" aria-label="Medical map feature inspector" data-inspector-state="idle">
+          <button id="close-map-inspector" class="map-inspector-close" type="button" aria-label="Close pinned feature" hidden>x</button>
+          <div id="map-inspector-content">
+            <strong>Selected feature</strong>
+            <p>Click a hospital, health program, healthy-housing site, or risk tract.</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>

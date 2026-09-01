@@ -1,0 +1,491 @@
+#!/usr/bin/env python3
+"""Selenium regression checks for the Baltimore MedTech public site."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import pathlib
+import re
+import sys
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+
+
+PORTAL_URL = "https://codecollective.us/p/?portalProfile=baltimore-medtech"
+
+
+def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
+    options = Options()
+    options.add_argument("--headless=new")
+    options.add_argument(f"--window-size={width},{height}")
+    options.add_argument("--use-angle=swiftshader")
+    options.add_argument("--use-gl=angle")
+    options.add_argument("--enable-webgl")
+    options.add_argument("--ignore-gpu-blocklist")
+    options.add_argument("--ignore-certificate-errors")
+    options.add_argument("--no-sandbox")
+    options.set_capability("acceptInsecureCerts", True)
+    driver = webdriver.Remote(command_executor=selenium_url, options=options)
+    if width <= 760:
+        driver.execute_cdp_cmd(
+            "Emulation.setDeviceMetricsOverride",
+            {"width": width, "height": height, "deviceScaleFactor": 2, "mobile": True},
+        )
+    driver.set_page_load_timeout(45)
+    driver.set_script_timeout(45)
+    return driver
+
+
+def settle(driver: webdriver.Remote) -> None:
+    WebDriverWait(driver, 30).until(lambda d: d.execute_script("return document.readyState") == "complete")
+    driver.execute_script("window.scrollTo(0, 0)")
+    WebDriverWait(driver, 10).until(lambda d: d.execute_script("return window.scrollY") == 0)
+
+
+def body_excerpt(driver: webdriver.Remote) -> str:
+    text = driver.find_element(By.TAG_NAME, "body").text or ""
+    return " ".join(text.split())[:400]
+
+
+def assert_no_horizontal_overflow(driver: webdriver.Remote, label: str) -> dict:
+    metrics = driver.execute_script(
+        """
+        const scrollWidth = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
+        return {
+          innerWidth: window.innerWidth,
+          scrollWidth,
+          overflow: scrollWidth > window.innerWidth + 2,
+          offenders: Array.from(document.querySelectorAll('body *'))
+            .map((el) => {
+              const box = el.getBoundingClientRect();
+              return {
+                tag: el.tagName.toLowerCase(),
+                className: String(el.className || '').slice(0, 120),
+                text: String(el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 90),
+                left: Math.round(box.left),
+                right: Math.round(box.right),
+                width: Math.round(box.width)
+              };
+            })
+            .filter((item) => item.width > window.innerWidth || item.right > window.innerWidth + 2 || item.left < -2)
+            .slice(0, 8)
+        };
+        """
+    )
+    if metrics["overflow"]:
+        raise AssertionError(f"{label}: horizontal overflow detected: {metrics}")
+    return metrics
+
+
+def numeric_object_position_x(value: str) -> float | None:
+    first = value.split()[0] if value else ""
+    match = re.match(r"^([0-9.]+)%$", first)
+    return float(match.group(1)) if match else None
+
+
+def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
+    driver.get(f"{base_url.rstrip('/')}/")
+    settle(driver)
+    WebDriverWait(driver, 20).until(lambda d: d.find_element(By.CSS_SELECTOR, ".hero-copy h1"))
+    assert_no_horizontal_overflow(driver, f"{viewport} home")
+
+    screenshot = screenshot_dir / f"{viewport}-home.png"
+    driver.save_screenshot(str(screenshot))
+    metrics = driver.execute_script(
+        """
+        const hero = document.querySelector('.hero').getBoundingClientRect();
+        const copy = document.querySelector('.hero-copy').getBoundingClientRect();
+        const h1 = document.querySelector('.hero-copy h1').getBoundingClientRect();
+        const heroCopyStyle = getComputedStyle(document.querySelector('.hero-copy'));
+        const heroImageStyle = getComputedStyle(document.querySelector('.hero-image'));
+        const heroImageSrc = document.querySelector('.hero-image')?.currentSrc || document.querySelector('.hero-image')?.src || '';
+        const bodyText = document.body.textContent;
+        return {
+          title: document.title,
+          bodyText,
+          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href.includes('/p/?portalProfile=baltimore-medtech')),
+          headerLoginHref: document.querySelector('header nav a.button')?.href || '',
+          heroLeft: hero.left,
+          heroRight: hero.right,
+          heroWidth: hero.width,
+          copyLeft: copy.left,
+          copyRight: copy.right,
+          copyWidth: copy.width,
+          copyCenterPct: ((copy.left + copy.right) / 2 - hero.left) / hero.width,
+          h1Left: h1.left,
+          h1Right: h1.right,
+          textAlign: heroCopyStyle.textAlign,
+          imageObjectPosition: heroImageStyle.objectPosition,
+          heroImageSrc
+        };
+        """
+    )
+
+    if metrics["title"] != "Baltimore MedTech":
+        raise AssertionError(f"{viewport} home: unexpected title {metrics['title']!r}")
+    if "Baltimore MedTech" not in metrics["bodyText"]:
+        raise AssertionError(f"{viewport} home: missing Baltimore MedTech body text")
+    if metrics["headerLoginHref"] != PORTAL_URL or PORTAL_URL not in metrics["loginHrefs"]:
+        raise AssertionError(f"{viewport} home: login links did not target the MedTech portal profile: {metrics}")
+    if "baltimore-medtech-home-hero-canonical" not in metrics["heroImageSrc"] or "lumacdn.com" in metrics["heroImageSrc"]:
+        raise AssertionError(f"{viewport} home: hero background should use the local canonical image: {metrics}")
+
+    if viewport == "desktop":
+        if metrics["copyLeft"] < metrics["heroWidth"] * 0.48 or metrics["copyCenterPct"] < 0.62:
+            raise AssertionError(f"desktop home: hero copy drifted back onto the left poster text: {metrics}")
+    else:
+        image_x = numeric_object_position_x(metrics["imageObjectPosition"])
+        if metrics["textAlign"] != "right":
+            raise AssertionError(f"mobile home: hero copy must stay right-aligned: {metrics}")
+        if image_x is None or image_x < 70:
+            raise AssertionError(f"mobile home: hero image crop must favor the right side: {metrics}")
+        if metrics["copyRight"] < metrics["heroWidth"] * 0.9:
+            raise AssertionError(f"mobile home: hero copy is not anchored far enough right: {metrics}")
+
+    dark_theme_metrics = driver.execute_script(
+        """
+        const select = document.getElementById('theme-mode');
+        select.value = 'dark';
+        select.dispatchEvent(new Event('change', {bubbles: true}));
+        return {
+          mode: document.documentElement.dataset.themeMode,
+          theme: document.documentElement.dataset.theme,
+          stored: localStorage.getItem('bmore-medtech.theme'),
+          bodyBg: getComputedStyle(document.body).backgroundColor,
+          headerBg: getComputedStyle(document.querySelector('.site-header')).backgroundColor
+        };
+        """
+    )
+    dark_screenshot = screenshot_dir / f"{viewport}-home-dark.png"
+    driver.save_screenshot(str(dark_screenshot))
+
+    system_theme_metrics = driver.execute_script(
+        """
+        const select = document.getElementById('theme-mode');
+        select.value = 'system';
+        select.dispatchEvent(new Event('change', {bubbles: true}));
+        return {
+          mode: document.documentElement.dataset.themeMode,
+          theme: document.documentElement.dataset.theme,
+          stored: localStorage.getItem('bmore-medtech.theme'),
+          selectValue: select.value
+        };
+        """
+    )
+    theme_metrics = {
+        "darkState": dark_theme_metrics,
+        "systemState": system_theme_metrics,
+        "darkScreenshot": str(dark_screenshot),
+    }
+    if dark_theme_metrics["mode"] != "dark" or dark_theme_metrics["theme"] != "dark":
+        raise AssertionError(f"{viewport} home: dark mode did not apply: {theme_metrics}")
+    if dark_theme_metrics["stored"] != "dark":
+        raise AssertionError(f"{viewport} home: dark mode did not persist locally: {theme_metrics}")
+    if system_theme_metrics["mode"] != "system" or system_theme_metrics["stored"] != "system":
+        raise AssertionError(f"{viewport} home: system theme mode did not persist locally: {theme_metrics}")
+    metrics["themeCheck"] = theme_metrics
+
+    return {"viewport": viewport, "page": "home", "metrics": metrics, "screenshot": str(screenshot)}
+
+
+def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
+    driver.get(f"{base_url.rstrip('/')}/calendar")
+    settle(driver)
+    WebDriverWait(driver, 30).until(lambda d: d.find_element(By.CSS_SELECTOR, ".event-card"))
+    assert_no_horizontal_overflow(driver, f"{viewport} calendar")
+
+    screenshot = screenshot_dir / f"{viewport}-calendar.png"
+    driver.save_screenshot(str(screenshot))
+    metrics = driver.execute_script(
+        """
+        const pageSections = Array.from(document.querySelectorAll('main > section')).map((el) => el.className);
+        const listSection = document.querySelector('.event-list-section').getBoundingClientRect();
+        const monthSection = document.querySelector('.month-section').getBoundingClientRect();
+        const cards = Array.from(document.querySelectorAll('.event-card'));
+        return {
+          title: document.title,
+          pageSections,
+          cardCount: cards.length,
+          eventCountText: document.getElementById('event-count')?.textContent || '',
+          statusHidden: document.getElementById('status')?.hidden || false,
+          listTop: listSection.top,
+          monthTop: monthSection.top,
+          firstCardText: cards[0]?.textContent?.trim().replace(/\\s+/g, ' ').slice(0, 180) || ''
+        };
+        """
+    )
+
+    if metrics["title"] != "Calendar | Baltimore MedTech":
+        raise AssertionError(f"{viewport} calendar: unexpected title {metrics['title']!r}")
+    if metrics["pageSections"][1] != "event-list-section":
+        raise AssertionError(f"{viewport} calendar: upcoming list is no longer the first content section: {metrics}")
+    if metrics["cardCount"] <= 0 or not metrics["statusHidden"]:
+        raise AssertionError(f"{viewport} calendar: medical events did not load from the published feed: {metrics}")
+    if metrics["monthTop"] <= metrics["listTop"]:
+        raise AssertionError(f"{viewport} calendar: monthly overview moved above the event list: {metrics}")
+
+    return {"viewport": viewport, "page": "calendar", "metrics": metrics, "screenshot": str(screenshot)}
+
+
+def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
+    driver.get(f"{base_url.rstrip('/')}/map")
+    settle(driver)
+    WebDriverWait(driver, 45).until(lambda d: d.execute_script("return window.__bmoreMedTechMapReady === true"))
+    assert_no_horizontal_overflow(driver, f"{viewport} map")
+
+    screenshot = screenshot_dir / f"{viewport}-map.png"
+    driver.save_screenshot(str(screenshot))
+    metrics = driver.execute_script(
+        """
+        const mapBox = document.getElementById('medical-map').getBoundingClientRect();
+        const panelBox = document.querySelector('.map-panel').getBoundingClientRect();
+        const stageBox = document.querySelector('.map-stage').getBoundingClientRect();
+        const inspector = document.getElementById('map-inspector');
+        const inspectorBox = inspector.getBoundingClientRect();
+        const canvas = document.querySelector('#medical-map canvas.maplibregl-canvas');
+        const state = window.__bmoreMedTechLayerState || {};
+        return {
+          title: document.title,
+          regionValue: document.getElementById('region-select')?.value,
+          stateFieldHidden: document.getElementById('state-field')?.hidden,
+          sizeModeValue: document.getElementById('size-mode-select')?.value,
+          layerRows: document.querySelectorAll('.map-layer-row').length,
+          layerOrderTopToBottom: Array.from(document.querySelectorAll('.map-layer-row')).map((row) => row.dataset.layerRow),
+          layerStack: window.__bmoreMedTechLayerStack || [],
+          mapWidth: mapBox.width,
+          mapHeight: mapBox.height,
+          stageRight: stageBox.right,
+          panelWidth: panelBox.width,
+          inspectorLeft: inspectorBox.left,
+          inspectorTop: inspectorBox.top,
+          inspectorWidth: inspectorBox.width,
+          inspectorState: inspector.dataset.inspectorState,
+          inspectorCloseHidden: document.getElementById('close-map-inspector')?.hidden,
+          canvasPresent: !!canvas,
+          canvasWidth: canvas?.width || 0,
+          canvasHeight: canvas?.height || 0,
+          diagnostics: state
+        };
+        """
+    )
+
+    if metrics["title"] != "Medical System Map | Baltimore MedTech":
+        raise AssertionError(f"{viewport} map: unexpected title {metrics['title']!r}")
+    if metrics["regionValue"] != "baltimore-city":
+        raise AssertionError(f"{viewport} map: default region changed: {metrics}")
+    if metrics["sizeModeValue"] != "volume":
+        raise AssertionError(f"{viewport} map: marker sizing should default to volume: {metrics}")
+    if metrics["layerRows"] < 10:
+        raise AssertionError(f"{viewport} map: missing expected medical layer controls: {metrics}")
+    if metrics["layerOrderTopToBottom"][:2] != ["us-hospitals", "md-hospitals"]:
+        raise AssertionError(f"{viewport} map: point layers should start above regional polygons: {metrics}")
+    if not metrics["canvasPresent"] or metrics["mapWidth"] < 280 or metrics["mapHeight"] < 500:
+        raise AssertionError(f"{viewport} map: MapLibre canvas did not render at useful size: {metrics}")
+    if viewport == "desktop" and metrics["inspectorLeft"] < metrics["stageRight"] - 2:
+        raise AssertionError(f"desktop map: inspector should be a right-hand column, not a map overlay: {metrics}")
+    if metrics["inspectorState"] != "idle" or not metrics["inspectorCloseHidden"]:
+        raise AssertionError(f"{viewport} map: inspector should start idle and unpinned: {metrics}")
+
+    diagnostics = metrics["diagnostics"]
+    for layer_id in ("us-hospitals", "md-hospitals", "dhcd-healthy-homes", "enviro-asthma"):
+        layer_state = diagnostics.get(layer_id) or {}
+        if not layer_state.get("visible") or not layer_state.get("applies") or int(layer_state.get("count") or 0) <= 0:
+            raise AssertionError(f"{viewport} map: expected layer {layer_id} did not load for Baltimore City: {metrics}")
+
+    volume_layers = [
+        diagnostics.get(layer_id) or {}
+        for layer_id in ("us-hospitals", "md-hospitals", "long-term-care")
+    ]
+    sized_layers = [
+        layer
+        for layer in volume_layers
+        if layer.get("sizeMode") == "volume"
+        and int(layer.get("volumeCount") or 0) > 0
+        and layer.get("minScale") is not None
+        and layer.get("maxScale") is not None
+    ]
+    if not sized_layers or not any(layer["maxScale"] > layer["minScale"] for layer in sized_layers):
+        raise AssertionError(f"{viewport} map: expected volume-based marker sizing diagnostics: {metrics}")
+
+    hover_metrics = driver.execute_script(
+        """
+        const point = window.__bmoreMedTechFirstFeaturePoint('us-hospitals');
+        const result = window.__showBmoreMedTechHoverTarget(point);
+        const inspector = document.getElementById('map-inspector');
+        return {
+          point,
+          result,
+          inspectorState: inspector.dataset.inspectorState,
+          closeHidden: document.getElementById('close-map-inspector').hidden,
+          text: document.getElementById('map-inspector-content').textContent.replace(/\\s+/g, ' ').trim()
+        };
+        """
+    )
+    chosen_layer = (hover_metrics.get("result") or {}).get("arbitration", {}).get("chosen", {}).get("layerId")
+    if (
+        not hover_metrics.get("point")
+        or chosen_layer != "us-hospitals"
+        or hover_metrics["inspectorState"] != "hover"
+        or not hover_metrics["closeHidden"]
+        or "All hospitals" not in hover_metrics["text"]
+    ):
+        raise AssertionError(f"{viewport} map: hover inspector did not preview the top medical feature: {hover_metrics}")
+    metrics["hoverInspectorCheck"] = hover_metrics
+
+    pin_metrics = driver.execute_script(
+        """
+        const point = window.__bmoreMedTechFirstFeaturePoint('us-hospitals');
+        const result = window.__pinBmoreMedTechHoverTarget(point);
+        const inspector = document.getElementById('map-inspector');
+        const box = inspector.getBoundingClientRect();
+        const close = document.getElementById('close-map-inspector');
+        const computed = getComputedStyle(inspector);
+        const beforeClose = {
+          result,
+          inspectorState: inspector.dataset.inspectorState,
+          closeHidden: close.hidden,
+          position: computed.position,
+          box: { left: box.left, right: box.right, top: box.top, bottom: box.bottom },
+          text: document.getElementById('map-inspector-content').textContent.replace(/\\s+/g, ' ').trim()
+        };
+        close.click();
+        return {
+          beforeClose,
+          afterClose: {
+            inspectorState: inspector.dataset.inspectorState,
+            closeHidden: close.hidden,
+            text: document.getElementById('map-inspector-content').textContent.replace(/\\s+/g, ' ').trim()
+          }
+        };
+        """
+    )
+    if (
+        pin_metrics["beforeClose"]["inspectorState"] != "pinned"
+        or pin_metrics["beforeClose"]["closeHidden"]
+        or "All hospitals" not in pin_metrics["beforeClose"]["text"]
+        or pin_metrics["afterClose"]["inspectorState"] != "idle"
+        or not pin_metrics["afterClose"]["closeHidden"]
+    ):
+        raise AssertionError(f"{viewport} map: pinned inspector lifecycle failed: {pin_metrics}")
+    if viewport == "mobile" and pin_metrics["beforeClose"]["position"] != "fixed":
+        raise AssertionError(f"mobile map: pinned inspector should become a bottom sheet: {pin_metrics}")
+    metrics["pinnedInspectorCheck"] = pin_metrics
+
+    z_order_metrics = driver.execute_script(
+        """
+        const before = Array.from(document.querySelectorAll('.map-layer-row')).map((row) => row.dataset.layerRow);
+        document.querySelector('.map-layer-row [data-layer-action="down"]').click();
+        const after = Array.from(document.querySelectorAll('.map-layer-row')).map((row) => row.dataset.layerRow);
+        return {
+          before,
+          after,
+          stack: window.__bmoreMedTechLayerStack || [],
+          diagnostics: window.__bmoreMedTechLayerState || {}
+        };
+        """
+    )
+    if z_order_metrics["before"][:2] != ["us-hospitals", "md-hospitals"] or z_order_metrics["after"][:2] != ["md-hospitals", "us-hospitals"]:
+        raise AssertionError(f"{viewport} map: layer stack controls did not reorder the top layers: {z_order_metrics}")
+    metrics["zOrderCheck"] = z_order_metrics
+
+    uniform_metrics = driver.execute_script(
+        """
+        const select = document.getElementById('size-mode-select');
+        select.value = 'uniform';
+        select.dispatchEvent(new Event('change', {bubbles: true}));
+        return {
+          sizeModeValue: select.value,
+          diagnostics: window.__bmoreMedTechLayerState || {}
+        };
+        """
+    )
+    const_layer = uniform_metrics["diagnostics"].get("md-hospitals") or {}
+    if (
+        uniform_metrics["sizeModeValue"] != "uniform"
+        or const_layer.get("sizeMode") != "uniform"
+        or const_layer.get("minScale") != 1
+        or const_layer.get("maxScale") != 1
+    ):
+        raise AssertionError(f"{viewport} map: uniform marker sizing did not apply cleanly: {uniform_metrics}")
+    metrics["uniformSizingCheck"] = uniform_metrics
+
+    if viewport == "desktop":
+        driver.execute_script(
+            """
+            document.getElementById('region-select').value = 'state';
+            document.getElementById('region-select').dispatchEvent(new Event('change', {bubbles: true}));
+            document.getElementById('state-select').value = 'PA';
+            document.getElementById('state-select').dispatchEvent(new Event('change', {bubbles: true}));
+            """
+        )
+        WebDriverWait(driver, 45).until(
+            lambda d: d.execute_script(
+                "return window.__bmoreMedTechLayerState?.['us-hospitals']?.count > 0 && window.__bmoreMedTechLayerState?.['md-hospitals']?.applies === false"
+            )
+        )
+        state_metrics = driver.execute_script(
+            """
+            return {
+              regionValue: document.getElementById('region-select').value,
+              stateValue: document.getElementById('state-select').value,
+              stateFieldHidden: document.getElementById('state-field').hidden,
+              diagnostics: window.__bmoreMedTechLayerState
+            };
+            """
+        )
+        if state_metrics["stateFieldHidden"] or state_metrics["diagnostics"]["md-hospitals"]["applies"]:
+            raise AssertionError(f"desktop map: state-region filtering did not disable Maryland-only layers: {state_metrics}")
+        metrics["stateRegionCheck"] = state_metrics
+
+    return {"viewport": viewport, "page": "map", "metrics": metrics, "screenshot": str(screenshot)}
+
+
+def run(args: argparse.Namespace) -> int:
+    screenshot_dir = pathlib.Path(args.screenshot_dir).resolve()
+    screenshot_dir.mkdir(parents=True, exist_ok=True)
+
+    viewports = [("desktop", 1366, 900), ("mobile", 390, 844)]
+    checks: list[dict] = []
+    for viewport, width, height in viewports:
+        driver = new_driver(args.selenium_url, width, height)
+        try:
+            checks.append(assert_home(driver, args.base_url, viewport, screenshot_dir))
+            checks.append(assert_calendar(driver, args.base_url, viewport, screenshot_dir))
+            checks.append(assert_map(driver, args.base_url, viewport, screenshot_dir))
+        except Exception:
+            failure_path = screenshot_dir / f"{viewport}-failure.png"
+            try:
+                driver.save_screenshot(str(failure_path))
+                print(f"[failure] {viewport} screenshot={failure_path}")
+                print(f"[failure] {viewport} body={body_excerpt(driver)}")
+            except Exception:
+                pass
+            raise
+        finally:
+            driver.quit()
+
+    print(json.dumps({"base_url": args.base_url, "checks": checks}, indent=2))
+    return 0
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run Baltimore MedTech Selenium regressions.")
+    parser.add_argument("--selenium-url", default=os.environ.get("SELENIUM_URL", "http://127.0.0.1:4444/wd/hub"))
+    parser.add_argument(
+        "--base-url",
+        default=os.environ.get("BMORE_MEDTECH_BASE_URL", "https://host.docker.internal:8768"),
+    )
+    parser.add_argument(
+        "--screenshot-dir",
+        default=os.environ.get("BMORE_MEDTECH_SCREENSHOT_DIR", "/tmp/bmore-medtech-selenium-regression"),
+    )
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    sys.exit(run(parse_args()))

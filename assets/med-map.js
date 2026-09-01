@@ -1,3 +1,5 @@
+import { MEDICAL_EVENTS_SOURCE_URL, eventCoordinates, isMedicalEvent, parseEventDate } from './medical-events.js'
+
 const ARCGIS_QUERY_DEFAULTS = {
   f: 'geojson',
   outFields: '*',
@@ -86,6 +88,28 @@ const STATE_VIEW = {
 }
 
 const LAYERS = [
+  {
+    id: 'medical-events',
+    label: 'Upcoming medical events',
+    summary: 'Geocoded events from the Baltimore medical events calendar',
+    kind: 'point',
+    color: '#e11d48',
+    defaultVisible: true,
+    coverage: 'maryland',
+    loadGeojson: fetchMedicalEventsGeojson,
+    sourceUrl: 'https://codecollective.us/calendar.html?city=baltimore&lm=individual_tags&lt=health.science',
+    sourceName: 'Code Collective Baltimore medical events calendar',
+    title: (p) => p.name,
+    details: (p) => [
+      ['Starts', formatEventDateTime(p.startDate)],
+      ['Venue', p.locationName],
+      ['Address', p.locationAddress],
+      ['Organizer', p.organizer],
+      ['Tags', p.tags],
+      ['Description', p.description],
+      ['Event', p.eventUrl],
+    ],
+  },
   {
     id: 'us-hospitals',
     label: 'All hospitals',
@@ -531,6 +555,7 @@ async function loadLayer(layer, loadToken) {
 }
 
 async function fetchLayerGeojson(layer) {
+  if (layer.loadGeojson) return layer.loadGeojson()
   const services = layer.services || [{ url: layer.service, label: layer.label }]
   const collections = await Promise.all(services.map(async (service) => {
     const url = arcgisQueryUrl(service.url, layer, service.label)
@@ -549,6 +574,61 @@ async function fetchLayerGeojson(layer) {
   return {
     type: 'FeatureCollection',
     features: collections.flatMap((collection) => collection.features).filter((feature) => feature.geometry),
+  }
+}
+
+async function fetchMedicalEventsGeojson() {
+  const response = await fetch(MEDICAL_EVENTS_SOURCE_URL, { cache: 'no-store' })
+  if (!response.ok) throw new Error(`Medical events calendar returned ${response.status}`)
+  const sourceEvents = await response.json()
+  const now = new Date()
+  const bbox = currentRegion().bbox
+  const features = sourceEvents
+    .filter(isMedicalEvent)
+    .map((event) => ({ event, date: parseEventDate(event), coordinates: eventCoordinates(event) }))
+    .filter(({ date, coordinates }) => date && date >= now && coordinates)
+    .filter(({ coordinates }) => !bbox || coordinateInBbox(coordinates, bbox))
+    .map(({ event, date, coordinates }, index) => ({
+      type: 'Feature',
+      id: event.id || `medical-event-${index}`,
+      geometry: { type: 'Point', coordinates },
+      properties: {
+        __layerId: 'medical-events',
+        eventId: String(event.id || `medical-event-${index}`),
+        name: plainText(event.name),
+        startDate: date.toISOString(),
+        locationName: plainText(event.location?.name),
+        locationAddress: plainText([
+          event.location?.address,
+          event.location?.city,
+          event.location?.state,
+        ].filter(Boolean).join(', ')),
+        organizer: plainText(event.source_group || event.org_name || event.orgName),
+        tags: Array.isArray(event.tags) ? event.tags.join(', ') : '',
+        description: plainText(event.description).replace(/\s+/g, ' ').trim().slice(0, 280),
+        eventUrl: safeHttpUrl(event.url),
+      },
+    }))
+
+  return { type: 'FeatureCollection', features }
+}
+
+function coordinateInBbox([longitude, latitude], [west, south, east, north]) {
+  return longitude >= west && longitude <= east && latitude >= south && latitude <= north
+}
+
+function plainText(value) {
+  const template = document.createElement('template')
+  template.innerHTML = String(value || '')
+  return template.content.textContent || ''
+}
+
+function safeHttpUrl(value) {
+  try {
+    const url = new URL(String(value || ''))
+    return ['http:', 'https:'].includes(url.protocol) ? url.toString() : ''
+  } catch {
+    return ''
   }
 }
 
@@ -919,7 +999,7 @@ function renderIdleInspector() {
   inspectorCloseButton.hidden = true
   inspectorContentEl.innerHTML = `
     <strong>Selected feature</strong>
-    <p>Click a hospital, health program, healthy-housing site, or risk tract.</p>
+    <p>Click an upcoming medical event, hospital, health program, healthy-housing site, or risk tract.</p>
   `
   window.__bmoreMedTechInspectorState = inspectorState()
 }
@@ -1143,6 +1223,18 @@ function formatDate(value) {
   const number = Number(value)
   if (!Number.isFinite(number) || number <= 0) return null
   return new Date(number).toLocaleDateString()
+}
+
+function formatEventDateTime(value) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return null
+  return date.toLocaleString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
 
 function escapeHtml(value) {

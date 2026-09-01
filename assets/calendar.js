@@ -1,4 +1,5 @@
-const SOURCE_URL = 'https://codecollective.us/baltimore/upcoming_events.json'
+import { MEDICAL_EVENTS_SOURCE_URL, isMedicalEvent, parseEventDate } from './medical-events.js'
+
 const PORTAL_URL = 'https://codecollective.us/p/?portalProfile=baltimore-medtech'
 
 const state = {
@@ -13,22 +14,6 @@ const monthLabelEl = document.getElementById('month-label')
 const countEl = document.getElementById('event-count')
 const prevButton = document.getElementById('prev-month')
 const nextButton = document.getElementById('next-month')
-
-const medicalSourceHints = [
-  'nami',
-  'bio-trac',
-  'biotrac',
-  'biobuzz',
-  'mdtechcouncil',
-  'johns hopkins',
-  'hopkins',
-  'nih',
-  'national cancer institute',
-  'university of maryland medical',
-]
-
-const medicalKeywords = /\b(medtech|medical|medicine|healthcare|health care|public health|mental health|biotech|biopharma|pharma(?:ceutical)?|clinical|clinic|hospital|patient|therapeutics?|life sciences?|genomics?|sequencing|cancer|oncology|nursing|physician|diagnos(?:is|tic|tics)?|disease|vaccine|surgery|surgical|neuroscience|cardiology|dental|pharmacology)\b/i
-const wellnessOnly = /\b(yoga|meditation|fitness|pilates|dance fitness|line dancing|workout)\b/i
 
 function cleanText(value) {
   const div = document.createElement('div')
@@ -52,38 +37,6 @@ function safeUrl(value) {
   } catch {
     return PORTAL_URL
   }
-}
-
-function eventBlob(event) {
-  return [
-    event.name,
-    event.description,
-    event.source_group,
-    event.org_name,
-    event.orgName,
-    event.location?.name,
-    event.location?.address,
-    event.url,
-    event.source,
-  ].map(cleanText).join(' ')
-}
-
-function isMedicalEvent(event) {
-  const tags = Array.isArray(event.tags) ? event.tags.map((tag) => String(tag).toLowerCase()) : []
-  const blob = eventBlob(event)
-  const normalizedBlob = blob.toLowerCase()
-  const sourceMatch = medicalSourceHints.some((hint) => normalizedBlob.includes(hint))
-  const keywordMatch = medicalKeywords.test(blob)
-  const taggedHealth = tags.includes('health')
-
-  if (sourceMatch || keywordMatch) return true
-  if (taggedHealth && !wellnessOnly.test(blob)) return true
-  return false
-}
-
-function parseEventDate(event) {
-  const date = new Date(event.startDate)
-  return Number.isNaN(date.getTime()) ? null : date
 }
 
 function monthKey(date) {
@@ -209,7 +162,7 @@ function renderList() {
 
 async function loadEvents() {
   try {
-    const response = await fetch(SOURCE_URL, { cache: 'no-store' })
+    const response = await fetch(MEDICAL_EVENTS_SOURCE_URL, { cache: 'no-store' })
     if (!response.ok) throw new Error(`Calendar source returned ${response.status}`)
     const sourceEvents = await response.json()
     state.events = sourceEvents

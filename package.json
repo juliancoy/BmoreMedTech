@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build:index": "node scripts/build-medtech-index.mjs",
+    "test:index": "node scripts/validate-medtech-index.mjs",
+    "build": "npm run build:index && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test:selenium": "scripts/run-selenium-regression.sh"
   },

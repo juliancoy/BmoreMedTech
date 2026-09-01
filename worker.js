@@ -1,5 +1,6 @@
 const ALLOWED_CORS_ORIGINS = new Set([
   'https://baltimore-medtech.jcloiacon.workers.dev',
+  'https://medtech.social',
   'https://baltimoremedtech.org',
   'https://www.baltimoremedtech.org',
   'https://bmoremedtech.org',
@@ -44,8 +45,10 @@ function applyStaticHeaders(request, path, response) {
 
   if (path.startsWith('/assets/')) {
     headers.set('cache-control', 'public, max-age=31536000, immutable')
+  } else if (path === '/' || path.endsWith('.html')) {
+    headers.set('cache-control', 'public, max-age=0, must-revalidate')
   } else {
-    headers.set('cache-control', 'public, max-age=300')
+    headers.set('cache-control', 'public, max-age=300, must-revalidate')
   }
   applyCorsHeaders(request, headers)
 

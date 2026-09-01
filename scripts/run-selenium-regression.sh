@@ -2,7 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-NODE_IMAGE="${NODE_IMAGE:-node:22-alpine}"
+NODE_IMAGE="${NODE_IMAGE:-node:22-bookworm-slim}"
+PYTHON_IMAGE="${PYTHON_IMAGE:-python:3.13-alpine}"
 SELENIUM_IMAGE="${SELENIUM_IMAGE:-selenium/standalone-chrome:latest}"
 SITE_CONTAINER_NAME="${SITE_CONTAINER_NAME:-bmoremedtech-local-site}"
 SITE_PORT="${SITE_PORT:-8768}"
@@ -91,7 +92,11 @@ if ! command -v docker >/dev/null 2>&1; then
 fi
 
 if [[ -z "$CONFIGURED_BASE_URL" ]]; then
-  npm --prefix "$ROOT_DIR" run build
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    -v "$ROOT_DIR:/work" \
+    -w /work \
+    "$NODE_IMAGE" npm run build
 
   mkdir -p "$CERT_DIR"
   if [[ ! -f "$CERT_DIR/localhost.crt" || ! -f "$CERT_DIR/localhost.key" ]]; then
@@ -136,7 +141,20 @@ wait_for_selenium
 
 echo "[bmore-medtech-selenium] base url: ${BMORE_MEDTECH_BASE_URL}"
 echo "[bmore-medtech-selenium] screenshots: ${BMORE_MEDTECH_SCREENSHOT_DIR}"
-SELENIUM_URL="$SELENIUM_URL" \
-BMORE_MEDTECH_BASE_URL="$BMORE_MEDTECH_BASE_URL" \
-BMORE_MEDTECH_SCREENSHOT_DIR="$BMORE_MEDTECH_SCREENSHOT_DIR" \
-  python3 "$ROOT_DIR/scripts/selenium-regression.py"
+mkdir -p "$BMORE_MEDTECH_SCREENSHOT_DIR"
+RUNNER_SELENIUM_URL="$SELENIUM_URL"
+if [[ "$RUNNER_SELENIUM_URL" == "http://127.0.0.1:"* ]]; then
+  RUNNER_SELENIUM_URL="${RUNNER_SELENIUM_URL/127.0.0.1/host.docker.internal}"
+fi
+
+docker run --rm \
+  --add-host=host.docker.internal:host-gateway \
+  -e SELENIUM_URL="$RUNNER_SELENIUM_URL" \
+  -e BMORE_MEDTECH_BASE_URL="$BMORE_MEDTECH_BASE_URL" \
+  -e BMORE_MEDTECH_SCREENSHOT_DIR=/screenshots \
+  -e BMORE_MEDTECH_TEST_PAGES="${BMORE_MEDTECH_TEST_PAGES:-home,calendar,map,taxonomy}" \
+  -v "$ROOT_DIR:/work:ro" \
+  -v "$BMORE_MEDTECH_SCREENSHOT_DIR:/screenshots" \
+  -w /work \
+  "$PYTHON_IMAGE" \
+  sh -c 'pip install --quiet --disable-pip-version-check selenium==4.36.0 && python scripts/selenium-regression.py'

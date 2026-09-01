@@ -1,0 +1,68 @@
+[
+  {
+    "id": "medtech_index",
+    "name": "MedTech Index",
+    "steward": "Baltimore MedTech",
+    "scope": "A modern polyhierarchy of medical science disciplines",
+    "description": "The complete local index. It treats anatomy, disease, method, population, care setting, and translational stage as intersecting facets rather than forcing every field into one tree.",
+    "source_url": "/medtech-index.json",
+    "source_label": "Download flat JSON",
+    "selection_mode": "all",
+    "group_mode": "lineage"
+  },
+  {
+    "id": "mesh",
+    "name": "Medical Subject Headings (MeSH)",
+    "steward": "U.S. National Library of Medicine",
+    "scope": "Biomedical indexing vocabulary",
+    "description": "A MedTech Index crosswalk grouped by the most relevant high-level MeSH tree. MeSH is broader than disciplines and also organizes anatomy, diseases, processes, techniques, and health care.",
+    "source_url": "https://www.nlm.nih.gov/databases/download/mesh.html",
+    "source_label": "Official MeSH data",
+    "selection_mode": "source_lens",
+    "group_mode": "source_lens"
+  },
+  {
+    "id": "acgme",
+    "name": "ACGME Specialties",
+    "steward": "Accreditation Council for Graduate Medical Education",
+    "scope": "U.S. physician specialties and subspecialties",
+    "description": "Clinical fields in the MedTech Index that map to an ACGME specialty umbrella. This lens describes accredited professional training, not the whole of medical research.",
+    "source_url": "https://www.acgme.org/specialties/",
+    "source_label": "Official specialties",
+    "selection_mode": "source_lens",
+    "group_mode": "source_lens"
+  },
+  {
+    "id": "oecd_ford",
+    "name": "OECD Fields of R&D (FORD)",
+    "steward": "Organisation for Economic Co-operation and Development",
+    "scope": "Research activity and statistical reporting",
+    "description": "The complete MedTech Index grouped into FORD's five medical and health science divisions. This lens is useful for portfolios and reporting, but intentionally coarse.",
+    "source_url": "https://www.oecd.org/en/publications/frascati-manual-2015_9789264239012-en.html",
+    "source_label": "Frascati Manual",
+    "selection_mode": "source_lens",
+    "group_mode": "source_lens"
+  },
+  {
+    "id": "nih_rcdc",
+    "name": "NIH RCDC",
+    "steward": "U.S. National Institutes of Health",
+    "scope": "Funded research, condition, and disease categories",
+    "description": "Research areas and disease domains in the MedTech Index that align with the overlapping topic model used for NIH categorical spending. It is a portfolio lens, not a discipline hierarchy.",
+    "source_url": "https://report.nih.gov/funding/categorical-spending/rcdc",
+    "source_label": "About RCDC",
+    "selection_mode": "source_lens",
+    "group_mode": "source_lens"
+  },
+  {
+    "id": "who_fic",
+    "name": "WHO Classification Family",
+    "steward": "World Health Organization",
+    "scope": "Diseases, functioning, and health interventions",
+    "description": "MedTech fields connected to ICD, ICF, or ICHI. WHO-FIC classifies the objects and activities of medicine rather than scientific disciplines themselves.",
+    "source_url": "https://www.who.int/standards/classifications/",
+    "source_label": "WHO classifications",
+    "selection_mode": "source_lens",
+    "group_mode": "source_lens"
+  }
+]

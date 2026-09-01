@@ -10,6 +10,9 @@ if (navToggle && primaryNav) {
     primaryNav.classList.toggle('is-open', open)
   }
 
+  setNavOpen(false)
+  requestAnimationFrame(() => primaryNav.classList.add('nav-interactive'))
+
   navToggle.addEventListener('click', () => {
     setNavOpen(navToggle.getAttribute('aria-expanded') !== 'true')
   })

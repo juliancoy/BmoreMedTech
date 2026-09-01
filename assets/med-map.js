@@ -9,6 +9,8 @@ const ARCGIS_QUERY_DEFAULTS = {
 
 const SIZE_MODES = new Set(['volume', 'uniform'])
 const MOBILE_INSPECTOR_MEDIA = '(max-width: 760px), (hover: none) and (pointer: coarse)'
+const COMPRESSED_STATE_QUERY_PARAM = 's'
+const COMPACT_STATE_QUERY_PARAM = 'compact'
 
 const REGIONS = {
   'baltimore-city': {
@@ -360,12 +362,258 @@ const LAYERS = [
   },
 ]
 
+let queryStateCompressionEnabled = false
+let compressedPersistSequence = 0
+
+function supportsCompressedQueryState() {
+  return typeof CompressionStream === 'function' && typeof DecompressionStream === 'function'
+}
+
+function bytesToBase64Url(bytes) {
+  let binary = ''
+  const chunkSize = 0x8000
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize))
+  }
+  return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '')
+}
+
+function base64UrlToBytes(value) {
+  const normalized = String(value || '').replaceAll('-', '+').replaceAll('_', '/')
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
+  return Uint8Array.from(atob(padded), (character) => character.charCodeAt(0))
+}
+
+async function compressUiStateForQuery(uiState) {
+  if (!supportsCompressedQueryState()) throw new Error('Compressed query state is not supported')
+  const stream = new Blob([JSON.stringify(uiState)]).stream().pipeThrough(new CompressionStream('gzip'))
+  return bytesToBase64Url(new Uint8Array(await new Response(stream).arrayBuffer()))
+}
+
+async function decompressUiStateFromQuery(value) {
+  if (!supportsCompressedQueryState()) throw new Error('Compressed query state is not supported')
+  const stream = new Blob([base64UrlToBytes(value)]).stream().pipeThrough(new DecompressionStream('gzip'))
+  return JSON.parse(await new Response(stream).text())
+}
+
+function defaultUiState() {
+  return {
+    version: 1,
+    region: 'baltimore-city',
+    state: 'MD',
+    size: 'volume',
+    layers: LAYERS.filter((layer) => layer.defaultVisible).map((layer) => layer.id),
+    order: defaultLayerOrder(),
+    center: null,
+    zoom: null,
+    orientation: { bearing: 0, pitch: 0 },
+  }
+}
+
+function normalizeLayerOrder(order) {
+  const validIds = new Set(LAYERS.map((layer) => layer.id))
+  const requested = Array.isArray(order) ? order : []
+  const unique = requested.filter((id, index) => validIds.has(id) && requested.indexOf(id) === index)
+  return [...unique, ...defaultLayerOrder().filter((id) => !unique.includes(id))]
+}
+
+function normalizeUiState(candidate) {
+  const defaults = defaultUiState()
+  const validLayerIds = new Set(LAYERS.map((layer) => layer.id))
+  const region = Object.hasOwn(REGIONS, candidate?.region) ? candidate.region : defaults.region
+  const stateCode = US_STATES.some(([code]) => code === candidate?.state) ? candidate.state : defaults.state
+  const size = SIZE_MODES.has(candidate?.size) ? candidate.size : defaults.size
+  const layers = Array.isArray(candidate?.layers)
+    ? candidate.layers.filter((id, index, values) => validLayerIds.has(id) && values.indexOf(id) === index)
+    : defaults.layers
+  const center = Array.isArray(candidate?.center) && candidate.center.length === 2
+    && candidate.center.every((value) => Number.isFinite(Number(value)))
+    ? candidate.center.map(Number)
+    : null
+  const hasZoom = candidate?.zoom !== null && candidate?.zoom !== undefined && candidate?.zoom !== ''
+  const zoom = hasZoom && Number.isFinite(Number(candidate.zoom)) ? Math.max(0, Math.min(22, Number(candidate.zoom))) : null
+  const bearing = Number.isFinite(Number(candidate?.orientation?.bearing)) ? Number(candidate.orientation.bearing) : 0
+  const pitch = Number.isFinite(Number(candidate?.orientation?.pitch)) ? Math.max(0, Math.min(85, Number(candidate.orientation.pitch))) : 0
+  return {
+    version: 1,
+    region,
+    state: stateCode,
+    size,
+    layers,
+    order: normalizeLayerOrder(candidate?.order),
+    center,
+    zoom,
+    orientation: { bearing, pitch },
+  }
+}
+
+function applyExpandedQueryState(uiState, parameters) {
+  const expanded = { ...uiState, orientation: { ...uiState.orientation } }
+  if (parameters.has('region')) expanded.region = parameters.get('region')
+  if (parameters.has('state')) expanded.state = parameters.get('state')
+  if (parameters.has('size')) expanded.size = parameters.get('size')
+  if (parameters.has('layers')) expanded.layers = parameters.get('layers').split(',').filter(Boolean)
+  if (parameters.has('order')) expanded.order = parameters.get('order').split(',').filter(Boolean)
+  if (parameters.has('c')) expanded.center = parameters.get('c').split(',').map(Number)
+  if (parameters.has('z')) expanded.zoom = Number(parameters.get('z'))
+  if (parameters.has('o')) {
+    const [bearing, pitch] = parameters.get('o').split(',').map(Number)
+    expanded.orientation = { bearing, pitch }
+  }
+  return normalizeUiState(expanded)
+}
+
+async function readUiStateFromUrl() {
+  const parameters = new URLSearchParams(window.location.search)
+  queryStateCompressionEnabled = parameters.has(COMPRESSED_STATE_QUERY_PARAM)
+    || parameters.get(COMPACT_STATE_QUERY_PARAM) === '1'
+  let uiState = defaultUiState()
+  if (parameters.has(COMPRESSED_STATE_QUERY_PARAM)) {
+    try {
+      uiState = normalizeUiState(await decompressUiStateFromQuery(parameters.get(COMPRESSED_STATE_QUERY_PARAM)))
+    } catch (error) {
+      console.warn('Ignoring invalid compressed map state.', error)
+    }
+  }
+  return applyExpandedQueryState(uiState, parameters)
+}
+
+function normalizedMapView() {
+  const center = map.getCenter()
+  const wrapDegrees = (value) => {
+    const wrapped = ((value % 360) + 360) % 360
+    return wrapped > 180 ? wrapped - 360 : wrapped
+  }
+  return {
+    center: [Number(center.lng.toFixed(5)), Number(center.lat.toFixed(5))],
+    zoom: Number(map.getZoom().toFixed(2)),
+    orientation: {
+      bearing: Number(wrapDegrees(map.getBearing()).toFixed(1)),
+      pitch: Number(map.getPitch().toFixed(1)),
+    },
+  }
+}
+
+function currentUiState() {
+  return {
+    version: 1,
+    region: state.regionKey,
+    state: state.stateCode,
+    size: state.sizeMode,
+    layers: LAYERS.map((layer) => layer.id).filter((id) => state.visible.has(id)),
+    order: normalizeLayerOrder(state.layerOrder),
+    ...normalizedMapView(),
+  }
+}
+
+function writeExpandedUiStateToUrl(url, uiState) {
+  url.searchParams.set('region', uiState.region)
+  url.searchParams.set('state', uiState.state)
+  url.searchParams.set('size', uiState.size)
+  url.searchParams.set('layers', uiState.layers.join(','))
+  url.searchParams.set('order', uiState.order.join(','))
+  url.searchParams.set('c', uiState.center.join(','))
+  url.searchParams.set('z', String(uiState.zoom))
+  url.searchParams.set('o', `${uiState.orientation.bearing},${uiState.orientation.pitch}`)
+}
+
+async function buildShareUrl(options = {}) {
+  const { preferCompressed = true } = options
+  const url = new URL(window.location.href)
+  const uiState = currentUiState()
+  url.search = ''
+  if (preferCompressed && supportsCompressedQueryState()) {
+    url.searchParams.set(COMPRESSED_STATE_QUERY_PARAM, await compressUiStateForQuery(uiState))
+  } else {
+    writeExpandedUiStateToUrl(url, uiState)
+  }
+  return url.toString()
+}
+
+async function writeCompressedUiStateToUrl(uiState, sequence) {
+  try {
+    const compressed = await compressUiStateForQuery(uiState)
+    if (sequence !== compressedPersistSequence) return
+    const url = new URL(window.location.href)
+    url.search = ''
+    url.searchParams.set(COMPRESSED_STATE_QUERY_PARAM, compressed)
+    history.replaceState(null, '', `${url.pathname}?${url.searchParams}${url.hash}`)
+  } catch {
+    writeExpandedUiStateToLocation(uiState)
+  }
+}
+
+function writeExpandedUiStateToLocation(uiState) {
+  const url = new URL(window.location.href)
+  url.search = ''
+  writeExpandedUiStateToUrl(url, uiState)
+  history.replaceState(null, '', `${url.pathname}?${url.searchParams}${url.hash}`)
+}
+
+function persistUiState() {
+  const uiState = currentUiState()
+  if (queryStateCompressionEnabled && supportsCompressedQueryState()) {
+    compressedPersistSequence += 1
+    writeCompressedUiStateToUrl(uiState, compressedPersistSequence)
+  } else {
+    writeExpandedUiStateToLocation(uiState)
+  }
+  syncCompressedQueryToggle()
+}
+
+function syncCompressedQueryToggle() {
+  if (!compactQueryToggle) return
+  const supported = supportsCompressedQueryState()
+  compactQueryToggle.checked = queryStateCompressionEnabled && supported
+  compactQueryToggle.disabled = !supported
+  compactQueryToggle.title = supported
+    ? 'Store changes in a compressed s query parameter'
+    : 'Compressed URLs are not supported by this browser'
+}
+
+function setShareSheetOpen(open) {
+  shareTrigger?.setAttribute('aria-expanded', open ? 'true' : 'false')
+  if (shareSheet) shareSheet.hidden = !open
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return
+    } catch {
+      // Continue to the selection fallback when clipboard permission is unavailable.
+    }
+  }
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.setAttribute('readonly', '')
+  textarea.style.position = 'fixed'
+  textarea.style.opacity = '0'
+  document.body.appendChild(textarea)
+  textarea.select()
+  document.execCommand('copy')
+  textarea.remove()
+}
+
+async function copyShareUrl(preferCompressed) {
+  try {
+    const url = await buildShareUrl({ preferCompressed })
+    await copyTextToClipboard(url)
+    shareStatus.textContent = `${preferCompressed ? 'Compact' : 'Readable'} map URL copied.`
+    setShareSheetOpen(false)
+  } catch {
+    shareStatus.textContent = 'Unable to copy the map URL.'
+  }
+}
+
+const initialUiState = await readUiStateFromUrl()
 const state = {
-  regionKey: 'baltimore-city',
-  stateCode: 'MD',
-  sizeMode: 'volume',
-  layerOrder: defaultLayerOrder(),
-  visible: new Set(LAYERS.filter((layer) => layer.defaultVisible).map((layer) => layer.id)),
+  regionKey: initialUiState.region,
+  stateCode: initialUiState.state,
+  sizeMode: initialUiState.size,
+  layerOrder: initialUiState.order,
+  visible: new Set(initialUiState.layers),
   loaded: new Map(),
   loadToken: 0,
 }
@@ -380,6 +628,10 @@ const regionSelect = document.getElementById('region-select')
 const stateField = document.getElementById('state-field')
 const stateSelect = document.getElementById('state-select')
 const sizeModeSelect = document.getElementById('size-mode-select')
+const compactQueryToggle = document.getElementById('compress-query-state')
+const shareTrigger = document.getElementById('open-map-share')
+const shareSheet = document.getElementById('map-share-sheet')
+const shareStatus = document.getElementById('map-share-status')
 const mobileInspectorQuery = window.matchMedia(MOBILE_INSPECTOR_MEDIA)
 let inspectorHoverKey = null
 let inspectorPinnedKey = null
@@ -389,19 +641,35 @@ for (const [value, label] of US_STATES) {
   const option = document.createElement('option')
   option.value = value
   option.textContent = label
-  if (value === 'MD') option.selected = true
+  if (value === state.stateCode) option.selected = true
   stateSelect.appendChild(option)
 }
+
+regionSelect.value = state.regionKey
+stateSelect.value = state.stateCode
+stateField.hidden = state.regionKey !== 'state'
+sizeModeSelect.value = state.sizeMode
+syncCompressedQueryToggle()
+setShareSheetOpen(false)
+
+const selectedStateView = STATE_VIEW[state.stateCode] || STATE_VIEW.MD
+const initialRegionCenter = state.regionKey === 'state'
+  ? [selectedStateView[0], selectedStateView[1]]
+  : REGIONS[state.regionKey].center
+const initialRegionZoom = state.regionKey === 'state' ? selectedStateView[2] : REGIONS[state.regionKey].zoom
 
 const map = new maplibregl.Map({
   container: mapEl,
   style: 'https://tiles.openfreemap.org/styles/liberty',
-  center: REGIONS[state.regionKey].center,
-  zoom: REGIONS[state.regionKey].zoom,
+  center: initialUiState.center || initialRegionCenter,
+  zoom: initialUiState.zoom ?? initialRegionZoom,
+  bearing: initialUiState.orientation.bearing,
+  pitch: initialUiState.orientation.pitch,
   attributionControl: true,
 })
 
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right')
+map.on('moveend', persistUiState)
 
 map.on('load', () => {
   renderControls()
@@ -420,6 +688,12 @@ map.on('load', () => {
 })
 
 window.__bmoreMedTechMap = map
+window.__bmoreMedTechQueryState = {
+  supportsCompression: supportsCompressedQueryState(),
+  current: () => currentUiState(),
+  buildShareUrl,
+  decodeCompressed: decompressUiStateFromQuery,
+}
 window.__bmoreMedTechFirstFeaturePoint = (layerId) => firstFeaturePoint(layerId)
 window.__showBmoreMedTechHoverTarget = (point) => {
   if (!point) return { arbitration: null, inspector: inspectorState() }
@@ -451,15 +725,34 @@ stateSelect.addEventListener('change', () => {
   state.stateCode = stateSelect.value
   closePinnedInspector()
   if (state.regionKey === 'state') moveToCurrentRegion()
+  else persistUiState()
   loadVisibleLayers()
 })
 
 sizeModeSelect.addEventListener('change', () => {
   state.sizeMode = SIZE_MODES.has(sizeModeSelect.value) ? sizeModeSelect.value : 'volume'
   refreshLoadedLayerSizing()
+  persistUiState()
 })
 
 inspectorCloseButton.addEventListener('click', closePinnedInspector)
+compactQueryToggle.addEventListener('change', () => {
+  queryStateCompressionEnabled = compactQueryToggle.checked
+  persistUiState()
+})
+shareTrigger.addEventListener('click', () => {
+  setShareSheetOpen(shareTrigger.getAttribute('aria-expanded') !== 'true')
+})
+document.getElementById('close-map-share').addEventListener('click', () => setShareSheetOpen(false))
+document.getElementById('copy-compressed-url').addEventListener('click', () => copyShareUrl(true))
+document.getElementById('copy-readable-url').addEventListener('click', () => copyShareUrl(false))
+document.addEventListener('click', (event) => {
+  if (shareSheet.hidden || shareTrigger.contains(event.target) || shareSheet.contains(event.target)) return
+  setShareSheetOpen(false)
+})
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') setShareSheetOpen(false)
+})
 
 function renderControls() {
   const currentStatuses = new Map(
@@ -496,6 +789,7 @@ function renderControls() {
       }
       setLayerVisibility(layer)
       loadVisibleLayers()
+      persistUiState()
     })
   }
 
@@ -782,6 +1076,7 @@ function moveLayerInStack(layerId, action) {
   setStatus(`Moved ${LAYERS.find((layer) => layer.id === layerId)?.label || 'layer'} ${action}.`)
   window.__bmoreMedTechLayerState = layerDiagnostics()
   window.__bmoreMedTechLayerStack = [...state.layerOrder]
+  persistUiState()
 }
 
 function renderedLayerIds(layer) {

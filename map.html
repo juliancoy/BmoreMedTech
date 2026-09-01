@@ -78,6 +78,24 @@
             </select>
           </label>
 
+          <div class="map-share-controls">
+            <label class="map-query-toggle" for="compress-query-state">
+              <span>Compact URL</span>
+              <input id="compress-query-state" type="checkbox" />
+            </label>
+            <button id="open-map-share" class="map-share-trigger" type="button" aria-expanded="false" aria-controls="map-share-sheet">Share view</button>
+            <div id="map-share-sheet" class="map-share-sheet" role="dialog" aria-modal="false" aria-label="Share map view" hidden>
+              <strong>Share this map view</strong>
+              <p>The link includes the region, map position, marker sizing, visible layers, and layer order.</p>
+              <div class="map-share-actions">
+                <button id="copy-compressed-url" type="button">Copy compact URL</button>
+                <button id="copy-readable-url" type="button">Copy readable URL</button>
+                <button id="close-map-share" type="button">Close</button>
+              </div>
+            </div>
+            <span id="map-share-status" class="map-share-status" aria-live="polite"></span>
+          </div>
+
           <div id="layer-controls" class="map-layer-controls" aria-label="Medical map layers"></div>
           <div id="map-status" class="map-status" aria-live="polite">Loading map...</div>
         </aside>

@@ -32,19 +32,30 @@ function applyThemeMode(mode) {
 }
 
 function setupThemeControls() {
-  const select = document.getElementById('theme-mode');
+  const controls = [...document.querySelectorAll('[data-theme-mode]')];
   const state = applyThemeMode(readThemeMode());
-  if (select) {
-    select.value = state.mode;
-    select.addEventListener('change', () => {
-      applyThemeMode(select.value);
+
+  function updateControls(mode) {
+    controls.forEach((control) => {
+      control.setAttribute('aria-pressed', String(control.dataset.themeMode === mode));
     });
   }
+
+  updateControls(state.mode);
+  controls.forEach((control) => {
+    control.addEventListener('click', () => {
+      const nextState = applyThemeMode(control.dataset.themeMode);
+      updateControls(nextState.mode);
+    });
+  });
 
   const media = window.matchMedia?.('(prefers-color-scheme: dark)');
   media?.addEventListener?.('change', () => {
     const mode = readThemeMode();
-    if (mode === 'system') applyThemeMode(mode);
+    if (mode === 'system') {
+      applyThemeMode(mode);
+      updateControls(mode);
+    }
   });
 
   window.__bmoreMedTechTheme = {

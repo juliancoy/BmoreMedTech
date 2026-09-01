@@ -101,9 +101,11 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         const hero = document.querySelector('.hero').getBoundingClientRect();
         const copy = document.querySelector('.hero-copy').getBoundingClientRect();
         const h1 = document.querySelector('.hero-copy h1').getBoundingClientRect();
+        const header = document.querySelector('.site-header').getBoundingClientRect();
         const heroCopyStyle = getComputedStyle(document.querySelector('.hero-copy'));
         const heroImageStyle = getComputedStyle(document.querySelector('.hero-image'));
         const heroImageSrc = document.querySelector('.hero-image')?.currentSrc || document.querySelector('.hero-image')?.src || '';
+        const glossary = document.querySelector('.glossary').getBoundingClientRect();
         const bodyText = document.body.textContent;
         return {
           title: document.title,
@@ -113,6 +115,11 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
           heroLeft: hero.left,
           heroRight: hero.right,
           heroWidth: hero.width,
+          heroTop: hero.top,
+          heroBottom: hero.bottom,
+          heroHeight: hero.height,
+          innerHeight: window.innerHeight,
+          headerBottom: header.bottom,
           copyLeft: copy.left,
           copyRight: copy.right,
           copyWidth: copy.width,
@@ -120,8 +127,14 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
           h1Left: h1.left,
           h1Right: h1.right,
           textAlign: heroCopyStyle.textAlign,
+          copyBackground: heroCopyStyle.backgroundColor,
           imageObjectPosition: heroImageStyle.objectPosition,
-          heroImageSrc
+          heroImageSrc,
+          glossaryTop: glossary.top,
+          glossaryEntryCount: document.querySelectorAll('.glossary-entry').length,
+          glossaryTitles: Array.from(document.querySelectorAll('.glossary-entry h3'), (title) => title.textContent.trim()),
+          glossaryRegionalText: document.querySelector('.glossary-lede')?.textContent || '',
+          revealEnabled: document.documentElement.classList.contains('reveal-enabled')
         };
         """
     )
@@ -134,6 +147,18 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: login links did not target the MedTech portal profile: {metrics}")
     if "baltimore-medtech-home-hero-canonical" not in metrics["heroImageSrc"] or "lumacdn.com" in metrics["heroImageSrc"]:
         raise AssertionError(f"{viewport} home: hero background should use the local canonical image: {metrics}")
+    if abs(metrics["heroTop"] - metrics["headerBottom"]) > 2:
+        raise AssertionError(f"{viewport} home: hero must start below the rendered navigation: {metrics}")
+    if metrics["copyBackground"] in {"transparent", "rgba(0, 0, 0, 0)"}:
+        raise AssertionError(f"{viewport} home: hero copy needs a readable background: {metrics}")
+    if metrics["heroHeight"] > metrics["innerHeight"] * 1.1 or metrics["glossaryTop"] > metrics["innerHeight"] * 1.2:
+        raise AssertionError(f"{viewport} home: hero no longer forms one viewport chapter: {metrics}")
+    if metrics["glossaryEntryCount"] != 3 or metrics["glossaryTitles"] != ["Health", "Medicine", "Biotech"]:
+        raise AssertionError(f"{viewport} home: regional glossary fields are incomplete: {metrics}")
+    if "specific to the Baltimore regional medical community" not in metrics["glossaryRegionalText"]:
+        raise AssertionError(f"{viewport} home: glossary regional context is missing: {metrics}")
+    if not metrics["revealEnabled"]:
+        raise AssertionError(f"{viewport} home: progressive scroll reveal did not initialize: {metrics}")
 
     if viewport == "desktop":
         if metrics["copyLeft"] < metrics["heroWidth"] * 0.48 or metrics["copyCenterPct"] < 0.62:
@@ -149,13 +174,13 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
 
     dark_theme_metrics = driver.execute_script(
         """
-        const select = document.getElementById('theme-mode');
-        select.value = 'dark';
-        select.dispatchEvent(new Event('change', {bubbles: true}));
+        const control = document.querySelector('[data-theme-mode="dark"]');
+        control.click();
         return {
           mode: document.documentElement.dataset.themeMode,
           theme: document.documentElement.dataset.theme,
           stored: localStorage.getItem('bmore-medtech.theme'),
+          pressed: control.getAttribute('aria-pressed'),
           bodyBg: getComputedStyle(document.body).backgroundColor,
           headerBg: getComputedStyle(document.querySelector('.site-header')).backgroundColor
         };
@@ -166,14 +191,13 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
 
     system_theme_metrics = driver.execute_script(
         """
-        const select = document.getElementById('theme-mode');
-        select.value = 'system';
-        select.dispatchEvent(new Event('change', {bubbles: true}));
+        const control = document.querySelector('[data-theme-mode="system"]');
+        control.click();
         return {
           mode: document.documentElement.dataset.themeMode,
           theme: document.documentElement.dataset.theme,
           stored: localStorage.getItem('bmore-medtech.theme'),
-          selectValue: select.value
+          pressed: control.getAttribute('aria-pressed')
         };
         """
     )
@@ -186,9 +210,36 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: dark mode did not apply: {theme_metrics}")
     if dark_theme_metrics["stored"] != "dark":
         raise AssertionError(f"{viewport} home: dark mode did not persist locally: {theme_metrics}")
-    if system_theme_metrics["mode"] != "system" or system_theme_metrics["stored"] != "system":
+    if dark_theme_metrics["pressed"] != "true":
+        raise AssertionError(f"{viewport} home: dark theme icon is not selected: {theme_metrics}")
+    if system_theme_metrics["mode"] != "system" or system_theme_metrics["stored"] != "system" or system_theme_metrics["pressed"] != "true":
         raise AssertionError(f"{viewport} home: system theme mode did not persist locally: {theme_metrics}")
     metrics["themeCheck"] = theme_metrics
+
+    driver.execute_script("document.querySelector('.glossary-entry').scrollIntoView({block: 'center', behavior: 'instant'})")
+    WebDriverWait(driver, 10).until(
+        lambda d: d.execute_script(
+            "return getComputedStyle(document.querySelector('.glossary-entry')).opacity === '1'"
+        )
+    )
+    glossary_metrics = driver.execute_script(
+        """
+        const entry = document.querySelector('.glossary-entry');
+        const box = entry.getBoundingClientRect();
+        return {
+          className: entry.className,
+          opacity: getComputedStyle(entry).opacity,
+          top: box.top,
+          bottom: box.bottom,
+          scrollY: window.scrollY
+        };
+        """
+    )
+    if glossary_metrics["opacity"] != "1":
+        raise AssertionError(f"{viewport} home: glossary reveal did not complete: {glossary_metrics}")
+    glossary_screenshot = screenshot_dir / f"{viewport}-home-glossary.png"
+    driver.save_screenshot(str(glossary_screenshot))
+    metrics["glossaryCheck"] = {**glossary_metrics, "screenshot": str(glossary_screenshot)}
 
     return {"viewport": viewport, "page": "home", "metrics": metrics, "screenshot": str(screenshot)}
 
@@ -280,9 +331,9 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         raise AssertionError(f"{viewport} map: default region changed: {metrics}")
     if metrics["sizeModeValue"] != "volume":
         raise AssertionError(f"{viewport} map: marker sizing should default to volume: {metrics}")
-    if metrics["layerRows"] < 10:
+    if metrics["layerRows"] < 12:
         raise AssertionError(f"{viewport} map: missing expected medical layer controls: {metrics}")
-    if metrics["layerOrderTopToBottom"][:2] != ["us-hospitals", "md-hospitals"]:
+    if metrics["layerOrderTopToBottom"][:3] != ["medical-events", "us-hospitals", "md-hospitals"]:
         raise AssertionError(f"{viewport} map: point layers should start above regional polygons: {metrics}")
     if not metrics["canvasPresent"] or metrics["mapWidth"] < 280 or metrics["mapHeight"] < 500:
         raise AssertionError(f"{viewport} map: MapLibre canvas did not render at useful size: {metrics}")
@@ -292,7 +343,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         raise AssertionError(f"{viewport} map: inspector should start idle and unpinned: {metrics}")
 
     diagnostics = metrics["diagnostics"]
-    for layer_id in ("us-hospitals", "md-hospitals", "dhcd-healthy-homes", "enviro-asthma"):
+    for layer_id in ("medical-events", "us-hospitals", "md-hospitals", "dhcd-healthy-homes", "enviro-asthma"):
         layer_state = diagnostics.get(layer_id) or {}
         if not layer_state.get("visible") or not layer_state.get("applies") or int(layer_state.get("count") or 0) <= 0:
             raise AssertionError(f"{viewport} map: expected layer {layer_id} did not load for Baltimore City: {metrics}")
@@ -311,6 +362,32 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
     ]
     if not sized_layers or not any(layer["maxScale"] > layer["minScale"] for layer in sized_layers):
         raise AssertionError(f"{viewport} map: expected volume-based marker sizing diagnostics: {metrics}")
+
+    event_metrics = driver.execute_script(
+        """
+        const point = window.__bmoreMedTechFirstFeaturePoint('medical-events');
+        const result = window.__showBmoreMedTechHoverTarget(point);
+        return {
+          point,
+          result,
+          inspectorState: document.getElementById('map-inspector').dataset.inspectorState,
+          text: document.getElementById('map-inspector-content').textContent.replace(/\\s+/g, ' ').trim(),
+          eventHref: Array.from(document.querySelectorAll('#map-inspector-content a'))
+            .map((link) => link.href)
+            .find((href) => !href.includes('codecollective.us/calendar.html')) || ''
+        };
+        """
+    )
+    event_layer = (event_metrics.get("result") or {}).get("arbitration", {}).get("chosen", {}).get("layerId")
+    if (
+        not event_metrics.get("point")
+        or event_layer != "medical-events"
+        or event_metrics["inspectorState"] != "hover"
+        or "Upcoming medical events" not in event_metrics["text"]
+        or not event_metrics["eventHref"].startswith("http")
+    ):
+        raise AssertionError(f"{viewport} map: upcoming medical event did not render in the inspector: {event_metrics}")
+    metrics["medicalEventCheck"] = event_metrics
 
     hover_metrics = driver.execute_script(
         """
@@ -389,7 +466,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         };
         """
     )
-    if z_order_metrics["before"][:2] != ["us-hospitals", "md-hospitals"] or z_order_metrics["after"][:2] != ["md-hospitals", "us-hospitals"]:
+    if z_order_metrics["before"][:2] != ["medical-events", "us-hospitals"] or z_order_metrics["after"][:2] != ["us-hospitals", "medical-events"]:
         raise AssertionError(f"{viewport} map: layer stack controls did not reorder the top layers: {z_order_metrics}")
     metrics["zOrderCheck"] = z_order_metrics
 
@@ -438,11 +515,86 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
             };
             """
         )
-        if state_metrics["stateFieldHidden"] or state_metrics["diagnostics"]["md-hospitals"]["applies"]:
+        if (
+            state_metrics["stateFieldHidden"]
+            or state_metrics["diagnostics"]["md-hospitals"]["applies"]
+            or state_metrics["diagnostics"]["medical-events"]["applies"]
+        ):
             raise AssertionError(f"desktop map: state-region filtering did not disable Maryland-only layers: {state_metrics}")
         metrics["stateRegionCheck"] = state_metrics
 
     return {"viewport": viewport, "page": "map", "metrics": metrics, "screenshot": str(screenshot)}
+
+
+def assert_taxonomy(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
+    driver.get(f"{base_url.rstrip('/')}/taxonomy")
+    settle(driver)
+    WebDriverWait(driver, 30).until(
+        lambda d: d.execute_script("return window.__bmoreMedTechTaxonomyReady === true")
+    )
+    assert_no_horizontal_overflow(driver, f"{viewport} taxonomy")
+
+    screenshot = screenshot_dir / f"{viewport}-taxonomy.png"
+    driver.save_screenshot(str(screenshot))
+    metrics = driver.execute_script(
+        """
+        const state = window.__bmoreMedTechTaxonomyState || {};
+        return {
+          title: document.title,
+          totalText: document.getElementById('taxonomy-total')?.textContent || '',
+          databaseOptions: document.getElementById('taxonomy-database')?.options.length || 0,
+          databaseValue: document.getElementById('taxonomy-database')?.value,
+          clusters: document.querySelectorAll('.taxonomy-cluster').length,
+          nodes: document.querySelectorAll('.taxonomy-node').length,
+          sourceHref: document.getElementById('taxonomy-source-link')?.href || '',
+          navbarCurrent: document.querySelector('header nav [aria-current="page"]')?.textContent?.trim() || '',
+          diagnostics: state
+        };
+        """
+    )
+    if metrics["title"] != "MedTech Index | Baltimore MedTech":
+        raise AssertionError(f"{viewport} taxonomy: unexpected title: {metrics}")
+    if int(metrics["totalText"].replace(",", "")) < 200 or metrics["databaseOptions"] != 6:
+        raise AssertionError(f"{viewport} taxonomy: index or framework selector is incomplete: {metrics}")
+    if metrics["databaseValue"] != "medtech_index" or metrics["clusters"] < 9 or metrics["nodes"] < 200:
+        raise AssertionError(f"{viewport} taxonomy: default MedTech Index did not render: {metrics}")
+    if not metrics["sourceHref"].endswith("/medtech-index.json") or metrics["navbarCurrent"] != "MedTech Index":
+        raise AssertionError(f"{viewport} taxonomy: download or navbar link is incorrect: {metrics}")
+
+    interaction_metrics = driver.execute_script(
+        """
+        const database = document.getElementById('taxonomy-database');
+        database.value = 'acgme';
+        database.dispatchEvent(new Event('change', {bubbles: true}));
+        const acgme = {...window.__bmoreMedTechTaxonomyState};
+        const search = document.getElementById('taxonomy-search');
+        search.value = 'genomics';
+        search.dispatchEvent(new Event('input', {bubbles: true}));
+        const searched = {...window.__bmoreMedTechTaxonomyState};
+        const firstNode = document.querySelector('.taxonomy-node');
+        firstNode?.click();
+        return {
+          acgme,
+          searched,
+          selectedText: document.getElementById('taxonomy-inspector-title')?.textContent || '',
+          selectedId: window.__bmoreMedTechTaxonomyState?.selectedRecord || null,
+          sourceHref: document.getElementById('taxonomy-source-link')?.href || ''
+        };
+        """
+    )
+    acgme = interaction_metrics["acgme"]
+    searched = interaction_metrics["searched"]
+    if not (20 < acgme.get("availableRecords", 0) < acgme.get("totalRecords", 0)):
+        raise AssertionError(f"{viewport} taxonomy: ACGME lens did not filter the index: {interaction_metrics}")
+    if not (0 < searched.get("visibleRecords", 0) < acgme.get("availableRecords", 0)):
+        raise AssertionError(f"{viewport} taxonomy: taxonomy search did not narrow the ACGME lens: {interaction_metrics}")
+    if not interaction_metrics["selectedId"] or interaction_metrics["selectedText"] == "Select a field":
+        raise AssertionError(f"{viewport} taxonomy: field inspector did not respond: {interaction_metrics}")
+    if "acgme.org/specialties" not in interaction_metrics["sourceHref"]:
+        raise AssertionError(f"{viewport} taxonomy: selected framework source is wrong: {interaction_metrics}")
+
+    metrics["interactionCheck"] = interaction_metrics
+    return {"viewport": viewport, "page": "taxonomy", "metrics": metrics, "screenshot": str(screenshot)}
 
 
 def run(args: argparse.Namespace) -> int:
@@ -450,13 +602,23 @@ def run(args: argparse.Namespace) -> int:
     screenshot_dir.mkdir(parents=True, exist_ok=True)
 
     viewports = [("desktop", 1366, 900), ("mobile", 390, 844)]
+    page_checks = {
+        "home": assert_home,
+        "calendar": assert_calendar,
+        "map": assert_map,
+        "taxonomy": assert_taxonomy,
+    }
+    requested_pages = [page.strip() for page in args.pages.split(",") if page.strip()]
+    unknown_pages = sorted(set(requested_pages) - set(page_checks))
+    if unknown_pages:
+        raise ValueError(f"Unknown regression pages: {', '.join(unknown_pages)}")
+
     checks: list[dict] = []
     for viewport, width, height in viewports:
         driver = new_driver(args.selenium_url, width, height)
         try:
-            checks.append(assert_home(driver, args.base_url, viewport, screenshot_dir))
-            checks.append(assert_calendar(driver, args.base_url, viewport, screenshot_dir))
-            checks.append(assert_map(driver, args.base_url, viewport, screenshot_dir))
+            for page in requested_pages:
+                checks.append(page_checks[page](driver, args.base_url, viewport, screenshot_dir))
         except Exception:
             failure_path = screenshot_dir / f"{viewport}-failure.png"
             try:
@@ -483,6 +645,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--screenshot-dir",
         default=os.environ.get("BMORE_MEDTECH_SCREENSHOT_DIR", "/tmp/bmore-medtech-selenium-regression"),
+    )
+    parser.add_argument(
+        "--pages",
+        default=os.environ.get("BMORE_MEDTECH_TEST_PAGES", "home,calendar,map,taxonomy"),
+        help="Comma-separated pages to check: home, calendar, map, taxonomy",
     )
     return parser.parse_args()
 

@@ -27,49 +27,221 @@
     </script>
     <link rel="stylesheet" href="/assets/styles.css" />
     <script type="module" src="/assets/theme.js"></script>
+    <script type="module" src="/assets/home.js"></script>
   </head>
-  <body>
+  <body class="home-body">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
-      <a class="brand" href="/">
-        <img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=32,height=32/uploads/gx/e8fdf4fb-b1ba-4269-8e6f-38103e820ff9.png" alt="" />
-        <span>Baltimore MedTech</span>
-      </a>
-      <nav aria-label="Primary navigation">
-        <a href="/calendar.html">Calendar</a>
-        <a href="/map.html">Map</a>
-        <label class="theme-control">
-          <span class="visually-hidden">Theme</span>
-          <select id="theme-mode" aria-label="Theme">
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
-        <a class="button" href="https://codecollective.us/p/?portalProfile=baltimore-medtech">Login</a>
-      </nav>
+      <div class="site-header-inner">
+        <a class="brand" href="/" aria-label="Baltimore MedTech home">
+          <img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=32,height=32/uploads/gx/e8fdf4fb-b1ba-4269-8e6f-38103e820ff9.png" alt="" />
+          <span class="brand-copy">
+            <strong>Baltimore MedTech</strong>
+            <small>Regional health innovation</small>
+          </span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+          <span>Menu</span>
+          <span class="nav-toggle-lines" aria-hidden="true"></span>
+        </button>
+        <nav id="primary-nav" aria-label="Primary navigation">
+          <a href="/calendar.html">Calendar</a>
+          <a href="/map.html">Map</a>
+          <a href="/taxonomy.html">MedTech Index</a>
+        <div class="theme-control" role="group" aria-label="Color theme">
+          <button class="theme-option" type="button" data-theme-mode="system" aria-label="Use system theme" aria-pressed="true" title="System theme">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </button>
+          <button class="theme-option" type="button" data-theme-mode="light" aria-label="Use light theme" aria-pressed="false" title="Light theme">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+          </button>
+          <button class="theme-option" type="button" data-theme-mode="dark" aria-label="Use dark theme" aria-pressed="false" title="Dark theme">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"/></svg>
+          </button>
+        </div>
+          <a class="button nav-cta" href="https://codecollective.us/p/?portalProfile=baltimore-medtech">Join / Login</a>
+        </nav>
+      </div>
     </header>
 
-    <main>
-      <section class="hero">
+    <main class="home-page" id="main-content">
+      <section class="hero" aria-labelledby="hero-title">
         <img
           class="hero-image"
-          src="./assets/images/baltimore-medtech-home-hero-canonical.jpg"
+          src="./assets/images/baltimore-medtech-hero-v2.webp"
           alt=""
         />
-        <div class="hero-copy">
-          <p class="eyebrow">Baltimore's medical technology community</p>
-          <h1>Baltimore MedTech</h1>
-          <p>
-            Join a recurring meetup connecting medicine, technology, research, and entrepreneurship to strengthen
-            Baltimore's medical community and improve care.
-          </p>
-          <div class="hero-actions">
-            <a class="button primary" href="/calendar.html">View Medical Events</a>
-            <a class="button secondary" href="/map.html">Explore Medical Map</a>
-            <a class="button secondary" href="https://codecollective.us/p/?portalProfile=baltimore-medtech">Login</a>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Medicine <span>&times;</span> Technology <span>&times;</span> Baltimore</p>
+            <h1 id="hero-title">Better care starts with a better-connected city.</h1>
+            <p>
+              Baltimore MedTech brings clinicians, builders, researchers, and founders into one regional community—so
+              useful ideas move closer to patients.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="/calendar.html">Find the next event <span aria-hidden="true">&rarr;</span></a>
+              <a class="button secondary" href="#ways-in">Explore the community</a>
+            </div>
+            <div class="hero-meta" aria-label="Community details">
+              <span>Monthly meetup</span>
+              <span>Open regional network</span>
+            </div>
+          </div>
+          <div class="hero-place" aria-hidden="true">
+            <span>Baltimore, Maryland</span>
+            <strong>Connected care.<br />Built locally.</strong>
           </div>
         </div>
       </section>
+
+      <section class="pathways" id="ways-in" aria-labelledby="pathways-title">
+        <div class="pathways-heading" data-reveal>
+          <div>
+            <p class="eyebrow">Your way into the ecosystem</p>
+            <h2 id="pathways-title">Start where you are.</h2>
+          </div>
+          <p>
+            Find people, understand the region, or orient yourself within the field. Each tool is designed to make a
+            complex medical community easier to enter.
+          </p>
+        </div>
+        <div class="pathway-grid">
+          <a class="pathway-card pathway-card-events" href="/calendar.html" data-reveal style="--reveal-order: 0">
+            <span class="pathway-number">01</span>
+            <div>
+              <p class="pathway-label">Meet the community</p>
+              <h3>Events</h3>
+              <p>Discover regional meetups, talks, workshops, and working sessions.</p>
+            </div>
+            <span class="pathway-link">Open calendar <span aria-hidden="true">&nearr;</span></span>
+          </a>
+          <a class="pathway-card pathway-card-map" href="/map.html" data-reveal style="--reveal-order: 1">
+            <span class="pathway-number">02</span>
+            <div>
+              <p class="pathway-label">See the system</p>
+              <h3>Medical map</h3>
+              <p>Explore the institutions, care infrastructure, and public-health layers shaping the region.</p>
+            </div>
+            <span class="pathway-link">Explore the map <span aria-hidden="true">&nearr;</span></span>
+          </a>
+          <a class="pathway-card pathway-card-index" href="/taxonomy.html" data-reveal style="--reveal-order: 2">
+            <span class="pathway-number">03</span>
+            <div>
+              <p class="pathway-label">Navigate the field</p>
+              <h3>MedTech index</h3>
+              <p>Trace the relationships among medical sciences, specialties, technologies, and care settings.</p>
+            </div>
+            <span class="pathway-link">Browse the index <span aria-hidden="true">&nearr;</span></span>
+          </a>
+        </div>
+      </section>
+
+      <section class="local-case" aria-labelledby="local-case-title">
+        <div class="local-case-grid">
+          <div data-reveal>
+            <p class="eyebrow">Why Baltimore MedTech</p>
+            <h2 id="local-case-title">The pieces are here.<br />We make the connections visible.</h2>
+          </div>
+          <div class="local-case-copy" data-reveal style="--reveal-order: 1">
+            <p>
+              Baltimore has clinical expertise, research institutions, technical talent, and people solving urgent
+              health problems. Progress accelerates when those communities can find one another and share a language.
+            </p>
+            <dl>
+              <div>
+                <dt>Convene</dt>
+                <dd>Bring disciplines and institutions into the same room.</dd>
+              </div>
+              <div>
+                <dt>Orient</dt>
+                <dd>Make the regional system legible through shared tools.</dd>
+              </div>
+              <div>
+                <dt>Connect</dt>
+                <dd>Move promising local knowledge toward practical care.</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="glossary" id="regional-glossary" aria-labelledby="glossary-title">
+        <div class="glossary-intro" data-reveal>
+          <p class="eyebrow">A shared regional language</p>
+          <h2 id="glossary-title">Three terms.<br />One local context.</h2>
+          <p class="glossary-lede">
+            <strong>These definitions are specific to the Baltimore regional medical community.</strong>
+            They explain how Baltimore MedTech distinguishes three closely connected fields in its work.
+          </p>
+        </div>
+
+        <div class="glossary-list" aria-label="Regional medical terminology">
+          <article class="glossary-entry" data-reveal style="--reveal-order: 0">
+            <p class="glossary-number" aria-hidden="true">01</p>
+            <div class="glossary-definition">
+              <p class="glossary-category">Systems &amp; institutions</p>
+              <h3>Health</h3>
+              <p>
+                Health, as in public health or healthcare, refers to the organizational and financial concerns of
+                big medicine: insurance, hospitals, and outreach. It also includes Epic, CMS, and other business
+                functions.
+              </p>
+            </div>
+          </article>
+
+          <article class="glossary-entry" data-reveal style="--reveal-order: 1">
+            <p class="glossary-number" aria-hidden="true">02</p>
+            <div class="glossary-definition">
+              <p class="glossary-category">Immediate patient care</p>
+              <h3>Medicine</h3>
+              <p>
+                Medicine is separated into diagnostic and operative practice. It includes the immediate,
+                individual care given to a patient.
+              </p>
+            </div>
+          </article>
+
+          <article class="glossary-entry" data-reveal style="--reveal-order: 2">
+            <p class="glossary-number" aria-hidden="true">03</p>
+            <div class="glossary-definition">
+              <p class="glossary-category">Life science &amp; industry</p>
+              <h3>Biotech</h3>
+              <p>
+                Biotech largely covers organic drugs and biopharmaceuticals, but can also include genetics. It
+                frequently employs the capitalist mode of production.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="closing-cta" aria-labelledby="closing-title">
+        <div data-reveal>
+          <p class="eyebrow">The community is the infrastructure</p>
+          <h2 id="closing-title">Bring your perspective<br />to the next conversation.</h2>
+          <a class="button primary" href="/calendar.html">See upcoming events <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="site-footer-grid">
+        <div>
+          <a class="footer-brand" href="/">Baltimore MedTech</a>
+          <p>Connecting medicine, technology, research, and entrepreneurship across the Baltimore region.</p>
+        </div>
+        <div class="footer-links" aria-label="Footer navigation">
+          <a href="/calendar.html">Calendar</a>
+          <a href="/map.html">Medical map</a>
+          <a href="/taxonomy.html">MedTech index</a>
+          <a href="#regional-glossary">Regional glossary</a>
+        </div>
+        <div class="footer-action">
+          <span>Already part of the community?</span>
+          <a href="https://codecollective.us/p/?portalProfile=baltimore-medtech">Join or log in <span aria-hidden="true">&nearr;</span></a>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

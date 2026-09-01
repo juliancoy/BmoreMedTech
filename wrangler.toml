@@ -2,6 +2,7 @@ name = "baltimore-medtech"
 main = "worker.js"
 compatibility_date = "2026-04-24"
 workers_dev = true
+routes = [{ pattern = "medtech.social", custom_domain = true }]
 
 [assets]
 directory = "dist"

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baltimore MedTech</title>
+    <meta
+      name="description"
+      content="Baltimore MedTech connects medicine, technology, research, and entrepreneurship to strengthen Baltimore's medical community and improve care."
+    />
+    <meta property="og:title" content="Baltimore MedTech" />
+    <meta
+      property="og:description"
+      content="A recurring meetup connecting medicine, technology, research, and entrepreneurship in Baltimore."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,anim=false,background=white,quality=75,width=1200,height=630/event-social/gx/de779028-c922-4b44-bc90-93c0355e9c48.png" />
+    <script>
+      (() => {
+        const key = 'bmore-medtech.theme';
+        const stored = (() => { try { return localStorage.getItem(key); } catch { return null; } })();
+        const mode = stored === 'light' || stored === 'dark' ? stored : 'system';
+        const resolved = mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : mode === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.dataset.theme = resolved;
+      })();
+    </script>
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script type="module" src="/assets/theme.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">
+        <img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=32,height=32/uploads/gx/e8fdf4fb-b1ba-4269-8e6f-38103e820ff9.png" alt="" />
+        <span>Baltimore MedTech</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/calendar.html">Calendar</a>
+        <a href="/map.html">Map</a>
+        <label class="theme-control">
+          <span class="visually-hidden">Theme</span>
+          <select id="theme-mode" aria-label="Theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <a class="button" href="https://codecollective.us/p/?portalProfile=baltimore-medtech">Login</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <img
+          class="hero-image"
+          src="./assets/images/baltimore-medtech-home-hero-canonical.jpg"
+          alt=""
+        />
+        <div class="hero-copy">
+          <p class="eyebrow">Baltimore's medical technology community</p>
+          <h1>Baltimore MedTech</h1>
+          <p>
+            Join a recurring meetup connecting medicine, technology, research, and entrepreneurship to strengthen
+            Baltimore's medical community and improve care.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="/calendar.html">View Medical Events</a>
+            <a class="button secondary" href="/map.html">Explore Medical Map</a>
+            <a class="button secondary" href="https://codecollective.us/p/?portalProfile=baltimore-medtech">Login</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

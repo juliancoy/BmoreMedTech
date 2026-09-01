@@ -1,0 +1,6 @@
+dist/
+node_modules/
+.wrangler/
+.local/
+__pycache__/
+*.pyc

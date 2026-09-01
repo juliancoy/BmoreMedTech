@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar | Baltimore MedTech</title>
+    <meta
+      name="description"
+      content="Baltimore MedTech calendar of medically related events from the published Code Collective Baltimore calendar."
+    />
+    <script>
+      (() => {
+        const key = 'bmore-medtech.theme';
+        const stored = (() => { try { return localStorage.getItem(key); } catch { return null; } })();
+        const mode = stored === 'light' || stored === 'dark' ? stored : 'system';
+        const resolved = mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : mode === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.dataset.theme = resolved;
+      })();
+    </script>
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script type="module" src="/assets/theme.js"></script>
+    <script type="module" src="/assets/calendar.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">
+        <img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=32,height=32/uploads/gx/e8fdf4fb-b1ba-4269-8e6f-38103e820ff9.png" alt="" />
+        <span>Baltimore MedTech</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a aria-current="page" href="/calendar.html">Calendar</a>
+        <a href="/map.html">Map</a>
+        <label class="theme-control">
+          <span class="visually-hidden">Theme</span>
+          <select id="theme-mode" aria-label="Theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <a class="button" href="https://codecollective.us/p/?portalProfile=baltimore-medtech">Login</a>
+      </nav>
+    </header>
+
+    <main class="calendar-page">
+      <section class="page-heading">
+        <p class="eyebrow">Medical calendar</p>
+        <h1>Medically Related Events</h1>
+        <p>
+          Events are filtered from the already published Code Collective Baltimore calendar feed.
+        </p>
+      </section>
+
+      <section class="event-list-section">
+        <div class="section-title-row">
+          <h2>Upcoming</h2>
+          <span id="event-count"></span>
+        </div>
+        <div id="event-list" class="event-list"></div>
+      </section>
+
+      <section class="month-section">
+        <div class="section-title-row">
+          <h2>Monthly Overview</h2>
+        </div>
+        <section class="calendar-toolbar" aria-label="Calendar controls">
+          <button id="prev-month" type="button" aria-label="Previous month">&lt;</button>
+          <h3 id="month-label">Loading</h3>
+          <button id="next-month" type="button" aria-label="Next month">&gt;</button>
+        </section>
+
+        <section class="calendar-shell" aria-live="polite">
+          <div id="status" class="status">Loading medical events...</div>
+          <div id="calendar-grid" class="calendar-grid" hidden></div>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

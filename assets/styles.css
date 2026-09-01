@@ -214,11 +214,13 @@ nav a[aria-current="page"] {
   color: var(--blue);
 }
 
-.social-link { position: fixed; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 30; display: block; border-radius: 12px; background: transparent; text-decoration: none; }
+.social-links { position: fixed; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 30; display: flex; align-items: center; gap: 8px; }
+.social-link { display: block; border-radius: 12px; background: transparent; color: #fff; text-decoration: none; }
 .social-button { width: 54px; height: 45px; display: grid; place-items: center; border: 3px solid #002a61; border-radius: 12px; background: #002a61; box-shadow: 0 2px 4px #bdbdbd; transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease; }
 .social-link:hover .social-button { border-color: #ffff00; background: #ffff00; transform: translateY(-1px); }
 .social-link:focus-visible { outline: 3px solid color-mix(in srgb, var(--blue) 45%, transparent); outline-offset: 3px; }
 .social-icon { width: 29px; height: 29px; object-fit: contain; }
+.social-icon.github-icon { fill: currentColor; }
 
 .hero {
   position: relative;
@@ -439,11 +441,16 @@ h2 {
 }
 
 .calendar-toolbar {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
 }
 
 .month-section {
-  margin-top: 24px;
+  margin-top: 28px;
 }
 
 .calendar-toolbar button {
@@ -456,6 +463,24 @@ h2 {
   font-size: 1.8rem;
   line-height: 1;
   cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease;
+}
+
+.calendar-toolbar button:hover,
+.calendar-toolbar button:focus-visible {
+  border-color: color-mix(in srgb, var(--blue) 35%, var(--line));
+  background: var(--nav-active-bg);
+  transform: translateY(-1px);
+}
+
+.calendar-toolbar h3 {
+  margin: 0;
+  font-size: clamp(1.05rem, 2.4vw, 1.45rem);
+  line-height: 1.1;
+  text-align: center;
 }
 
 .calendar-shell,
@@ -478,32 +503,28 @@ h2 {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  background: var(--line);
+  gap: 1px;
 }
 
 .weekday,
 .day {
   min-width: 0;
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.weekday:nth-child(7n),
-.day:nth-child(7n) {
-  border-right: 0;
 }
 
 .weekday {
-  padding: 10px;
+  padding: 11px 8px;
   background: var(--calendar-head-bg);
   color: var(--blue);
   font-size: 0.78rem;
   font-weight: 900;
+  text-align: center;
   text-transform: uppercase;
 }
 
 .day {
   min-height: 112px;
-  padding: 8px;
+  padding: 9px;
   background: var(--surface-raised);
 }
 
@@ -513,9 +534,14 @@ h2 {
 }
 
 .day-number {
-  display: block;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
   margin-bottom: 8px;
+  border-radius: 999px;
   font-weight: 900;
+  line-height: 1;
 }
 
 .day-event {
@@ -531,12 +557,34 @@ h2 {
   font: inherit;
   font-size: 0.72rem;
   font-weight: 800;
+  line-height: 1.25;
   text-align: left;
   cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    transform 140ms ease;
+}
+
+.day-event:hover,
+.day-event:focus-visible {
+  background: color-mix(in srgb, var(--calendar-event-bg) 78%, var(--blue));
+  transform: translateY(-1px);
+}
+
+.day .status {
+  display: inline-flex;
+  margin-top: 3px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: var(--surface-subtle);
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1.2;
 }
 
 .event-list-section {
-  padding: 18px;
+  padding: clamp(16px, 3vw, 24px);
 }
 
 .section-title-row {
@@ -555,12 +603,22 @@ h2 {
 
 .event-card {
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  gap: 14px;
-  padding: 14px;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface-raised);
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.event-card:hover {
+  border-color: color-mix(in srgb, var(--blue) 24%, var(--line));
+  box-shadow: 0 16px 34px rgba(12, 28, 40, 0.1);
+  transform: translateY(-1px);
 }
 
 .event-date {
@@ -570,8 +628,11 @@ h2 {
   border-radius: 8px;
   background: var(--date-bg);
   color: var(--blue);
+  font-size: 0.78rem;
   font-weight: 900;
+  line-height: 1.1;
   text-align: center;
+  text-transform: uppercase;
 }
 
 .event-date span {
@@ -583,7 +644,8 @@ h2 {
 
 .event-card h3 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: clamp(1.02rem, 2vw, 1.18rem);
+  line-height: 1.2;
 }
 
 .event-card p {
@@ -594,7 +656,10 @@ h2 {
 
 .event-card a {
   display: inline-flex;
+  align-items: center;
+  min-height: 34px;
   margin-top: 10px;
+  text-underline-offset: 4px;
   color: var(--blue);
   font-weight: 800;
 }
@@ -1411,6 +1476,9 @@ h2 {
     grid-template-columns: 1fr;
     max-height: 540px;
     overflow: auto;
+    gap: 0;
+    background: transparent;
+    border-top: 1px solid var(--line);
   }
 
   .weekday {
@@ -1419,15 +1487,46 @@ h2 {
 
   .day {
     min-height: auto;
-    border-right: 0;
+    padding: 12px;
+    border-bottom: 1px solid var(--line);
   }
 
   .day.outside {
     display: none;
   }
 
+  .day-number {
+    width: auto;
+    height: auto;
+    justify-content: start;
+    margin-bottom: 10px;
+    color: var(--blue);
+    font-size: 0.9rem;
+  }
+
+  .day-event {
+    min-height: 36px;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+  }
+
   .event-card {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .event-date {
+    min-height: 58px;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    gap: 8px;
+    padding: 0 14px;
+    text-align: left;
+  }
+
+  .event-date span {
+    font-size: 1.45rem;
   }
 
   .month-section {

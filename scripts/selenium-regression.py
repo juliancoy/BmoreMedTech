@@ -9,6 +9,7 @@ import os
 import pathlib
 import re
 import sys
+from urllib.parse import parse_qs, urlparse
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -200,7 +201,8 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
           glossaryRegionalText: document.querySelector('.glossary-lede')?.textContent || '',
           revealEnabled: document.documentElement.classList.contains('reveal-enabled'),
           footerPresent: !!document.querySelector('.site-footer'),
-          navEnhanced: document.documentElement.classList.contains('nav-enhanced')
+          navEnhanced: document.documentElement.classList.contains('nav-enhanced'),
+          navOpenInitial: document.getElementById('primary-nav')?.classList.contains('is-open') || false
         };
         """
     )
@@ -233,6 +235,8 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: progressive scroll reveal did not initialize: {metrics}")
     if not metrics["footerPresent"] or not metrics["navEnhanced"]:
         raise AssertionError(f"{viewport} home: navigation or footer enhancement is missing: {metrics}")
+    if metrics["navOpenInitial"]:
+        raise AssertionError(f"{viewport} home: navigation should load closed: {metrics}")
 
     if viewport == "desktop":
         if metrics["copyLeft"] > metrics["heroWidth"] * 0.12 or metrics["copyRight"] > metrics["heroWidth"] * 0.7:
@@ -380,6 +384,11 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
           inspectorWidth: inspectorBox.width,
           inspectorState: inspector.dataset.inspectorState,
           inspectorCloseHidden: document.getElementById('close-map-inspector')?.hidden,
+          compactSupported: window.__bmoreMedTechQueryState?.supportsCompression,
+          compactDisabled: document.getElementById('compress-query-state')?.disabled,
+          shareExpanded: document.getElementById('open-map-share')?.getAttribute('aria-expanded'),
+          shareHidden: document.getElementById('map-share-sheet')?.hidden,
+          shareDisplay: getComputedStyle(document.getElementById('map-share-sheet')).display,
           canvasPresent: !!canvas,
           canvasWidth: canvas?.width || 0,
           canvasHeight: canvas?.height || 0,
@@ -404,6 +413,10 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         raise AssertionError(f"desktop map: inspector should be a right-hand column, not a map overlay: {metrics}")
     if metrics["inspectorState"] != "idle" or not metrics["inspectorCloseHidden"]:
         raise AssertionError(f"{viewport} map: inspector should start idle and unpinned: {metrics}")
+    if not metrics["compactSupported"] or metrics["compactDisabled"]:
+        raise AssertionError(f"{viewport} map: browser compression support was not exposed: {metrics}")
+    if metrics["shareExpanded"] != "false" or not metrics["shareHidden"] or metrics["shareDisplay"] != "none":
+        raise AssertionError(f"{viewport} map: share sheet should start fully closed: {metrics}")
 
     diagnostics = metrics["diagnostics"]
     for layer_id in ("medical-events", "us-hospitals", "md-hospitals", "dhcd-healthy-homes", "enviro-asthma"):
@@ -585,6 +598,107 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         ):
             raise AssertionError(f"desktop map: state-region filtering did not disable Maryland-only layers: {state_metrics}")
         metrics["stateRegionCheck"] = state_metrics
+
+        WebDriverWait(driver, 15).until(
+            lambda d: parse_qs(urlparse(d.current_url).query).get("region") == ["state"]
+            and parse_qs(urlparse(d.current_url).query).get("state") == ["PA"]
+            and parse_qs(urlparse(d.current_url).query).get("size") == ["uniform"]
+        )
+        readable_query = parse_qs(urlparse(driver.current_url).query)
+        for parameter in ("region", "state", "size", "layers", "order", "c", "z", "o"):
+            if parameter not in readable_query:
+                raise AssertionError(f"desktop map: readable URL is missing {parameter}: {driver.current_url}")
+
+        share_urls = driver.execute_async_script(
+            """
+            const done = arguments[arguments.length - 1];
+            Promise.all([
+              window.__bmoreMedTechQueryState.buildShareUrl({preferCompressed: true}),
+              window.__bmoreMedTechQueryState.buildShareUrl({preferCompressed: false})
+            ]).then(([compact, readable]) => done({compact, readable})).catch((error) => done({error: String(error)}));
+            """
+        )
+        if share_urls.get("error"):
+            raise AssertionError(f"desktop map: share URLs could not be built: {share_urls}")
+        compact_query = parse_qs(urlparse(share_urls["compact"]).query)
+        expanded_share_query = parse_qs(urlparse(share_urls["readable"]).query)
+        if set(compact_query) != {"s"} or not compact_query["s"][0]:
+            raise AssertionError(f"desktop map: compact share URL should contain only s: {share_urls}")
+        if "s" in expanded_share_query or expanded_share_query.get("region") != ["state"]:
+            raise AssertionError(f"desktop map: readable share URL was not expanded: {share_urls}")
+
+        share_lifecycle = driver.execute_async_script(
+            """
+            const done = arguments[arguments.length - 1];
+            const trigger = document.getElementById('open-map-share');
+            const sheet = document.getElementById('map-share-sheet');
+            trigger.click();
+            const opened = {
+              expanded: trigger.getAttribute('aria-expanded'),
+              hidden: sheet.hidden,
+              display: getComputedStyle(sheet).display
+            };
+            document.getElementById('copy-readable-url').click();
+            setTimeout(() => done({
+              opened,
+              closed: {
+                expanded: trigger.getAttribute('aria-expanded'),
+                hidden: sheet.hidden,
+                display: getComputedStyle(sheet).display,
+                status: document.getElementById('map-share-status').textContent
+              }
+            }), 500);
+            """
+        )
+        if (
+            share_lifecycle["opened"] != {"expanded": "true", "hidden": False, "display": "grid"}
+            or share_lifecycle["closed"]["expanded"] != "false"
+            or not share_lifecycle["closed"]["hidden"]
+            or share_lifecycle["closed"]["display"] != "none"
+            or "Readable map URL copied" not in share_lifecycle["closed"]["status"]
+        ):
+            raise AssertionError(f"desktop map: live share sheet lifecycle failed: {share_lifecycle}")
+
+        driver.execute_script("document.getElementById('compress-query-state').click()")
+        WebDriverWait(driver, 15).until(lambda d: set(parse_qs(urlparse(d.current_url).query)) == {"s"})
+        compressed_current_url = driver.current_url
+        driver.get(compressed_current_url)
+        settle(driver)
+        WebDriverWait(driver, 45).until(lambda d: d.execute_script("return window.__bmoreMedTechMapReady === true"))
+        roundtrip = driver.execute_script(
+            """
+            const sheet = document.getElementById('map-share-sheet');
+            return {
+              region: document.getElementById('region-select').value,
+              state: document.getElementById('state-select').value,
+              size: document.getElementById('size-mode-select').value,
+              compactChecked: document.getElementById('compress-query-state').checked,
+              visible: Array.from(document.querySelectorAll('.map-layer-row input:checked'), (input) => input.id.slice(5)),
+              orderTopToBottom: Array.from(document.querySelectorAll('.map-layer-row'), (row) => row.dataset.layerRow),
+              shareExpanded: document.getElementById('open-map-share').getAttribute('aria-expanded'),
+              shareHidden: sheet.hidden,
+              shareDisplay: getComputedStyle(sheet).display,
+              queryState: window.__bmoreMedTechQueryState.current()
+            };
+            """
+        )
+        if (
+            roundtrip["region"] != "state"
+            or roundtrip["state"] != "PA"
+            or roundtrip["size"] != "uniform"
+            or not roundtrip["compactChecked"]
+            or roundtrip["orderTopToBottom"][:2] != ["us-hospitals", "medical-events"]
+            or roundtrip["shareExpanded"] != "false"
+            or not roundtrip["shareHidden"]
+            or roundtrip["shareDisplay"] != "none"
+        ):
+            raise AssertionError(f"desktop map: compressed URL did not round-trip live state: {roundtrip}")
+        metrics["queryStateCheck"] = {
+            "readableParameters": sorted(readable_query),
+            "compactParameter": "s",
+            "shareLifecycle": share_lifecycle,
+            "roundtrip": roundtrip,
+        }
 
     return {"viewport": viewport, "page": "map", "metrics": metrics, "screenshot": str(screenshot)}
 

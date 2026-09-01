@@ -32,7 +32,7 @@ function applyThemeMode(mode) {
 }
 
 function setupThemeControls() {
-  const controls = [...document.querySelectorAll('[data-theme-mode]')];
+  const controls = [...document.querySelectorAll('.theme-option[data-theme-mode]')];
   const state = applyThemeMode(readThemeMode());
 
   function updateControls(mode) {

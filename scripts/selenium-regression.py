@@ -88,6 +88,63 @@ def numeric_object_position_x(value: str) -> float | None:
     return float(match.group(1)) if match else None
 
 
+def assert_theme_control(driver: webdriver.Remote, viewport: str, screenshot_dir: pathlib.Path) -> dict:
+    metrics = driver.execute_script(
+        """
+        const controls = Array.from(document.querySelectorAll('.theme-option[data-theme-mode]'));
+        const snapshot = () => controls.map((control) => {
+          const box = control.getBoundingClientRect();
+          return {
+            mode: control.dataset.themeMode,
+            label: control.getAttribute('aria-label'),
+            pressed: control.getAttribute('aria-pressed'),
+            hasIcon: !!control.querySelector('svg'),
+            left: box.left,
+            right: box.right
+          };
+        });
+        const darkControl = controls.find((control) => control.dataset.themeMode === 'dark');
+        darkControl.click();
+        const dark = {
+          mode: document.documentElement.dataset.themeMode,
+          theme: document.documentElement.dataset.theme,
+          stored: localStorage.getItem('bmore-medtech.theme'),
+          controls: snapshot()
+        };
+        return {innerWidth: window.innerWidth, dark};
+        """
+    )
+    dark_screenshot = screenshot_dir / f"{viewport}-theme-dark.png"
+    driver.save_screenshot(str(dark_screenshot))
+
+    system_metrics = driver.execute_script(
+        """
+        const control = document.querySelector('.theme-option[data-theme-mode="system"]');
+        control.click();
+        return {
+          mode: document.documentElement.dataset.themeMode,
+          stored: localStorage.getItem('bmore-medtech.theme'),
+          pressed: control.getAttribute('aria-pressed')
+        };
+        """
+    )
+    controls = metrics["dark"]["controls"]
+    if [control["mode"] for control in controls] != ["system", "light", "dark"]:
+        raise AssertionError(f"{viewport}: theme control is missing a mode: {metrics}")
+    if any(not control["label"] or not control["hasIcon"] for control in controls):
+        raise AssertionError(f"{viewport}: theme controls need both icon and accessible name: {metrics}")
+    if any(control["left"] < -1 or control["right"] > metrics["innerWidth"] + 1 for control in controls):
+        raise AssertionError(f"{viewport}: theme icon is clipped outside the viewport: {metrics}")
+    if metrics["dark"]["mode"] != "dark" or metrics["dark"]["theme"] != "dark" or metrics["dark"]["stored"] != "dark":
+        raise AssertionError(f"{viewport}: dark theme did not apply and persist: {metrics}")
+    if [control["pressed"] for control in controls] != ["false", "false", "true"]:
+        raise AssertionError(f"{viewport}: dark theme icon is not the sole selected option: {metrics}")
+    if system_metrics != {"mode": "system", "stored": "system", "pressed": "true"}:
+        raise AssertionError(f"{viewport}: system theme did not restore correctly: {system_metrics}")
+
+    return {**metrics, "system": system_metrics, "darkScreenshot": str(dark_screenshot)}
+
+
 def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
     driver.get(f"{base_url.rstrip('/')}/")
     settle(driver)
@@ -104,7 +161,9 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         const header = document.querySelector('.site-header').getBoundingClientRect();
         const heroCopyStyle = getComputedStyle(document.querySelector('.hero-copy'));
         const heroImageStyle = getComputedStyle(document.querySelector('.hero-image'));
+        const heroOverlayStyle = getComputedStyle(document.querySelector('.hero'), '::before');
         const heroImageSrc = document.querySelector('.hero-image')?.currentSrc || document.querySelector('.hero-image')?.src || '';
+        const pathways = document.querySelector('.pathways').getBoundingClientRect();
         const glossary = document.querySelector('.glossary').getBoundingClientRect();
         const bodyText = document.body.textContent;
         return {
@@ -128,13 +187,20 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
           h1Right: h1.right,
           textAlign: heroCopyStyle.textAlign,
           copyBackground: heroCopyStyle.backgroundColor,
+          heroOverlay: heroOverlayStyle.backgroundImage,
           imageObjectPosition: heroImageStyle.objectPosition,
           heroImageSrc,
+          heroTitle: document.querySelector('.hero-copy h1')?.textContent.trim() || '',
+          pathwaysTop: pathways.top,
+          pathwayCount: document.querySelectorAll('.pathway-card').length,
+          pathwayTitles: Array.from(document.querySelectorAll('.pathway-card h3'), (title) => title.textContent.trim()),
           glossaryTop: glossary.top,
           glossaryEntryCount: document.querySelectorAll('.glossary-entry').length,
           glossaryTitles: Array.from(document.querySelectorAll('.glossary-entry h3'), (title) => title.textContent.trim()),
           glossaryRegionalText: document.querySelector('.glossary-lede')?.textContent || '',
-          revealEnabled: document.documentElement.classList.contains('reveal-enabled')
+          revealEnabled: document.documentElement.classList.contains('reveal-enabled'),
+          footerPresent: !!document.querySelector('.site-footer'),
+          navEnhanced: document.documentElement.classList.contains('nav-enhanced')
         };
         """
     )
@@ -145,76 +211,72 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: missing Baltimore MedTech body text")
     if metrics["headerLoginHref"] != PORTAL_URL or PORTAL_URL not in metrics["loginHrefs"]:
         raise AssertionError(f"{viewport} home: login links did not target the MedTech portal profile: {metrics}")
-    if "baltimore-medtech-home-hero-canonical" not in metrics["heroImageSrc"] or "lumacdn.com" in metrics["heroImageSrc"]:
-        raise AssertionError(f"{viewport} home: hero background should use the local canonical image: {metrics}")
+    if "baltimore-medtech-hero-v2" not in metrics["heroImageSrc"] or "lumacdn.com" in metrics["heroImageSrc"]:
+        raise AssertionError(f"{viewport} home: hero background should use the optimized local editorial image: {metrics}")
     if abs(metrics["heroTop"] - metrics["headerBottom"]) > 2:
         raise AssertionError(f"{viewport} home: hero must start below the rendered navigation: {metrics}")
-    if metrics["copyBackground"] in {"transparent", "rgba(0, 0, 0, 0)"}:
-        raise AssertionError(f"{viewport} home: hero copy needs a readable background: {metrics}")
-    if metrics["heroHeight"] > metrics["innerHeight"] * 1.1 or metrics["glossaryTop"] > metrics["innerHeight"] * 1.2:
-        raise AssertionError(f"{viewport} home: hero no longer forms one viewport chapter: {metrics}")
+    if metrics["heroOverlay"] in {"none", ""}:
+        raise AssertionError(f"{viewport} home: editorial hero needs a contrast overlay: {metrics}")
+    if not metrics["innerHeight"] * 0.75 <= metrics["heroHeight"] <= metrics["innerHeight"] * 1.35:
+        raise AssertionError(f"{viewport} home: hero no longer forms a focused opening chapter: {metrics}")
+    if abs(metrics["pathwaysTop"] - metrics["heroBottom"]) > 2:
+        raise AssertionError(f"{viewport} home: pathways must follow the hero without a layout gap: {metrics}")
+    if metrics["heroTitle"] != "Better care starts with a better-connected city.":
+        raise AssertionError(f"{viewport} home: editorial promise is missing: {metrics}")
+    if metrics["pathwayCount"] != 3 or metrics["pathwayTitles"] != ["Events", "Medical map", "MedTech index"]:
+        raise AssertionError(f"{viewport} home: community pathways are incomplete: {metrics}")
     if metrics["glossaryEntryCount"] != 3 or metrics["glossaryTitles"] != ["Health", "Medicine", "Biotech"]:
         raise AssertionError(f"{viewport} home: regional glossary fields are incomplete: {metrics}")
     if "specific to the Baltimore regional medical community" not in metrics["glossaryRegionalText"]:
         raise AssertionError(f"{viewport} home: glossary regional context is missing: {metrics}")
     if not metrics["revealEnabled"]:
         raise AssertionError(f"{viewport} home: progressive scroll reveal did not initialize: {metrics}")
+    if not metrics["footerPresent"] or not metrics["navEnhanced"]:
+        raise AssertionError(f"{viewport} home: navigation or footer enhancement is missing: {metrics}")
 
     if viewport == "desktop":
-        if metrics["copyLeft"] < metrics["heroWidth"] * 0.48 or metrics["copyCenterPct"] < 0.62:
-            raise AssertionError(f"desktop home: hero copy drifted back onto the left poster text: {metrics}")
+        if metrics["copyLeft"] > metrics["heroWidth"] * 0.12 or metrics["copyRight"] > metrics["heroWidth"] * 0.7:
+            raise AssertionError(f"desktop home: hero copy lost its editorial left-column composition: {metrics}")
     else:
         image_x = numeric_object_position_x(metrics["imageObjectPosition"])
-        if metrics["textAlign"] != "right":
-            raise AssertionError(f"mobile home: hero copy must stay right-aligned: {metrics}")
-        if image_x is None or image_x < 70:
-            raise AssertionError(f"mobile home: hero image crop must favor the right side: {metrics}")
-        if metrics["copyRight"] < metrics["heroWidth"] * 0.9:
-            raise AssertionError(f"mobile home: hero copy is not anchored far enough right: {metrics}")
+        if metrics["textAlign"] != "left":
+            raise AssertionError(f"mobile home: editorial hero copy must stay left-aligned: {metrics}")
+        if image_x is None or image_x < 55:
+            raise AssertionError(f"mobile home: hero image crop must retain the Baltimore skyline: {metrics}")
 
-    dark_theme_metrics = driver.execute_script(
-        """
-        const control = document.querySelector('[data-theme-mode="dark"]');
-        control.click();
-        return {
-          mode: document.documentElement.dataset.themeMode,
-          theme: document.documentElement.dataset.theme,
-          stored: localStorage.getItem('bmore-medtech.theme'),
-          pressed: control.getAttribute('aria-pressed'),
-          bodyBg: getComputedStyle(document.body).backgroundColor,
-          headerBg: getComputedStyle(document.querySelector('.site-header')).backgroundColor
-        };
-        """
-    )
-    dark_screenshot = screenshot_dir / f"{viewport}-home-dark.png"
-    driver.save_screenshot(str(dark_screenshot))
+        nav_metrics = driver.execute_script(
+            """
+            const toggle = document.querySelector('.nav-toggle');
+            toggle.click();
+            const nav = document.getElementById('primary-nav');
+            const box = nav.getBoundingClientRect();
+            return {
+              expanded: toggle.getAttribute('aria-expanded'),
+              isOpen: nav.classList.contains('is-open'),
+              left: box.left,
+              right: box.right,
+              innerWidth: window.innerWidth
+            };
+            """
+        )
+        if not nav_metrics["isOpen"] or nav_metrics["expanded"] != "true":
+            raise AssertionError(f"mobile home: compact navigation did not open accessibly: {nav_metrics}")
+        if nav_metrics["left"] < -1 or nav_metrics["right"] > nav_metrics["innerWidth"] + 1:
+            raise AssertionError(f"mobile home: open navigation is clipped: {nav_metrics}")
+        driver.execute_script("document.querySelector('.nav-toggle').click()")
+        metrics["mobileNavCheck"] = nav_metrics
 
-    system_theme_metrics = driver.execute_script(
-        """
-        const control = document.querySelector('[data-theme-mode="system"]');
-        control.click();
-        return {
-          mode: document.documentElement.dataset.themeMode,
-          theme: document.documentElement.dataset.theme,
-          stored: localStorage.getItem('bmore-medtech.theme'),
-          pressed: control.getAttribute('aria-pressed')
-        };
-        """
+    metrics["themeCheck"] = assert_theme_control(driver, viewport, screenshot_dir)
+
+    driver.execute_script("document.querySelector('.pathway-grid').scrollIntoView({block: 'center', behavior: 'instant'})")
+    WebDriverWait(driver, 10).until(
+        lambda d: d.execute_script(
+            "return getComputedStyle(document.querySelector('.pathway-card')).opacity === '1'"
+        )
     )
-    theme_metrics = {
-        "darkState": dark_theme_metrics,
-        "systemState": system_theme_metrics,
-        "darkScreenshot": str(dark_screenshot),
-    }
-    if dark_theme_metrics["mode"] != "dark" or dark_theme_metrics["theme"] != "dark":
-        raise AssertionError(f"{viewport} home: dark mode did not apply: {theme_metrics}")
-    if dark_theme_metrics["stored"] != "dark":
-        raise AssertionError(f"{viewport} home: dark mode did not persist locally: {theme_metrics}")
-    if dark_theme_metrics["pressed"] != "true":
-        raise AssertionError(f"{viewport} home: dark theme icon is not selected: {theme_metrics}")
-    if system_theme_metrics["mode"] != "system" or system_theme_metrics["stored"] != "system" or system_theme_metrics["pressed"] != "true":
-        raise AssertionError(f"{viewport} home: system theme mode did not persist locally: {theme_metrics}")
-    metrics["themeCheck"] = theme_metrics
+    pathways_screenshot = screenshot_dir / f"{viewport}-home-pathways.png"
+    driver.save_screenshot(str(pathways_screenshot))
+    metrics["pathwaysScreenshot"] = str(pathways_screenshot)
 
     driver.execute_script("document.querySelector('.glossary-entry').scrollIntoView({block: 'center', behavior: 'instant'})")
     WebDriverWait(driver, 10).until(
@@ -270,6 +332,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
         };
         """
     )
+    metrics["themeCheck"] = assert_theme_control(driver, viewport, screenshot_dir)
 
     if metrics["title"] != "Calendar | Baltimore MedTech":
         raise AssertionError(f"{viewport} calendar: unexpected title {metrics['title']!r}")

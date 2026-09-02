@@ -66,3 +66,7 @@ function setupThemeControls() {
 }
 
 setupThemeControls();
+
+if (document.body.classList.contains('taxonomy-body')) {
+  import('./semantic-flow.js');
+}

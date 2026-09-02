@@ -8,7 +8,8 @@
     "build:index": "node scripts/build-medtech-index.mjs",
     "test:index": "node scripts/validate-medtech-index.mjs",
     "test:codes": "node scripts/validate-clinical-code-systems.mjs",
-    "test:data": "npm run test:index && npm run test:codes",
+    "test:semantics": "node scripts/validate-clinical-semantic-systems.mjs",
+    "test:data": "npm run test:index && npm run test:codes && npm run test:semantics",
     "build": "npm run build:index && npm run test:data && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test:selenium": "scripts/run-selenium-regression.sh"

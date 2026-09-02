@@ -56,10 +56,10 @@
   },
   {
     "id": "who_fic",
-    "name": "WHO Classification Family",
+    "name": "WHO-FIC: ICD, ICF & ICHI",
     "steward": "World Health Organization",
-    "scope": "Diseases, functioning, and health interventions",
-    "description": "MedTech fields connected to ICD, ICF, or ICHI. WHO-FIC classifies the objects and activities of medicine rather than scientific disciplines themselves.",
+    "scope": "Diseases, functioning, disability, and health interventions",
+    "description": "MedTech fields connected to ICD (diseases and health conditions), ICF (functioning and disability), or ICHI (interventions). These systems classify the objects and activities of medicine rather than scientific disciplines themselves.",
     "source_url": "https://www.who.int/standards/classifications/",
     "source_label": "WHO classifications",
     "selection_mode": "source_lens",

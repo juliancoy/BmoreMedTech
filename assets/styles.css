@@ -218,9 +218,11 @@ nav a[aria-current="page"] {
 .social-link { display: block; border-radius: 12px; background: transparent; color: #fff; text-decoration: none; }
 .social-button { width: 54px; height: 45px; display: grid; place-items: center; border: 3px solid #002a61; border-radius: 12px; background: #002a61; box-shadow: 0 2px 4px #bdbdbd; transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease; }
 .social-link:hover .social-button { border-color: #ffff00; background: #ffff00; transform: translateY(-1px); }
+.social-link:hover .github-icon { fill: #002a61; }
 .social-link:focus-visible { outline: 3px solid color-mix(in srgb, var(--blue) 45%, transparent); outline-offset: 3px; }
 .social-icon { width: 29px; height: 29px; object-fit: contain; }
 .social-icon.github-icon { fill: currentColor; }
+.social-icon.branded-icon { border-radius: 7px; }
 
 .hero {
   position: relative;

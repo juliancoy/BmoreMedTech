@@ -76,9 +76,11 @@ for (const [index, [expectedId, expectedMode, expectedAdapter]] of expected.entr
   }
   assert(page.includes('/assets/dataset-sheet.js'), `${pagePath} must load the sheet renderer`)
   assert(page.includes('/assets/dataset-pages.css'), `${pagePath} must load the workbook stylesheet`)
-  assert(vite.includes(`datasets/${dataset.id}.html`), `${pagePath} must be a Vite entry`)
+  assert(vite.includes(`'${dataset.id}'`), `${pagePath} dataset id must be present in Vite's generated input list`)
 }
 
+assert(vite.includes('datasetPages.map'), 'Vite must generate dataset entries from the registry-aligned page list')
+assert(vite.includes('`datasets/${id}.html`'), 'Vite dataset input template is missing')
 const live = registry.datasets.filter((dataset) => dataset.mode.startsWith('live-'))
 const snapshots = registry.datasets.filter((dataset) => dataset.mode === 'repository-snapshot')
 assert(live.length === 7, 'Expected seven live source sheets')

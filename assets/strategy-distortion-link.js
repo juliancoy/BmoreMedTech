@@ -19,10 +19,10 @@ function injectCallout() {
     <span class="strategy-distortion-callout-kicker">Need ↔ availability</span>
     <div class="strategy-distortion-callout-copy">
       <strong>Where patient need outruns service capacity</strong>
-      <p>Open the ranked mismatch view, raw need-per-specialist ratios, capacity gap chart, and interpretation guardrails.</p>
+      <p>Open the physician-pressure ranking plus the new allied-care-team context, raw ratios, capacity gap chart, and interpretation guardrails.</p>
     </div>
     <div class="strategy-distortion-callout-result">
-      <small>Largest current signal</small>
+      <small>Largest current physician signal</small>
       <strong id="strategy-distortion-leader">Calculating…</strong>
       <span id="strategy-distortion-detail">Directional four-field comparison</span>
     </div>
@@ -54,7 +54,7 @@ async function populateCallout(link) {
     const fields = await Promise.all(responses.map((response) => response.json()))
     const { leader } = calculateNeedAvailabilityMetrics(fields)
     link.querySelector('#strategy-distortion-leader').textContent = `${leader.name} · ${leader.distortionIndex.toFixed(1)}`
-    link.querySelector('#strategy-distortion-detail').textContent = `${formatInteger(leader.peoplePerSpecialist)} need-proxy people per specialist proxy`
+    link.querySelector('#strategy-distortion-detail').textContent = `${formatInteger(leader.peoplePerSpecialist)} need-proxy people per physician proxy · allied team shown separately`
   } catch {
     link.querySelector('#strategy-distortion-leader').textContent = 'Open ranked comparison'
   }

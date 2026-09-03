@@ -1,7 +1,58 @@
 import { calculateNeedAvailabilityMetrics } from '../assets/need-availability-metrics.js'
-import { loadAssetJson, paginateLocal } from './dataset-core.js'
+import { loadAssetJson, loadRegistry, paginateLocal } from './dataset-core.js'
 
-async function localMedtechIndex(dataset, query, env, origin) {
+async function localMetaIndex(dataset, query, env, origin) {
+  const [metaIndex, registry] = await Promise.all([
+    loadAssetJson(env, origin, '/medtech-meta-index.json'),
+    loadRegistry(env, origin),
+  ])
+  const components = new Map(registry.datasets.map((component) => [component.id, component]))
+  let rows = metaIndex.sources.map((source) => {
+    const component = components.get(source.source_id)
+    if (!component) throw new Error(`Meta Index component is not registered: ${source.source_id}`)
+    return {
+      decision_rank: source.decision_rank,
+      source_id: source.source_id,
+      source_name: component.title,
+      publisher: component.publisher,
+      source_tier: source.source_tier,
+      source_tier_label: source.source_tier_label,
+      authority_class: source.authority_class,
+      evidence_type: source.evidence_type,
+      unit_of_observation: source.unit_of_observation,
+      data_layer: source.data_layer,
+      availability_layer: source.availability_layer,
+      mode: component.mode,
+      geography: component.geography,
+      coverage: component.coverage,
+      refresh: component.refresh,
+      decision_role: source.decision_role,
+      quality_strength: source.quality_strength,
+      principal_caveat: source.principal_caveat,
+      join_keys: source.join_keys,
+      dependencies: source.dependencies,
+      component_sheet: component.page,
+      live_endpoint: `/api/datasets/${component.id}`,
+      source_url: component.source_url,
+    }
+  })
+
+  const sourceTier = query.params.get('source_tier')
+  const dataLayer = query.params.get('data_layer')?.trim().toLocaleLowerCase()
+  const mode = query.params.get('mode')
+  if (sourceTier) rows = rows.filter((row) => row.source_tier === sourceTier)
+  if (dataLayer) rows = rows.filter((row) => row.data_layer.toLocaleLowerCase().includes(dataLayer))
+  if (mode) rows = rows.filter((row) => row.mode === mode)
+
+  return {
+    ...paginateLocal(rows, query),
+    sourceUpdatedAt: metaIndex.meta?.as_of || null,
+    upstream: { url: '/medtech-meta-index.json + /dataset-registry.json', status: 200 },
+    warnings: metaIndex.meta?.limitations || [],
+  }
+}
+
+async function localMedicalScienceFieldAtlas(dataset, query, env, origin) {
   const payload = await loadAssetJson(env, origin, '/medtech-index.json')
   const records = Array.isArray(payload) ? payload : payload.records || payload.fields || payload.items || []
   const rows = records.map((record) => ({
@@ -19,7 +70,7 @@ async function localMedtechIndex(dataset, query, env, origin) {
   return {
     ...paginateLocal(rows, query),
     sourceUpdatedAt: payload.meta?.as_of || payload.meta?.generated_at || null,
-    upstream: { url: '/medtech-index.json', status: 200 },
+    upstream: { url: '/medical-science-field-atlas.json', status: 200 },
   }
 }
 
@@ -131,5 +182,11 @@ async function localCareTeams(dataset, query, env, origin) {
   }
 }
 
-
-export { localMedtechIndex, localSystems, localStrategyFields, localDistortions, localCareTeams }
+export {
+  localMetaIndex,
+  localMedicalScienceFieldAtlas,
+  localSystems,
+  localStrategyFields,
+  localDistortions,
+  localCareTeams,
+}

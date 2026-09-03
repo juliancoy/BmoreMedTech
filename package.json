@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "dev:worker": "wrangler dev",
-    "build:index": "node scripts/build-medtech-index.mjs",
+    "build:index": "node scripts/build-medical-science-field-atlas.mjs",
     "test:index": "node scripts/validate-medtech-index.mjs",
     "test:codes": "node scripts/validate-clinical-code-systems.mjs",
     "test:semantics": "node scripts/validate-clinical-semantic-systems.mjs",

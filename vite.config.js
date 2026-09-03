@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 
 const datasetPages = [
+  'medtech-meta-index',
   'cms-doctors-clinicians',
   'cms-provider-services',
   'nppes-registry',
@@ -8,7 +9,7 @@ const datasetPages = [
   'hrsa-ahrf',
   'maryland-medicaid-pvs',
   'maryland-medicaid-provider-finder',
-  'medical-taxonomy',
+  'medical-science-field-atlas',
   'clinical-code-systems',
   'clinical-semantic-systems',
   'strategy-field-metrics',
@@ -31,6 +32,7 @@ export default defineConfig({
         taxonomy: 'taxonomy.html',
         needAvailabilityDistortions: 'need-availability-distortions.html',
         datasets: 'datasets.html',
+        legacyMedicalTaxonomy: 'datasets/medical-taxonomy.html',
         ...datasetInputs,
       },
     },

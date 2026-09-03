@@ -10,6 +10,10 @@ const ALLOWED_CORS_ORIGINS = new Set([
   'https://codecollective.us',
 ])
 
+const LEGACY_REDIRECTS = new Map([
+  ['/datasets/medical-taxonomy.html', '/datasets/medical-science-field-atlas.html'],
+])
+
 function allowedCorsOrigin(request) {
   const origin = request.headers.get('origin')
   if (!origin) return null
@@ -77,10 +81,21 @@ function isHtmlNavigation(request) {
   return accept.includes('text/html')
 }
 
+function legacyRedirect(request, url) {
+  const target = LEGACY_REDIRECTS.get(url.pathname)
+  if (!target || !['GET', 'HEAD'].includes(request.method)) return null
+  const destination = new URL(target, url.origin)
+  destination.search = url.search
+  return Response.redirect(destination.toString(), 308)
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url)
     if (request.method === 'OPTIONS') return preflightResponse(request)
+
+    const redirect = legacyRedirect(request, url)
+    if (redirect) return redirect
 
     if (url.pathname === '/api/datasets' || url.pathname.startsWith('/api/datasets/')) {
       const response = await handleDatasetApi(request, env, url)

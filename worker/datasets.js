@@ -2,7 +2,14 @@ import { loadRegistry, makePayload, nowIso, parseQuery, payloadToCsv, responseJs
 import { cmsDoctorsClinicians, cmsProviderServices, nppesRegistry } from './dataset-live-cms.js'
 import { blsOews, hrsaAhrfReleases } from './dataset-live-workforce.js'
 import { marylandMedicaidProviderFinder, marylandMedicaidPvs } from './dataset-live-maryland.js'
-import { localCareTeams, localDistortions, localMedtechIndex, localStrategyFields, localSystems } from './dataset-snapshots.js'
+import {
+  localCareTeams,
+  localDistortions,
+  localMedicalScienceFieldAtlas,
+  localMetaIndex,
+  localStrategyFields,
+  localSystems,
+} from './dataset-snapshots.js'
 
 const API_PREFIX = '/api/datasets'
 
@@ -14,7 +21,8 @@ const ADAPTERS = {
   hrsa_ahrf_releases: hrsaAhrfReleases,
   maryland_medicaid_pvs: marylandMedicaidPvs,
   maryland_medicaid_provider_finder: marylandMedicaidProviderFinder,
-  local_medtech_index: localMedtechIndex,
+  local_meta_index: localMetaIndex,
+  local_medical_science_field_atlas: localMedicalScienceFieldAtlas,
   local_systems: localSystems,
   local_strategy_fields: localStrategyFields,
   local_distortions: localDistortions,

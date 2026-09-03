@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "baltimore-medtech",
+  "main": "worker.js",
+  "compatibility_date": "2026-08-15",
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "medtech.social",
+      "custom_domain": true
+    }
+  ],
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}

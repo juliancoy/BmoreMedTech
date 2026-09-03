@@ -12,9 +12,12 @@
     "test:data": "npm run test:index && npm run test:codes && npm run test:semantics",
     "build": "npm run build:index && npm run test:data && vite build",
     "preview": "vite preview --host 0.0.0.0",
+    "deploy": "wrangler deploy",
+    "deploy:dry-run": "wrangler deploy --dry-run",
     "test:selenium": "scripts/run-selenium-regression.sh"
   },
   "devDependencies": {
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "wrangler": "^4.128.0"
   }
 }

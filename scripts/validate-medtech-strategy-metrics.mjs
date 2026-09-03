@@ -1,7 +1,16 @@
 import { readFile } from 'node:fs/promises'
 
-const file = 'assets/data/medtech-strategy-metrics.json'
-const data = JSON.parse(await readFile(file, 'utf8'))
+const contextFile = 'assets/data/strategy-context.json'
+const fieldFiles = [
+  'assets/data/strategy-neurology.json',
+  'assets/data/strategy-oncology.json',
+  'assets/data/strategy-radiology.json',
+  'assets/data/strategy-genomics.json',
+]
+const [context, ...fields] = await Promise.all(
+  [contextFile, ...fieldFiles].map(async (file) => JSON.parse(await readFile(file, 'utf8'))),
+)
+const data = { ...context, fields }
 
 function assert(condition, message) {
   if (!condition) throw new Error(message)

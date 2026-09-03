@@ -65,7 +65,18 @@ function setupThemeControls() {
   };
 }
 
+function ensureDatasetNavigation() {
+  const nav = document.querySelector('.site-header nav')
+  if (!nav || nav.querySelector('a[href="/datasets.html"]')) return
+  const link = document.createElement('a')
+  link.href = '/datasets.html'
+  link.textContent = 'Data sheets'
+  const insertionPoint = nav.querySelector('.theme-control, .nav-cta')
+  nav.insertBefore(link, insertionPoint || null)
+}
+
 setupThemeControls();
+ensureDatasetNavigation();
 
 if (document.querySelector('.taxonomy-page')) {
   import('./semantic-flow.js')

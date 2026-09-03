@@ -1,3 +1,5 @@
+import { handleDatasetApi } from './worker/datasets.js'
+
 const ALLOWED_CORS_ORIGINS = new Set([
   'https://baltimore-medtech.jcloiacon.workers.dev',
   'https://medtech.social',
@@ -40,6 +42,16 @@ function preflightResponse(request) {
   return new Response(null, { status: 204, headers })
 }
 
+function applyApiHeaders(request, response) {
+  const headers = applyCorsHeaders(request, new Headers(response.headers))
+  headers.set('x-content-type-options', 'nosniff')
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
 function applyStaticHeaders(request, path, response) {
   const headers = new Headers(response.headers)
 
@@ -69,6 +81,11 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url)
     if (request.method === 'OPTIONS') return preflightResponse(request)
+
+    if (url.pathname === '/api/datasets' || url.pathname.startsWith('/api/datasets/')) {
+      const response = await handleDatasetApi(request, env, url)
+      return applyApiHeaders(request, response)
+    }
 
     const response = await env.ASSETS.fetch(request)
     if (response.status !== 404) return applyStaticHeaders(request, url.pathname, response)

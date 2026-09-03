@@ -68,5 +68,9 @@ function setupThemeControls() {
 setupThemeControls();
 
 if (document.body.classList.contains('taxonomy-body')) {
-  import('./semantic-flow.js');
+  import('./semantic-flow.js')
+    .then(() => import('./strategy-dashboard.js'))
+    .catch((error) => {
+      console.error('Unable to initialize the medical atlas enhancements.', error);
+    });
 }

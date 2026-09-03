@@ -32,6 +32,69 @@ def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
     options.add_argument("--no-sandbox")
     options.set_capability("acceptInsecureCerts", True)
     driver = webdriver.Remote(command_executor=selenium_url, options=options)
+    driver.execute_cdp_cmd(
+        "Page.addScriptToEvaluateOnNewDocument",
+        {
+            "source": r"""
+            (() => {
+              const failures = [];
+              const record = (kind, details) => failures.push({kind, ...details});
+              const sameOrigin = (value) => {
+                try { return new URL(value, location.href).origin === location.origin; }
+                catch { return false; }
+              };
+              Object.defineProperty(window, '__bmoreMedTechSmokeFailures', {
+                configurable: false,
+                get: () => failures.slice()
+              });
+
+              addEventListener('error', (event) => {
+                const target = event.target;
+                if (target && target !== window) {
+                  const url = target.currentSrc || target.src || target.href || '';
+                  if (sameOrigin(url)) record('resource', {url, element: target.tagName || 'unknown'});
+                  return;
+                }
+                record('javascript', {
+                  message: event.message || String(event.error || 'Unknown script error'),
+                  source: event.filename || '',
+                  line: event.lineno || 0,
+                  column: event.colno || 0
+                });
+              }, true);
+              addEventListener('unhandledrejection', (event) => {
+                record('unhandled-rejection', {message: String(event.reason?.stack || event.reason || 'Unknown rejection')});
+              });
+
+              const nativeFetch = window.fetch.bind(window);
+              window.fetch = async (...args) => {
+                try {
+                  const response = await nativeFetch(...args);
+                  if (sameOrigin(response.url) && !response.ok) {
+                    record('fetch', {url: response.url, status: response.status, statusText: response.statusText});
+                  }
+                  return response;
+                } catch (error) {
+                  const value = args[0] instanceof Request ? args[0].url : args[0];
+                  if (sameOrigin(value)) record('fetch-rejected', {url: String(value), message: String(error)});
+                  throw error;
+                }
+              };
+
+              const nativeOpen = XMLHttpRequest.prototype.open;
+              XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+                this.__smokeUrl = new URL(url, location.href).href;
+                this.addEventListener('loadend', () => {
+                  if (sameOrigin(this.__smokeUrl) && (this.status === 0 || this.status >= 400)) {
+                    record('xhr', {url: this.__smokeUrl, status: this.status, method});
+                  }
+                }, {once: true});
+                return nativeOpen.call(this, method, url, ...rest);
+              };
+            })();
+            """
+        },
+    )
     if width <= 760:
         driver.execute_cdp_cmd(
             "Emulation.setDeviceMetricsOverride",
@@ -51,6 +114,17 @@ def settle(driver: webdriver.Remote) -> None:
 def body_excerpt(driver: webdriver.Remote) -> str:
     text = driver.find_element(By.TAG_NAME, "body").text or ""
     return " ".join(text.split())[:400]
+
+
+def browser_failures(driver: webdriver.Remote) -> list[dict]:
+    return driver.execute_script("return window.__bmoreMedTechSmokeFailures || []") or []
+
+
+def assert_no_browser_failures(driver: webdriver.Remote, label: str) -> dict:
+    failures = browser_failures(driver)
+    if failures:
+        raise AssertionError(f"{label}: browser detected uncaught or same-origin request failures: {failures}")
+    return {"capturedFailures": 0}
 
 
 def assert_no_horizontal_overflow(driver: webdriver.Remote, label: str) -> dict:
@@ -774,6 +848,104 @@ def assert_taxonomy(driver: webdriver.Remote, base_url: str, viewport: str, scre
     return {"viewport": viewport, "page": "taxonomy", "metrics": metrics, "screenshot": str(screenshot)}
 
 
+def assert_datasets(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
+    base_url = base_url.rstrip("/")
+    datasets = (
+        ("cms-provider-services", True),
+        ("medical-science-field-atlas", False),
+    )
+    checks = []
+
+    for dataset_id, expected_live in datasets:
+        driver.get(f"{base_url}/datasets/{dataset_id}.html")
+        settle(driver)
+        WebDriverWait(driver, 45).until(
+            lambda d: d.execute_script("return window.__bmoreMedTechDatasetSheet !== undefined")
+        )
+        state = driver.execute_script("return window.__bmoreMedTechDatasetSheet")
+        if not state.get("ready"):
+            raise AssertionError(f"{viewport} datasets: {dataset_id} did not load: {state}")
+        if state.get("dataset") != dataset_id or state.get("live") is not expected_live:
+            raise AssertionError(f"{viewport} datasets: {dataset_id} returned the wrong dataset mode: {state}")
+        if int(state.get("rows") or 0) <= 0 or int(state.get("columns") or 0) <= 0:
+            raise AssertionError(f"{viewport} datasets: {dataset_id} returned no tabular data: {state}")
+
+        metrics = driver.execute_script(
+            """
+            return {
+              title: document.title,
+              statusHidden: document.getElementById('dataset-status')?.hidden || false,
+              errorVisible: document.getElementById('dataset-status')?.classList.contains('is-error') || false,
+              tableRows: document.querySelectorAll('#dataset-table-body tr').length,
+              tableColumns: document.querySelectorAll('#dataset-table-head th').length - 1,
+              jsonHref: document.getElementById('dataset-json-link')?.href || '',
+              csvHref: document.getElementById('dataset-csv-link')?.href || ''
+            };
+            """
+        )
+        if (
+            not metrics["statusHidden"]
+            or metrics["errorVisible"]
+            or metrics["tableRows"] <= 0
+            or metrics["tableColumns"] <= 0
+            or f"/api/datasets/{dataset_id}?" not in metrics["jsonHref"]
+            or f"/api/datasets/{dataset_id}.csv?" not in metrics["csvHref"]
+        ):
+            raise AssertionError(f"{viewport} datasets: {dataset_id} sheet UI is incomplete: {metrics}")
+
+        api_result = driver.execute_async_script(
+            """
+            const done = arguments[arguments.length - 1];
+            const datasetId = arguments[0];
+            fetch(`/api/datasets/${datasetId}?page=1&page_size=5`)
+              .then(async (response) => done({
+                status: response.status,
+                contentType: response.headers.get('content-type') || '',
+                text: await response.text()
+              }))
+              .catch((error) => done({error: String(error)}));
+            """,
+            dataset_id,
+        )
+        if api_result.get("error"):
+            raise AssertionError(f"{viewport} datasets: {dataset_id} API request rejected: {api_result}")
+        try:
+            payload = json.loads(api_result["text"])
+        except (KeyError, json.JSONDecodeError) as error:
+            excerpt = api_result.get("text", "")[:200]
+            raise AssertionError(
+                f"{viewport} datasets: {dataset_id} API did not return valid JSON: "
+                f"status={api_result.get('status')} content_type={api_result.get('contentType')!r} body={excerpt!r}"
+            ) from error
+        api_excerpt = api_result.get("text", "")[:200]
+        if (
+            api_result["status"] != 200
+            or "application/json" not in api_result["contentType"]
+            or not payload.get("ok")
+            or payload.get("dataset", {}).get("id") != dataset_id
+            or not payload.get("rows")
+        ):
+            raise AssertionError(
+                f"{viewport} datasets: {dataset_id} API contract failed: "
+                f"status={api_result.get('status')} content_type={api_result.get('contentType')!r} body={api_excerpt!r}"
+            )
+
+        assert_no_horizontal_overflow(driver, f"{viewport} datasets {dataset_id}")
+        dataset_browser_check = assert_no_browser_failures(driver, f"{viewport} datasets {dataset_id}")
+        screenshot = screenshot_dir / f"{viewport}-dataset-{dataset_id}.png"
+        driver.save_screenshot(str(screenshot))
+        checks.append({
+            "dataset": dataset_id,
+            "state": state,
+            "metrics": metrics,
+            "apiStatus": api_result["status"],
+            "browserCheck": dataset_browser_check,
+            "screenshot": str(screenshot),
+        })
+
+    return {"viewport": viewport, "page": "datasets", "checks": checks}
+
+
 def run(args: argparse.Namespace) -> int:
     screenshot_dir = pathlib.Path(args.screenshot_dir).resolve()
     screenshot_dir.mkdir(parents=True, exist_ok=True)
@@ -784,6 +956,7 @@ def run(args: argparse.Namespace) -> int:
         "calendar": assert_calendar,
         "map": assert_map,
         "taxonomy": assert_taxonomy,
+        "datasets": assert_datasets,
     }
     requested_pages = [page.strip() for page in args.pages.split(",") if page.strip()]
     unknown_pages = sorted(set(requested_pages) - set(page_checks))
@@ -795,7 +968,17 @@ def run(args: argparse.Namespace) -> int:
         driver = new_driver(args.selenium_url, width, height)
         try:
             for page in requested_pages:
-                checks.append(page_checks[page](driver, args.base_url, viewport, screenshot_dir))
+                try:
+                    check = page_checks[page](driver, args.base_url, viewport, screenshot_dir)
+                    check["browserCheck"] = assert_no_browser_failures(driver, f"{viewport} {page}")
+                    checks.append(check)
+                except Exception as error:
+                    failures = browser_failures(driver)
+                    if failures:
+                        raise AssertionError(
+                            f"{viewport} {page}: browser failures={failures}; page check failed with: {error}"
+                        ) from error
+                    raise
         except Exception:
             failure_path = screenshot_dir / f"{viewport}-failure.png"
             try:
@@ -825,8 +1008,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--pages",
-        default=os.environ.get("BMORE_MEDTECH_TEST_PAGES", "home,calendar,map,taxonomy"),
-        help="Comma-separated pages to check: home, calendar, map, taxonomy",
+        default=os.environ.get("BMORE_MEDTECH_TEST_PAGES", "home,calendar,map,taxonomy,datasets"),
+        help="Comma-separated pages to check: home, calendar, map, taxonomy, datasets",
     )
     return parser.parse_args()
 

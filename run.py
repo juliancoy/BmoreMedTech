@@ -275,7 +275,7 @@ def parse_args() -> argparse.Namespace:
     )
     test_parser.add_argument(
         "--test-pages",
-        default=os.getenv("BMORE_MEDTECH_TEST_PAGES", "home,calendar,map,taxonomy"),
+        default=os.getenv("BMORE_MEDTECH_TEST_PAGES", "home,calendar,map,taxonomy,datasets"),
     )
     test_parser.set_defaults(func=run_tests)
 

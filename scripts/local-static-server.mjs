@@ -1,7 +1,8 @@
 import { createReadStream, readFileSync } from 'node:fs'
-import { stat } from 'node:fs/promises'
+import { readFile, stat } from 'node:fs/promises'
 import https from 'node:https'
 import path from 'node:path'
+import { handleDatasetApi } from '../worker/datasets.js'
 
 const siteRoot = process.env.SITE_ROOT || '/site'
 const publicRoot = process.env.PUBLIC_ROOT || ''
@@ -129,6 +130,57 @@ async function serveFile(req, res, filePath) {
   createReadStream(filePath).pipe(res)
 }
 
+const localAssets = {
+  async fetch(request) {
+    const url = new URL(request.url)
+    const filePath = await existingFile(cleanPathname(url.pathname))
+    if (!filePath) return new Response('Not found\n', { status: 404 })
+    const ext = path.extname(filePath).toLowerCase()
+    return new Response(request.method === 'HEAD' ? null : await readFile(filePath), {
+      status: 200,
+      headers: {
+        'cache-control': 'no-store',
+        'content-type': mimeTypes.get(ext) || 'application/octet-stream',
+      },
+    })
+  },
+}
+
+function webRequest(req, requestUrl) {
+  const headers = new Headers()
+  for (const [name, value] of Object.entries(req.headers)) {
+    if (value !== undefined) headers.set(name, Array.isArray(value) ? value.join(', ') : value)
+  }
+  return new Request(requestUrl, { method: req.method, headers })
+}
+
+async function sendWebResponse(req, res, response) {
+  const headers = Object.fromEntries(response.headers.entries())
+  res.writeHead(response.status, {
+    'cache-control': 'no-store',
+    ...headers,
+    ...corsHeaders(req),
+  })
+  if (req.method === 'HEAD' || !response.body) {
+    res.end()
+    return
+  }
+  res.end(Buffer.from(await response.arrayBuffer()))
+}
+
+async function serveDatasetApi(req, res, requestUrl) {
+  try {
+    const response = await handleDatasetApi(webRequest(req, requestUrl), { ASSETS: localAssets }, requestUrl)
+    await sendWebResponse(req, res, response)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Dataset request failed'
+    send(res, 500, JSON.stringify({ ok: false, error: message }), {
+      'content-type': 'application/json; charset=utf-8',
+      ...corsHeaders(req),
+    })
+  }
+}
+
 const server = https.createServer(
   {
     cert: readFileSync(certFile),
@@ -141,6 +193,10 @@ const server = https.createServer(
         return
       }
       const requestUrl = new URL(req.url || '/', `https://${req.headers.host || 'localhost'}`)
+      if (requestUrl.pathname === '/api/datasets' || requestUrl.pathname.startsWith('/api/datasets/')) {
+        await serveDatasetApi(req, res, requestUrl)
+        return
+      }
       const filePath = await existingFile(cleanPathname(requestUrl.pathname))
       if (filePath) {
         await serveFile(req, res, filePath)

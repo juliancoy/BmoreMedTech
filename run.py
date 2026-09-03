@@ -93,6 +93,7 @@ def ensure_local_certificates(cert_dir: Path) -> None:
 
 
 def run_one_shot_container(config: dict):
+    docker_utils.remove_container(config["name"])
     container = docker_utils.run_container(config)
     result = container.wait()
     logs = container.logs(stdout=True, stderr=True).decode("utf-8", errors="replace")
@@ -128,7 +129,7 @@ def build_site(args: argparse.Namespace) -> None:
             "command": [
                 "sh",
                 "-c",
-                "npm install && npm run build && chown -R ${HOST_UID}:${HOST_GID} dist assets/data",
+                "npm ci --ignore-scripts --no-audit --no-fund && npm run build && chown -R ${HOST_UID}:${HOST_GID} dist assets/data",
             ],
         }
     )
@@ -159,9 +160,8 @@ def start_site(args: argparse.Namespace) -> None:
                 "TLS_KEY_FILE": "/certs/localhost.key",
             },
             "command": [
-                "sh",
-                "-c",
-                "npm install && node scripts/local-static-server.mjs",
+                "node",
+                "scripts/local-static-server.mjs",
             ],
         }
     )

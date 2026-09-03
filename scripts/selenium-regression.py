@@ -729,13 +729,13 @@ def assert_taxonomy(driver: webdriver.Remote, base_url: str, viewport: str, scre
         };
         """
     )
-    if metrics["title"] != "MedTech Index | Baltimore MedTech":
+    if metrics["title"] != "Medical Science & Coding Atlas | Baltimore MedTech":
         raise AssertionError(f"{viewport} taxonomy: unexpected title: {metrics}")
     if int(metrics["totalText"].replace(",", "")) < 200 or metrics["databaseOptions"] != 6:
         raise AssertionError(f"{viewport} taxonomy: index or framework selector is incomplete: {metrics}")
     if metrics["databaseValue"] != "medtech_index" or metrics["clusters"] < 9 or metrics["nodes"] < 200:
         raise AssertionError(f"{viewport} taxonomy: default MedTech Index did not render: {metrics}")
-    if not metrics["sourceHref"].endswith("/medtech-index.json") or metrics["navbarCurrent"] != "MedTech Index":
+    if not metrics["sourceHref"].endswith("/medical-science-field-atlas.json") or metrics["navbarCurrent"] != "Medical atlas":
         raise AssertionError(f"{viewport} taxonomy: download or navbar link is incorrect: {metrics}")
 
     interaction_metrics = driver.execute_script(

@@ -4,6 +4,7 @@ import https from 'node:https'
 import path from 'node:path'
 
 const siteRoot = process.env.SITE_ROOT || '/site'
+const publicRoot = process.env.PUBLIC_ROOT || ''
 const port = Number.parseInt(process.env.CONTAINER_PORT || '8080', 10)
 const certFile = process.env.TLS_CERT_FILE || '/certs/localhost.crt'
 const keyFile = process.env.TLS_KEY_FILE || '/certs/localhost.key'
@@ -39,32 +40,35 @@ function cleanPathname(rawPathname) {
   return normalized === '/.' ? '/' : normalized
 }
 
-function resolveInsideRoot(urlPath) {
+function resolveInsideRoot(urlPath, rootPath = siteRoot) {
   const relative = urlPath.replace(/^\/+/, '')
-  const resolved = path.resolve(siteRoot, relative)
-  const root = path.resolve(siteRoot)
+  const resolved = path.resolve(rootPath, relative)
+  const root = path.resolve(rootPath)
   if (resolved !== root && !resolved.startsWith(`${root}${path.sep}`)) return null
   return resolved
 }
 
 async function existingFile(urlPath) {
   const candidates = [urlPath]
+  const roots = [siteRoot, publicRoot].filter(Boolean)
   if (!path.posix.basename(urlPath).includes('.')) {
     candidates.push(`${urlPath}.html`)
   }
 
-  for (const candidate of candidates) {
-    const filePath = resolveInsideRoot(candidate)
-    if (!filePath) continue
-    try {
-      const info = await stat(filePath)
-      if (info.isFile()) return filePath
-      if (info.isDirectory()) {
-        const indexPath = path.join(filePath, 'index.html')
-        if ((await stat(indexPath)).isFile()) return indexPath
+  for (const root of roots) {
+    for (const candidate of candidates) {
+      const filePath = resolveInsideRoot(candidate, root)
+      if (!filePath) continue
+      try {
+        const info = await stat(filePath)
+        if (info.isFile()) return filePath
+        if (info.isDirectory()) {
+          const indexPath = path.join(filePath, 'index.html')
+          if ((await stat(indexPath)).isFile()) return indexPath
+        }
+      } catch {
+        // Try the next candidate or public root.
       }
-    } catch {
-      // Try the next candidate.
     }
   }
   return null

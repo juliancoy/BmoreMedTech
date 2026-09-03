@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "title": "Need–availability distortions",
+    "as_of": "2026-09-03",
+    "geography": "United States unless an underlying field metric says otherwise",
+    "summary": "A directional comparison of patient-need or service-demand proxies against physician-specialist capacity and new-entry pipelines across neurology, oncology, radiology, and genomics.",
+    "conclusion": "Genomics is the clearest positive shortfall signal in the current four-field dataset: its addressable rare-disease population proxy is large while its physician-specialist and entry-pipeline proxies are the smallest.",
+    "availability_definition": "Service availability is approximated with current physician-specialist workforce and annual new-entrant counts. It does not measure appointment supply, wait time, geographic access, insurance participation, nonphysician labor, clinical appropriateness, or actual services delivered.",
+    "formula": "Distortion index = 80% log-normalized need-per-specialist pressure + 20% log-normalized pipeline fragility (current workforce divided by annual entrants).",
+    "scaling": "Each component is scaled from 20 to 100 within only these four selected fields. The index is relative, not an absolute shortage threshold, and should not be compared with an external score.",
+    "signed_gap_note": "The separate need-versus-availability gap compares log-normalized need with a capacity composite weighted 80% to current workforce and 20% to the entry pipeline. Positive values indicate need outrunning the selected capacity proxies; negative values indicate the reverse within this dataset.",
+    "comparability_guardrail": "Neurology uses chronic pain as a cross-specialty burden marker, oncology uses survivorship prevalence, radiology uses annual CT utilization, and genomics uses rare disease as an addressable-population proxy. These are not equivalent patient denominators."
+  },
+  "weights": {
+    "distortion": {
+      "need_per_specialist_pressure": 0.8,
+      "pipeline_fragility": 0.2
+    },
+    "availability": {
+      "current_workforce": 0.8,
+      "entry_pipeline": 0.2
+    }
+  },
+  "interpretations": [
+    {
+      "id": "genomics",
+      "headline": "Largest shortfall signal",
+      "summary": "The rare-disease population proxy is large, while the board-certified physician proxy and observed new-diplomate pipeline are the smallest of the four fields.",
+      "action": "Prioritize phenotype capture, evidence review, counseling support, referral completion, report comprehension, and responsible reanalysis that extend scarce genetics teams.",
+      "caution": "Rare disease is broader than clinical genomics demand, and physicians are only one part of genetics service capacity."
+    },
+    {
+      "id": "radiology",
+      "headline": "High-throughput pressure",
+      "summary": "Radiology has the largest workforce proxy, but CT touches tens of millions of patients and the entrant-to-workforce ratio is relatively weak.",
+      "action": "Focus on workflow reliability, protocoling, prioritization, follow-up closure, quality assurance, and dose or appropriateness improvement rather than autonomous replacement.",
+      "caution": "CT utilization is a service-volume proxy, not all imaging demand, disease prevalence, or evidence that every examination required a radiologist encounter."
+    },
+    {
+      "id": "oncology",
+      "headline": "Pipeline fragility exceeds the raw burden ratio",
+      "summary": "The survivorship proxy produces the lowest people-per-specialist ratio in this four-field set, but the annual entrant pipeline is small relative to the existing workforce.",
+      "action": "Measure navigation, survivorship, toxicity management, prior authorization, trial matching, and multidisciplinary coordination burdens directly.",
+      "caution": "Cancer survivors have highly variable needs, and hematology-oncology physicians are not the entire oncology workforce."
+    },
+    {
+      "id": "neurology",
+      "headline": "Large burden with a blurred service denominator",
+      "summary": "The chronic-pain marker is large, but pain care spans primary care, rehabilitation, anesthesiology, psychiatry, surgery, and other specialties, weakening a simple neurologist ratio.",
+      "action": "Collect referral delay, appointment wait, rehabilitation access, diagnostic turnaround, and longitudinal follow-up data before treating the national proxy as a local shortage estimate.",
+      "caution": "Chronic pain is not a count of all neurological disease and is not served exclusively by neurologists."
+    }
+  ]
+}

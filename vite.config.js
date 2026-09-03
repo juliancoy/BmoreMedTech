@@ -9,6 +9,7 @@ export default defineConfig({
         calendar: 'calendar.html',
         map: 'map.html',
         taxonomy: 'taxonomy.html',
+        needAvailabilityDistortions: 'need-availability-distortions.html',
       },
     },
   },

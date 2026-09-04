@@ -300,6 +300,22 @@ function syncLocation() {
   history.replaceState(null, '', url)
 }
 
+async function readJsonResponse(response, label) {
+  const text = await response.text()
+  let payload
+  try {
+    payload = JSON.parse(text)
+  } catch {
+    const contentType = response.headers.get('content-type') || 'unknown content type'
+    const excerpt = text.trim().replace(/\s+/g, ' ').slice(0, 160) || 'empty response'
+    throw new Error(`${label} returned ${response.status} ${contentType}, not JSON: ${excerpt}`)
+  }
+  if (!response.ok || !payload?.ok) {
+    throw new Error(payload?.error || `${label} failed (${response.status})`)
+  }
+  return payload
+}
+
 async function loadData(refresh = false) {
   state.requestController?.abort()
   state.requestController = new AbortController()
@@ -309,8 +325,7 @@ async function loadData(refresh = false) {
   elements.tableWrap.setAttribute('aria-busy', 'true')
   try {
     const response = await fetch(`/api/datasets/${datasetId}?${currentParams(refresh)}`, { signal: state.requestController.signal })
-    const payload = await response.json()
-    if (!response.ok || !payload.ok) throw new Error(payload.error || `Dataset request failed (${response.status})`)
+    const payload = await readJsonResponse(response, 'Dataset API')
     state.payload = payload
     renderPayload()
     syncLocation()

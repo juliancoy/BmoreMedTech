@@ -304,7 +304,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: pathways must follow the hero without a layout gap: {metrics}")
     if metrics["heroTitle"] != "Better care starts with a better-connected city.":
         raise AssertionError(f"{viewport} home: editorial promise is missing: {metrics}")
-    if metrics["pathwayCount"] != 3 or metrics["pathwayTitles"] != ["Events", "Medical map", "MedTech index"]:
+    if metrics["pathwayCount"] != 3 or metrics["pathwayTitles"] != ["General Calendar", "Medical map", "MedTech index"]:
         raise AssertionError(f"{viewport} home: community pathways are incomplete: {metrics}")
     if metrics["glossaryEntryCount"] != 3 or metrics["glossaryTitles"] != ["Health", "Medicine", "Biotech"]:
         raise AssertionError(f"{viewport} home: regional glossary fields are incomplete: {metrics}")

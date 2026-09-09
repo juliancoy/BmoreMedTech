@@ -2,20 +2,19 @@
 
 MedTech's public site contains medical datasets, taxonomy and strategy views,
 and medical event discovery. Organization services in the live deployment are
-provided by [OrgPortal](https://github.com/juliancoy/OrgPortal), pinned here as
-the [`OrgPortal/`](OrgPortal) Git submodule.
+provided by [OrgPortal](https://github.com/juliancoy/OrgPortal). The active
+local deployment checkout is `../CodeCollective/portal`; this repository no
+longer vendors OrgPortal as a submodule.
 
 ```sh
-git submodule update --init OrgPortal
 npm ci
 npm run build
 npm run dev
 ```
 
-The static site builds independently of OrgPortal's services. The submodule is
-the shared source reference, not a second deployment. Initialize OrgPortal's
-nested submodules only when developing services that need them, following its
-own documentation.
+The static site builds independently of OrgPortal's services. Shared portal work
+belongs in `../CodeCollective/portal` or upstream OrgPortal, and production
+portal deployment is handled through the CodeCollective deployment flow.
 
 ## Ownership
 
@@ -26,7 +25,7 @@ own documentation.
 | MedTech static build and local site/Selenium harness | MedTech |
 
 Reuse the existing portal for shared capabilities. Implement shared behavior in
-OrgPortal and update the submodule pin after that change is committed upstream;
-do not copy its services or build another provider adapter here.
+OrgPortal/CodeCollective; do not copy its services or build another provider
+adapter here.
 
 See [event administration and draft migration](docs/events-platform.md).

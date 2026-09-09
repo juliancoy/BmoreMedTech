@@ -1,31 +1,29 @@
 # Events through OrgPortal
 
-MedTech already uses OrgPortal in the live deployment. The pinned
-[`OrgPortal` submodule](../OrgPortal) makes that shared implementation available
-in this checkout; it does not create a separate portal deployment.
+MedTech already uses OrgPortal in the live deployment. OrgPortal is not vendored
+in this checkout; the active local deployment checkout is
+`../CodeCollective/portal`.
 
 OrgPortal owns event providers, updates, collaborators, authorization, branding
 application, previews, and operation auditing. MedTech's former event CLI,
 provider registry, and Luma adapter have been removed. Use the existing portal
 for event administration. Shared event changes belong in OrgPortal.
 
-See [OrgPortal's event integration documentation](../OrgPortal/docs/deployment/EVENTS_MCP.md)
-for its MCP tools, configuration, and verification. The presence of that code
-does not establish which MCP features are enabled in the live deployment.
+See `../CodeCollective/portal/docs/deployment/EVENTS_MCP.md` for MCP tools,
+configuration, and verification. The presence of local code does not establish
+which MCP features are enabled in the live deployment.
 
 ## Formational event draft
 
 [`events/baltimore-medtech-formational-2026-09-29.json`](../events/baltimore-medtech-formational-2026-09-29.json)
-now uses OrgPortal's event-plan format for `preview_event_changes`. Replace
-`MEDTECH_ORGANIZATION_DATABASE_ID` with the existing MedTech organization's
-database ID. The proposed schedule remains September 29, 2026, 6–8:30 p.m.
-America/New_York; verify it against the live event.
+is a stale external-provider draft retained for history. The live portal-owned
+event is `medtech-formational-event`, scheduled for September 29, 2026,
+6:00-8:30 p.m. America/New_York.
 
-If the shared MCP integration is enabled, submit this draft to
-`preview_event_changes`, review the result, then use `apply_event_changes` with
-the same changes, the returned `previewId`, and `confirm: true` after approval.
-Otherwise, administer the event through the existing portal. Do not restore a
-MedTech-specific provider client as a fallback.
+For new portal-owned events, use OrgPortal's native MCP event tools:
+`preview_org_event_changes`, then `apply_org_event_changes` with the returned
+`previewId` and `confirm: true` after approval. Do not restore a MedTech-specific
+provider client as a fallback.
 
 `applyBranding` uses the portal's approved MedTech branding configuration.
 The proposed local cover remains

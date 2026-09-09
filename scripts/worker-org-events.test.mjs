@@ -26,9 +26,14 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   const seen = []
   t.mock.method(globalThis, 'fetch', async (request) => {
     seen.push({ url: request.url, method: request.method, headers: request.headers })
+    if (request.url === 'https://portal.example/p/events/medtech-formational-event') {
+      const headers = new Headers()
+      headers.append('set-cookie', 'portal_session=fixture; Domain=codecollective.us; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax')
+      return new Response('ok', { headers })
+    }
     if (request.url === 'https://pidp.example/auth/session/login') {
       const headers = new Headers()
-      headers.append('set-cookie', 'pidp_session=fixture; Domain=codecollective.us; Path=/; HttpOnly; Secure; SameSite=Lax')
+      headers.append('set-cookie', 'pidp_session=fixture; Domain=codecollective.us; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax')
       return new Response('{}', { headers })
     }
     return new Response('ok')
@@ -53,6 +58,9 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(portal.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/p/events/medtech-formational-event')
   assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'medtech.social')
+  assert.deepEqual(portal.headers.getSetCookie(), [
+    'portal_session=fixture; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax',
+  ])
 
   const portalAsset = await worker.fetch(new Request('https://medtech.social/p/assets/index.js'), env)
   assert.equal(portalAsset.status, 200)
@@ -107,5 +115,7 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   const login = await worker.fetch(new Request('https://medtech.social/pidp/auth/session/login', { method: 'POST', body: 'fixture' }), env)
   assert.equal(login.status, 200)
   assert.equal(seen.at(-1).url, 'https://pidp.example/auth/session/login')
-  assert.ok(login.headers.getSetCookie().every((cookie) => !/domain=/i.test(cookie)))
+  assert.deepEqual(login.headers.getSetCookie(), [
+    'pidp_session=fixture; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax',
+  ])
 })

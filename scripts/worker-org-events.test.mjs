@@ -34,7 +34,7 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     return new Response('ok')
   })
   const assets = {
-    fetch: async (request) => new URL(request.url).pathname === '/index.html'
+    fetch: async (request) => ['/index.html', '/calendar'].includes(new URL(request.url).pathname)
       ? new Response('<div id="root"></div>', { headers: { 'content-type': 'text/html' } })
       : new Response('not found', { status: 404 }),
   }
@@ -64,6 +64,10 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(portalIcon.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/p/codecollective_logo.png')
 
+  const rootPortalIcon = await worker.fetch(new Request('https://medtech.social/images/google-g-logo.svg'), env)
+  assert.equal(rootPortalIcon.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/images/google-g-logo.svg')
+
   const portalSearch = await worker.fetch(new Request('https://medtech.social/search?q=medtech&scope=people', {
     headers: { accept: 'text/html' },
   }), env)
@@ -75,6 +79,18 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   }), env)
   assert.equal(legacyPortal.status, 308)
   assert.equal(legacyPortal.headers.get('location'), 'https://medtech.social/users/login?portalProfile=baltimore-medtech')
+
+  const tenantLogin = await worker.fetch(new Request('https://medtech.social/users/login', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(tenantLogin.status, 302)
+  assert.equal(tenantLogin.headers.get('location'), 'https://medtech.social/users/login?portalProfile=baltimore-medtech')
+
+  const staticCalendar = await worker.fetch(new Request('https://medtech.social/calendar', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(staticCalendar.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/search?q=medtech&scope=people')
 
   const orgPost = await worker.fetch(new Request('https://medtech.social/api/org/api/network/events/event-1/attendance', { method: 'POST', body: '{}' }), env)
   assert.equal(orgPost.status, 200)

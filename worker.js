@@ -13,6 +13,11 @@ const ALLOWED_CORS_ORIGINS = new Set([
 const LEGACY_REDIRECTS = new Map([
   ['/datasets/medical-taxonomy.html', '/datasets/medical-science-field-atlas.html'],
 ])
+const DEFAULT_ORG_API_ORIGIN = 'https://org-codecollective.jcloiacon.workers.dev'
+const ORG_PUBLIC_EVENT_PREFIXES = [
+  '/api/org/api/network/orgs/public/baltimore-medtech/events',
+  '/api/org/api/network/events/public',
+]
 
 function allowedCorsOrigin(request) {
   const origin = request.headers.get('origin')
@@ -44,6 +49,38 @@ function preflightResponse(request) {
   }
   const headers = applyCorsHeaders(request, new Headers({ allow: 'GET, HEAD, OPTIONS' }))
   return new Response(null, { status: 204, headers })
+}
+
+function isPublicOrgEventRequest(path) {
+  return ORG_PUBLIC_EVENT_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))
+}
+
+function trimTrailingSlash(value) {
+  return String(value || '').replace(/\/+$/, '')
+}
+
+function orgProxyResponse(request, env, url) {
+  if (!['GET', 'HEAD'].includes(request.method)) {
+    return new Response('Method not allowed\n', {
+      status: 405,
+      headers: { allow: 'GET, HEAD, OPTIONS' },
+    })
+  }
+  const targetUrl = new URL(url)
+  const targetOrigin = new URL(trimTrailingSlash(env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN))
+  targetUrl.protocol = targetOrigin.protocol
+  targetUrl.host = targetOrigin.host
+  targetUrl.pathname = url.pathname.slice('/api/org'.length) || '/'
+
+  const headers = new Headers(request.headers)
+  headers.set('x-forwarded-host', url.host)
+  headers.delete('host')
+
+  return fetch(new Request(targetUrl, {
+    method: request.method,
+    headers,
+    redirect: 'manual',
+  }))
 }
 
 function applyApiHeaders(request, response) {
@@ -99,6 +136,11 @@ export default {
 
     if (url.pathname === '/api/datasets' || url.pathname.startsWith('/api/datasets/')) {
       const response = await handleDatasetApi(request, env, url)
+      return applyApiHeaders(request, response)
+    }
+
+    if (isPublicOrgEventRequest(url.pathname)) {
+      const response = await orgProxyResponse(request, env, url)
       return applyApiHeaders(request, response)
     }
 

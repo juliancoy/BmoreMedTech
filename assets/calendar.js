@@ -1,4 +1,13 @@
-import { MEDICAL_EVENTS_SOURCE_URL, eventImageUrl, isMedicalEvent, parseEventDate } from './medical-events.js'
+import {
+  MEDICAL_EVENTS_SOURCE_URL,
+  MEDTECH_ORG_EVENTS_SOURCE_URL,
+  eventImageUrl,
+  isMedicalEvent,
+  isMedTechOwnedEvent,
+  mergeEventSources,
+  normalizeMedTechPortalEvent,
+  parseEventDate,
+} from './medical-events.js'
 
 const PORTAL_URL = 'https://community.medtech.social/p/users/login'
 
@@ -58,10 +67,20 @@ function formatTime(date) {
 }
 
 function formatEventMeta(event, date) {
-  const location = typeof event.location === 'object'
-    ? [event.location.name, event.location.address, event.location.city].filter(Boolean).join(', ')
-    : ''
+  const locationParts = typeof event.location === 'object'
+    ? [event.location.name, event.location.address, event.location.city].filter(Boolean)
+    : []
+  const location = locationParts
+    .filter((part, index, parts) => !parts.slice(0, index).some((previous) => previous === part || previous.includes(part)))
+    .join(', ')
   return [formatTime(date), event.source_group || event.org_name, location].filter(Boolean).join(' | ')
+}
+
+function loadJson(url) {
+  return fetch(url, { cache: 'no-store' }).then((response) => {
+    if (!response.ok) throw new Error(`Calendar source returned ${response.status}`)
+    return response.json()
+  })
 }
 
 function monthEvents() {
@@ -104,7 +123,7 @@ function renderCalendar() {
     for (const item of (eventsByDay.get(key) || []).slice(0, 3)) {
       const button = document.createElement('button')
       button.type = 'button'
-      button.className = 'day-event'
+      button.className = `day-event${isMedTechOwnedEvent(item.event) ? ' medtech-owned' : ''}`
       button.textContent = item.event.name
       button.addEventListener('click', () => {
         document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -128,7 +147,10 @@ function renderCalendar() {
 
 function renderList() {
   const now = new Date()
-  const upcoming = state.events.filter(({ date }) => date >= now).slice(0, 40)
+  const allUpcoming = state.events.filter(({ date }) => date >= now)
+  const medtechUpcoming = allUpcoming.filter((item) => isMedTechOwnedEvent(item.event))
+  const regionalUpcoming = allUpcoming.filter((item) => !isMedTechOwnedEvent(item.event)).slice(0, Math.max(0, 40 - medtechUpcoming.length))
+  const upcoming = [...medtechUpcoming, ...regionalUpcoming]
   countEl.textContent = `${upcoming.length} shown`
   listEl.innerHTML = ''
 
@@ -147,15 +169,18 @@ function renderList() {
     const description = cleanText(item.event.description).replace(/\s+/g, ' ').trim()
     const eventUrl = safeUrl(item.event.url)
     const imageUrl = eventImageUrl(item.event)
+    const medtechOwned = isMedTechOwnedEvent(item.event)
+    if (medtechOwned) article.classList.add('medtech-owned')
     if (imageUrl) article.classList.add('has-image')
 
     article.innerHTML = `
       <div class="event-date">${month}<span>${day}</span></div>
       <div class="event-details">
+        ${medtechOwned ? '<p class="event-feature-label">Baltimore MedTech hosted</p>' : ''}
         <h3>${escapeHtml(cleanText(item.event.name))}</h3>
         <p>${escapeHtml(formatEventMeta(item.event, item.date))}</p>
         ${description ? `<p>${escapeHtml(description.slice(0, 180))}${description.length > 180 ? '...' : ''}</p>` : ''}
-        <a href="${escapeHtml(eventUrl)}" target="_blank" rel="noopener noreferrer">Open event</a>
+        <a href="${escapeHtml(eventUrl)}" target="_blank" rel="noopener noreferrer">${medtechOwned ? 'Register for this event' : 'Open event'}</a>
       </div>
       ${imageUrl ? `<a class="event-image-link" href="${escapeHtml(eventUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(cleanText(item.event.name))}"><img class="event-image" src="${escapeHtml(imageUrl)}" alt="" loading="lazy" decoding="async" /></a>` : ''}
     `
@@ -169,9 +194,15 @@ function renderList() {
 
 async function loadEvents() {
   try {
-    const response = await fetch(MEDICAL_EVENTS_SOURCE_URL, { cache: 'no-store' })
-    if (!response.ok) throw new Error(`Calendar source returned ${response.status}`)
-    const sourceEvents = await response.json()
+    const [regionalEvents, medtechEventsResult] = await Promise.all([
+      loadJson(MEDICAL_EVENTS_SOURCE_URL),
+      loadJson(MEDTECH_ORG_EVENTS_SOURCE_URL).catch((error) => {
+        console.warn('Baltimore MedTech events could not be loaded for the general calendar.', error)
+        return []
+      }),
+    ])
+    const medtechEvents = Array.isArray(medtechEventsResult) ? medtechEventsResult.map(normalizeMedTechPortalEvent) : []
+    const sourceEvents = mergeEventSources(medtechEvents, regionalEvents)
     state.events = sourceEvents
       .filter(isMedicalEvent)
       .map((event, index) => ({ event, date: parseEventDate(event), id: `event-${index}` }))

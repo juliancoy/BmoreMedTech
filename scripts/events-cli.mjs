@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { applyEventPlan, createEventsPlatform, registerEventsProvider } from './events-platform.mjs'
 import { LumaEventsProvider } from './luma-events-provider.mjs'
 

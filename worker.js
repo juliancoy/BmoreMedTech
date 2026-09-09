@@ -50,6 +50,29 @@ function trimTrailingSlash(value) {
   return String(value || '').replace(/\/+$/, '')
 }
 
+function splitSetCookieHeader(value) {
+  if (!value) return []
+  return value
+    .split(/,(?=\s*[^;,\s]+=)/g)
+    .map((cookie) => cookie.trim())
+    .filter(Boolean)
+}
+
+function responseSetCookies(headers) {
+  if (typeof headers.getSetCookie === 'function') {
+    const cookies = headers.getSetCookie()
+    if (cookies.length) return cookies
+  }
+  return splitSetCookieHeader(headers.get('set-cookie'))
+}
+
+function stripCookieDomains(responseHeaders, cookies) {
+  responseHeaders.delete('set-cookie')
+  for (const cookie of cookies) {
+    responseHeaders.append('set-cookie', cookie.replace(/;\s*Domain=[^;]+/gi, ''))
+  }
+}
+
 function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewriteCookieDomain = false } = {}) {
   const targetUrl = new URL(url)
   const targetOrigin = new URL(trimTrailingSlash(targetOriginValue))
@@ -76,12 +99,9 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
   return fetch(new Request(targetUrl.toString(), proxiedInit)).then((response) => {
     if (!rewriteCookieDomain) return response
     const responseHeaders = new Headers(response.headers)
-    const cookies = typeof response.headers.getSetCookie === 'function' ? response.headers.getSetCookie() : []
+    const cookies = responseSetCookies(response.headers)
     if (cookies.length) {
-      responseHeaders.delete('set-cookie')
-      for (const cookie of cookies) {
-        responseHeaders.append('set-cookie', cookie.replace(/;\s*Domain=[^;]+/gi, ''))
-      }
+      stripCookieDomains(responseHeaders, cookies)
     }
     responseHeaders.set('cache-control', 'no-store')
     responseHeaders.set('referrer-policy', 'no-referrer')
@@ -101,7 +121,7 @@ function portalProxyResponse(request, env, url, { stripBase = false } = {}) {
   if (!targetUrl.pathname.startsWith('/p/')) {
     targetUrl.pathname = `/p${targetUrl.pathname === '/' ? '' : targetUrl.pathname}`
   }
-  return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl)
+  return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
 }
 
 function applyApiHeaders(request, response) {

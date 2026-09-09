@@ -10,10 +10,8 @@ const port = Number.parseInt(process.env.CONTAINER_PORT || '8080', 10)
 const certFile = process.env.TLS_CERT_FILE || '/certs/localhost.crt'
 const keyFile = process.env.TLS_KEY_FILE || '/certs/localhost.key'
 const orgApiOrigin = process.env.ORG_API_ORIGIN || 'https://org-codecollective.jcloiacon.workers.dev'
-const orgPublicEventPrefixes = [
-  '/api/org/api/network/orgs/public/baltimore-medtech/events',
-  '/api/org/api/network/events/public',
-]
+const pidpApiOrigin = process.env.PIDP_PROXY_ORIGIN || process.env.PIDP_API_ORIGIN || 'https://pidp-codecollective.jcloiacon.workers.dev'
+const portalSiteOrigin = process.env.PORTAL_SITE_ORIGIN || 'https://codecollective.us'
 const allowedCorsOrigins = new Set([
   'https://baltimore-medtech.jcloiacon.workers.dev',
   'https://baltimoremedtech.org',
@@ -156,7 +154,13 @@ function webRequest(req, requestUrl) {
   for (const [name, value] of Object.entries(req.headers)) {
     if (value !== undefined) headers.set(name, Array.isArray(value) ? value.join(', ') : value)
   }
-  return new Request(requestUrl, { method: req.method, headers })
+  const init = {
+    method: req.method,
+    headers,
+    body: ['GET', 'HEAD'].includes(req.method || 'GET') ? undefined : req,
+  }
+  if (init.body) init.duplex = 'half'
+  return new Request(requestUrl, init)
 }
 
 async function sendWebResponse(req, res, response) {
@@ -186,29 +190,19 @@ async function serveDatasetApi(req, res, requestUrl) {
   }
 }
 
-function isPublicOrgEventRequest(pathname) {
-  return orgPublicEventPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
-}
-
-async function serveOrgPublicEventApi(req, res, requestUrl) {
-  if (!['GET', 'HEAD'].includes(req.method || 'GET')) {
-    send(res, 405, 'Method not allowed\n', {
-      allow: 'GET, HEAD, OPTIONS',
-      'content-type': 'text/plain; charset=utf-8',
-      ...corsHeaders(req),
-    })
-    return
-  }
+async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix = '') {
   try {
     const targetUrl = new URL(requestUrl)
-    const targetOrigin = new URL(orgApiOrigin.replace(/\/+$/, ''))
+    const targetOrigin = new URL(targetOriginValue.replace(/\/+$/, ''))
     targetUrl.protocol = targetOrigin.protocol
     targetUrl.host = targetOrigin.host
-    targetUrl.pathname = requestUrl.pathname.slice('/api/org'.length) || '/'
+    if (stripPrefix && (requestUrl.pathname === stripPrefix || requestUrl.pathname.startsWith(`${stripPrefix}/`))) {
+      targetUrl.pathname = requestUrl.pathname.slice(stripPrefix.length) || '/'
+    }
     const response = await fetch(webRequest(req, targetUrl))
     await sendWebResponse(req, res, response)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Org event request failed'
+    const message = error instanceof Error ? error.message : 'Proxy request failed'
     send(res, 502, JSON.stringify({ ok: false, error: message }), {
       'content-type': 'application/json; charset=utf-8',
       ...corsHeaders(req),
@@ -232,8 +226,16 @@ const server = https.createServer(
         await serveDatasetApi(req, res, requestUrl)
         return
       }
-      if (isPublicOrgEventRequest(requestUrl.pathname)) {
-        await serveOrgPublicEventApi(req, res, requestUrl)
+      if (requestUrl.pathname === '/api/org' || requestUrl.pathname.startsWith('/api/org/')) {
+        await serveProxy(req, res, requestUrl, orgApiOrigin, '/api/org')
+        return
+      }
+      if (requestUrl.pathname === '/pidp' || requestUrl.pathname.startsWith('/pidp/')) {
+        await serveProxy(req, res, requestUrl, pidpApiOrigin, '/pidp')
+        return
+      }
+      if (requestUrl.pathname === '/p' || requestUrl.pathname.startsWith('/p/')) {
+        await serveProxy(req, res, requestUrl, portalSiteOrigin)
         return
       }
       const filePath = await existingFile(cleanPathname(requestUrl.pathname))

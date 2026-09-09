@@ -17,7 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-PORTAL_URL = "https://codecollective.us/p/?portalProfile=baltimore-medtech"
+PORTAL_URL = "https://community.medtech.social/p/users/login"
 
 
 def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
@@ -244,7 +244,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         return {
           title: document.title,
           bodyText,
-          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href.includes('/p/?portalProfile=baltimore-medtech')),
+          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href === 'https://community.medtech.social/p/users/login'),
           headerLoginHref: document.querySelector('header nav a.button')?.href || '',
           heroLeft: hero.left,
           heroRight: hero.right,
@@ -388,6 +388,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
     driver.get(f"{base_url.rstrip('/')}/calendar")
     settle(driver)
     WebDriverWait(driver, 30).until(lambda d: d.find_element(By.CSS_SELECTOR, ".event-card"))
+    WebDriverWait(driver, 30).until(lambda d: d.execute_script("return Array.from(document.querySelectorAll('.event-image')).some(image => image.complete && image.naturalWidth > 0)"))
     assert_no_horizontal_overflow(driver, f"{viewport} calendar")
 
     screenshot = screenshot_dir / f"{viewport}-calendar.png"
@@ -402,6 +403,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
           title: document.title,
           pageSections,
           cardCount: cards.length,
+          loadedImages: Array.from(document.querySelectorAll('.event-image')).filter(image => image.complete && image.naturalWidth > 0).map(image => image.currentSrc),
           eventCountText: document.getElementById('event-count')?.textContent || '',
           statusHidden: document.getElementById('status')?.hidden || false,
           listTop: listSection.top,

@@ -1,5 +1,16 @@
 export const MEDICAL_EVENTS_SOURCE_URL = 'https://codecollective.us/baltimore/upcoming_events.json'
 
+export function eventImageUrl(event) {
+  for (const value of [event.imageUrl, event.orgImageUrl]) {
+    if (typeof value !== 'string' || !value.trim()) continue
+    try {
+      const url = new URL(value, MEDICAL_EVENTS_SOURCE_URL)
+      if (['https:', 'http:'].includes(url.protocol)) return url.href
+    } catch { /* Try the organizer image if the event image is invalid. */ }
+  }
+  return null
+}
+
 const medicalSourceHints = [
   'nami',
   'bio-trac',

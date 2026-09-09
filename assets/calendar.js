@@ -1,6 +1,6 @@
-import { MEDICAL_EVENTS_SOURCE_URL, isMedicalEvent, parseEventDate } from './medical-events.js'
+import { MEDICAL_EVENTS_SOURCE_URL, eventImageUrl, isMedicalEvent, parseEventDate } from './medical-events.js'
 
-const PORTAL_URL = 'https://codecollective.us/p/?portalProfile=baltimore-medtech'
+const PORTAL_URL = 'https://community.medtech.social/p/users/login'
 
 const state = {
   events: [],
@@ -146,16 +146,23 @@ function renderList() {
     const day = item.date.toLocaleDateString(undefined, { day: 'numeric' })
     const description = cleanText(item.event.description).replace(/\s+/g, ' ').trim()
     const eventUrl = safeUrl(item.event.url)
+    const imageUrl = eventImageUrl(item.event)
+    if (imageUrl) article.classList.add('has-image')
 
     article.innerHTML = `
       <div class="event-date">${month}<span>${day}</span></div>
-      <div>
+      <div class="event-details">
         <h3>${escapeHtml(cleanText(item.event.name))}</h3>
         <p>${escapeHtml(formatEventMeta(item.event, item.date))}</p>
         ${description ? `<p>${escapeHtml(description.slice(0, 180))}${description.length > 180 ? '...' : ''}</p>` : ''}
         <a href="${escapeHtml(eventUrl)}" target="_blank" rel="noopener noreferrer">Open event</a>
       </div>
+      ${imageUrl ? `<a class="event-image-link" href="${escapeHtml(eventUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(cleanText(item.event.name))}"><img class="event-image" src="${escapeHtml(imageUrl)}" alt="" loading="lazy" decoding="async" /></a>` : ''}
     `
+    article.querySelector('.event-image')?.addEventListener('error', () => {
+      article.querySelector('.event-image-link')?.remove()
+      article.classList.remove('has-image')
+    }, { once: true })
     listEl.appendChild(article)
   }
 }

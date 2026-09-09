@@ -623,6 +623,11 @@ h2 {
   transform: translateY(-1px);
 }
 
+.event-card.has-image { grid-template-columns: 88px minmax(0, 1fr) 220px; }
+.event-details { min-width: 0; overflow-wrap: anywhere; }
+.event-image-link { align-self: center; }
+.event-image { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: contain; border-radius: 8px; background: #fff; }
+
 .event-date {
   display: grid;
   place-items: center;
@@ -1512,7 +1517,7 @@ h2 {
     font-size: 0.82rem;
   }
 
-  .event-card {
+  .event-card, .event-card.has-image {
     grid-template-columns: 1fr;
     gap: 12px;
     padding: 14px;

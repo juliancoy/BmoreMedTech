@@ -1524,6 +1524,7 @@ function formatEventDateTime(value) {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return null
   return date.toLocaleString(undefined, {
+    timeZone: 'America/New_York',
     weekday: 'short',
     month: 'short',
     day: 'numeric',

@@ -10,9 +10,6 @@ const ALLOWED_CORS_ORIGINS = new Set([
   'https://codecollective.us',
 ])
 
-const LEGACY_REDIRECTS = new Map([
-  ['/datasets/medical-taxonomy.html', '/datasets/medical-science-field-atlas.html'],
-])
 const DEFAULT_ORG_API_ORIGIN = 'https://org-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PIDP_API_ORIGIN = 'https://pidp-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PORTAL_SITE_ORIGIN = 'https://codecollective.us'
@@ -57,7 +54,8 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
   const targetUrl = new URL(url)
   const targetOrigin = new URL(trimTrailingSlash(targetOriginValue))
   targetUrl.protocol = targetOrigin.protocol
-  targetUrl.host = targetOrigin.host
+  targetUrl.hostname = targetOrigin.hostname
+  targetUrl.port = targetOrigin.port
   if (stripPrefix && (url.pathname === stripPrefix || url.pathname.startsWith(`${stripPrefix}/`))) {
     targetUrl.pathname = url.pathname.slice(stripPrefix.length) || '/'
   }
@@ -141,20 +139,6 @@ function isHtmlNavigation(request) {
   return accept.includes('text/html')
 }
 
-function legacyRedirect(request, url) {
-  const target = LEGACY_REDIRECTS.get(url.pathname)
-  if (!['GET', 'HEAD'].includes(request.method)) return null
-  if (isLegacyPortalRoute(url.pathname)) {
-    const destination = new URL(url.toString())
-    destination.pathname = url.pathname.slice('/p'.length) || '/'
-    return Response.redirect(destination.toString(), 308)
-  }
-  if (!target) return null
-  const destination = new URL(target, url.origin)
-  destination.search = url.search
-  return Response.redirect(destination.toString(), 308)
-}
-
 function isPortalAssetPath(pathname) {
   return pathname === '/p/assets' || pathname.startsWith('/p/assets/')
     || pathname === '/p/images' || pathname.startsWith('/p/images/')
@@ -170,19 +154,8 @@ function isPortalAssetPath(pathname) {
 function isRootPortalAssetPath(pathname) {
   return pathname === '/images' || pathname.startsWith('/images/')
     || pathname === '/css' || pathname.startsWith('/css/')
-    || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|json|webmanifest)$/.test(pathname)
-}
-
-function isLegacyPortalRoute(pathname) {
-  return pathname === '/p'
-    || pathname.startsWith('/p/users/')
-    || pathname.startsWith('/p/events')
-    || pathname.startsWith('/p/orgs')
-    || pathname.startsWith('/p/people')
-    || pathname.startsWith('/p/chat')
-    || pathname.startsWith('/p/community')
-    || pathname.startsWith('/p/medtech-events')
-    || pathname.startsWith('/p/auth/callback')
+    || pathname === '/mobile-update.json'
+    || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
 }
 
 function isPortalRoute(pathname) {
@@ -210,9 +183,6 @@ export default {
       url.searchParams.set('portalProfile', 'baltimore-medtech')
       return Response.redirect(url.toString(), 302)
     }
-
-    const redirect = legacyRedirect(request, url)
-    if (redirect) return redirect
 
     if (isPortalAssetPath(url.pathname) || isRootPortalAssetPath(url.pathname)) {
       return portalProxyResponse(request, env, url)

@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-const outputFile = path.resolve('assets/data/medtech-index.json')
+const outputFile = path.resolve('assets/data/medical-science-field-atlas.json')
 
 const rows = []
 
@@ -301,4 +301,4 @@ for (const entry of index) {
 
 await mkdir(path.dirname(outputFile), { recursive: true })
 await writeFile(outputFile, `${JSON.stringify(index, null, 2)}\n`)
-console.log(`Wrote ${index.length} MedTech Index records to ${outputFile}`)
+console.log(`Wrote ${index.length} Medical Science Field Atlas records to ${outputFile}`)

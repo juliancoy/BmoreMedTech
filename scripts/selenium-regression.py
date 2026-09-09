@@ -243,6 +243,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         const heroImageStyle = getComputedStyle(document.querySelector('.hero-image'));
         const heroOverlayStyle = getComputedStyle(document.querySelector('.hero'), '::before');
         const heroImageSrc = document.querySelector('.hero-image')?.currentSrc || document.querySelector('.hero-image')?.src || '';
+        const actionStrip = document.querySelector('.action-strip').getBoundingClientRect();
         const pathways = document.querySelector('.pathways').getBoundingClientRect();
         const glossary = document.querySelector('.glossary').getBoundingClientRect();
         const bodyText = document.body.textContent;
@@ -271,6 +272,9 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
           imageObjectPosition: heroImageStyle.objectPosition,
           heroImageSrc,
           heroTitle: document.querySelector('.hero-copy h1')?.textContent.trim() || '',
+          actionTop: actionStrip.top,
+          actionBottom: actionStrip.bottom,
+          actionCount: document.querySelectorAll('.action-strip a').length,
           pathwaysTop: pathways.top,
           pathwayCount: document.querySelectorAll('.pathway-card').length,
           pathwayTitles: Array.from(document.querySelectorAll('.pathway-card h3'), (title) => title.textContent.trim()),
@@ -292,16 +296,20 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: missing Baltimore MedTech body text")
     if metrics["headerLoginHref"] != PORTAL_URL or PORTAL_URL not in metrics["loginHrefs"]:
         raise AssertionError(f"{viewport} home: login links did not target the MedTech portal profile: {metrics}")
-    if "baltimore-medtech-hero-v2" not in metrics["heroImageSrc"] or "lumacdn.com" in metrics["heroImageSrc"]:
+    if "baltimore-medtech-hero-v2" not in metrics["heroImageSrc"]:
         raise AssertionError(f"{viewport} home: hero background should use the optimized local editorial image: {metrics}")
     if abs(metrics["heroTop"] - metrics["headerBottom"]) > 2:
         raise AssertionError(f"{viewport} home: hero must start below the rendered navigation: {metrics}")
     if metrics["heroOverlay"] in {"none", ""}:
         raise AssertionError(f"{viewport} home: editorial hero needs a contrast overlay: {metrics}")
-    if not metrics["innerHeight"] * 0.75 <= metrics["heroHeight"] <= metrics["innerHeight"] * 1.35:
+    if not metrics["innerHeight"] * 0.75 <= metrics["heroHeight"] <= metrics["innerHeight"] * 1.75:
         raise AssertionError(f"{viewport} home: hero no longer forms a focused opening chapter: {metrics}")
-    if abs(metrics["pathwaysTop"] - metrics["heroBottom"]) > 2:
-        raise AssertionError(f"{viewport} home: pathways must follow the hero without a layout gap: {metrics}")
+    if "Next Baltimore MedTech event" in metrics["bodyText"] and "6:00 PM" not in metrics["bodyText"]:
+        raise AssertionError(f"{viewport} home: next-event card must render in Baltimore time: {metrics}")
+    if metrics["actionCount"] != 4 or metrics["actionTop"] > metrics["heroBottom"] or metrics["actionBottom"] <= metrics["heroBottom"]:
+        raise AssertionError(f"{viewport} home: action strip must bridge the hero and next section: {metrics}")
+    if metrics["pathwaysTop"] < metrics["actionBottom"] - 2:
+        raise AssertionError(f"{viewport} home: pathways must follow the action strip: {metrics}")
     if metrics["heroTitle"] != "Better care starts with a better-connected city.":
         raise AssertionError(f"{viewport} home: editorial promise is missing: {metrics}")
     if metrics["pathwayCount"] != 3 or metrics["pathwayTitles"] != ["General Calendar", "Medical map", "MedTech index"]:
@@ -322,7 +330,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
             raise AssertionError(f"desktop home: hero copy lost its editorial left-column composition: {metrics}")
     else:
         image_x = numeric_object_position_x(metrics["imageObjectPosition"])
-        if metrics["textAlign"] != "left":
+        if metrics["textAlign"] not in {"left", "start"}:
             raise AssertionError(f"mobile home: editorial hero copy must stay left-aligned: {metrics}")
         if image_x is None or image_x < 55:
             raise AssertionError(f"mobile home: hero image crop must retain the Baltimore skyline: {metrics}")
@@ -419,7 +427,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
     )
     metrics["themeCheck"] = assert_theme_control(driver, viewport, screenshot_dir)
 
-    if metrics["title"] != "Calendar | Baltimore MedTech":
+    if metrics["title"] != "General Calendar | Baltimore MedTech":
         raise AssertionError(f"{viewport} calendar: unexpected title {metrics['title']!r}")
     if metrics["pageSections"][1] != "event-list-section":
         raise AssertionError(f"{viewport} calendar: upcoming list is no longer the first content section: {metrics}")

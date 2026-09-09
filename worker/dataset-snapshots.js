@@ -53,7 +53,7 @@ async function localMetaIndex(dataset, query, env, origin) {
 }
 
 async function localMedicalScienceFieldAtlas(dataset, query, env, origin) {
-  const payload = await loadAssetJson(env, origin, '/medtech-index.json')
+  const payload = await loadAssetJson(env, origin, '/medical-science-field-atlas.json')
   const records = Array.isArray(payload) ? payload : payload.records || payload.fields || payload.items || []
   const rows = records.map((record) => ({
     id: record.id,

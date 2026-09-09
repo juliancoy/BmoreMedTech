@@ -36,7 +36,9 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   const assets = {
     fetch: async (request) => ['/index.html', '/calendar'].includes(new URL(request.url).pathname)
       ? new Response('<div id="root"></div>', { headers: { 'content-type': 'text/html' } })
-      : new Response('not found', { status: 404 }),
+      : new URL(request.url).pathname === '/medical-science-field-atlas.json'
+        ? Response.json([{ id: 'neurology', name: 'Neurology' }])
+        : new Response('not found', { status: 404 }),
   }
   const env = {
     ASSETS: assets,
@@ -74,23 +76,24 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(portalSearch.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/p/search?q=medtech&scope=people')
 
-  const legacyPortal = await worker.fetch(new Request('https://medtech.social/p/users/login?portalProfile=baltimore-medtech', {
-    headers: { accept: 'text/html' },
-  }), env)
-  assert.equal(legacyPortal.status, 308)
-  assert.equal(legacyPortal.headers.get('location'), 'https://medtech.social/users/login?portalProfile=baltimore-medtech')
-
   const tenantLogin = await worker.fetch(new Request('https://medtech.social/users/login', {
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(tenantLogin.status, 302)
   assert.equal(tenantLogin.headers.get('location'), 'https://medtech.social/users/login?portalProfile=baltimore-medtech')
 
+  const fetchCountBeforeStaticCalendar = seen.length
   const staticCalendar = await worker.fetch(new Request('https://medtech.social/calendar', {
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(staticCalendar.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/search?q=medtech&scope=people')
+  assert.equal(seen.length, fetchCountBeforeStaticCalendar)
+
+  const fetchCountBeforeFieldAtlas = seen.length
+  const fieldAtlas = await worker.fetch(new Request('https://medtech.social/medical-science-field-atlas.json'), env)
+  assert.equal(fieldAtlas.status, 200)
+  assert.deepEqual(await fieldAtlas.json(), [{ id: 'neurology', name: 'Neurology' }])
+  assert.equal(seen.length, fetchCountBeforeFieldAtlas)
 
   const orgPost = await worker.fetch(new Request('https://medtech.social/api/org/api/network/events/event-1/attendance', { method: 'POST', body: '{}' }), env)
   assert.equal(orgPost.status, 200)

@@ -33,7 +33,6 @@ export default defineConfig({
         taxonomy: 'taxonomy.html',
         needAvailabilityDistortions: 'need-availability-distortions.html',
         datasets: 'datasets.html',
-        legacyMedicalTaxonomy: 'datasets/medical-taxonomy.html',
         ...datasetInputs,
       },
     },

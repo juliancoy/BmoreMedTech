@@ -151,7 +151,19 @@ const localAssets = {
 
 function webRequest(req, requestUrl) {
   const headers = new Headers()
+  const blockedHeaders = new Set([
+    'connection',
+    'host',
+    'keep-alive',
+    'proxy-authenticate',
+    'proxy-authorization',
+    'te',
+    'trailer',
+    'transfer-encoding',
+    'upgrade',
+  ])
   for (const [name, value] of Object.entries(req.headers)) {
+    if (blockedHeaders.has(name.toLowerCase())) continue
     if (value !== undefined) headers.set(name, Array.isArray(value) ? value.join(', ') : value)
   }
   const init = {
@@ -195,19 +207,72 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
     const targetUrl = new URL(requestUrl)
     const targetOrigin = new URL(targetOriginValue.replace(/\/+$/, ''))
     targetUrl.protocol = targetOrigin.protocol
-    targetUrl.host = targetOrigin.host
+    targetUrl.hostname = targetOrigin.hostname
+    targetUrl.port = targetOrigin.port
     if (stripPrefix && (requestUrl.pathname === stripPrefix || requestUrl.pathname.startsWith(`${stripPrefix}/`))) {
       targetUrl.pathname = requestUrl.pathname.slice(stripPrefix.length) || '/'
     }
-    const response = await fetch(webRequest(req, targetUrl))
+    const proxiedRequest = webRequest(req, targetUrl)
+    proxiedRequest.headers.set('x-forwarded-host', req.headers.host || '')
+    proxiedRequest.headers.set('x-forwarded-proto', requestUrl.protocol.replace(':', ''))
+    const response = await fetch(targetUrl, {
+      method: req.method,
+      headers: proxiedRequest.headers,
+      body: ['GET', 'HEAD'].includes(req.method || 'GET') ? undefined : req,
+      duplex: ['GET', 'HEAD'].includes(req.method || 'GET') ? undefined : 'half',
+    })
     await sendWebResponse(req, res, response)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Proxy request failed'
+    const cause = error instanceof Error && error.cause instanceof Error ? `: ${error.cause.message}` : ''
+    const message = error instanceof Error ? `${error.message}${cause}` : 'Proxy request failed'
     send(res, 502, JSON.stringify({ ok: false, error: message }), {
       'content-type': 'application/json; charset=utf-8',
       ...corsHeaders(req),
     })
   }
+}
+
+async function servePortalProxy(req, res, requestUrl) {
+  const targetUrl = new URL(requestUrl)
+  if (!targetUrl.pathname.startsWith('/p/')) {
+    targetUrl.pathname = `/p${targetUrl.pathname === '/' ? '' : targetUrl.pathname}`
+  }
+  await serveProxy(req, res, targetUrl, portalSiteOrigin)
+}
+
+function isPortalAssetPath(pathname) {
+  return pathname === '/p/assets' || pathname.startsWith('/p/assets/')
+    || pathname === '/p/images' || pathname.startsWith('/p/images/')
+    || pathname === '/p/css' || pathname.startsWith('/p/css/')
+    || pathname === '/p/manifest.webmanifest'
+    || pathname === '/p/medtech.webmanifest'
+    || pathname === '/p/push-sw.js'
+    || pathname === '/p/mobile-update.json'
+    || pathname === '/p/orgportal-android-release.apk'
+    || /^\/p\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|json|webmanifest)$/.test(pathname)
+}
+
+function isRootPortalAssetPath(pathname) {
+  return pathname === '/images' || pathname.startsWith('/images/')
+    || pathname === '/css' || pathname.startsWith('/css/')
+    || pathname === '/mobile-update.json'
+    || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
+}
+
+function isPortalRoute(pathname) {
+  return pathname === '/users' || pathname.startsWith('/users/')
+    || pathname === '/events' || pathname.startsWith('/events/')
+    || pathname === '/orgs' || pathname.startsWith('/orgs/')
+    || pathname === '/people' || pathname.startsWith('/people/')
+    || pathname === '/chat' || pathname.startsWith('/chat/')
+    || pathname === '/community' || pathname.startsWith('/community/')
+    || pathname === '/medtech-events' || pathname.startsWith('/medtech-events/')
+    || pathname === '/auth/callback'
+    || pathname === '/email' || pathname.startsWith('/email/')
+    || pathname === '/profile'
+    || pathname === '/settings'
+    || pathname === '/search'
+    || pathname === '/tools' || pathname.startsWith('/tools/')
 }
 
 const server = https.createServer(
@@ -238,13 +303,17 @@ const server = https.createServer(
         await serveProxy(req, res, requestUrl, pidpApiOrigin, '/pidp')
         return
       }
-      if (requestUrl.pathname === '/p' || requestUrl.pathname.startsWith('/p/')) {
-        await serveProxy(req, res, requestUrl, portalSiteOrigin)
+      if (isPortalAssetPath(requestUrl.pathname) || isRootPortalAssetPath(requestUrl.pathname)) {
+        await servePortalProxy(req, res, requestUrl)
         return
       }
       const filePath = await existingFile(cleanPathname(requestUrl.pathname))
       if (filePath) {
         await serveFile(req, res, filePath)
+        return
+      }
+      if (isPortalRoute(requestUrl.pathname)) {
+        await servePortalProxy(req, res, requestUrl)
         return
       }
       send(res, 404, 'Not found\n', { 'content-type': 'text/plain; charset=utf-8' })

@@ -1,4 +1,4 @@
-const DATA_URL = '/medtech-index.json'
+const DATA_URL = '/medical-science-field-atlas.json'
 const DATABASES_URL = '/taxonomy-databases.json'
 const CODE_SYSTEMS_URL = '/clinical-code-systems.json'
 

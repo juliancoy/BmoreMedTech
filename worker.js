@@ -156,6 +156,11 @@ export default {
       return applyApiHeaders(request, response)
     }
 
+    if (url.pathname === '/.well-known/oauth-protected-resource/api/org/mcp' || url.pathname.startsWith('/.well-known/oauth-protected-resource/api/org/mcp/')) {
+      const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url)
+      return applyApiHeaders(request, response)
+    }
+
     if (url.pathname === '/api/org' || url.pathname.startsWith('/api/org/')) {
       const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url, { stripPrefix: '/api/org' })
       return applyApiHeaders(request, response)

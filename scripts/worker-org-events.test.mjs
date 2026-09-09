@@ -51,6 +51,10 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(seen.at(-1).url, 'https://org.example/api/network/events/event-1/attendance')
   assert.equal(seen.at(-1).method, 'POST')
 
+  const mcp = await worker.fetch(new Request('https://medtech.social/.well-known/oauth-protected-resource/api/org/mcp'), env)
+  assert.equal(mcp.status, 200)
+  assert.equal(seen.at(-1).url, 'https://org.example/.well-known/oauth-protected-resource/api/org/mcp')
+
   const login = await worker.fetch(new Request('https://medtech.social/pidp/auth/session/login', { method: 'POST', body: 'fixture' }), env)
   assert.equal(login.status, 200)
   assert.equal(seen.at(-1).url, 'https://pidp.example/auth/session/login')

@@ -86,7 +86,7 @@ function ensureMedTechEventsNavigation() {
     return
   }
   const link = orphan || document.createElement('a')
-  link.href = link.getAttribute('href') || 'https://community.medtech.social/p/medtech-events'
+  link.href = link.getAttribute('href') || 'https://medtech.social/p/medtech-events'
   link.textContent = link.textContent.trim() || 'MedTech Events'
   const insertionPoint = nav.querySelector('a[href="/map.html"]') || nav.querySelector('.theme-control, .nav-cta')
   nav.insertBefore(link, insertionPoint || null)

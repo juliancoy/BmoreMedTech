@@ -34,7 +34,7 @@ test('portal-owned MedTech events normalize into the general calendar feed', () 
   const normalized = normalizeMedTechPortalEvent(portalEvent)
   assert.equal(normalized.name, 'MedTech Formational Event')
   assert.equal(normalized.startDate, '2026-09-29T22:00:00.000Z')
-  assert.equal(normalized.url, 'https://community.medtech.social/p/events/medtech-formational-event')
+  assert.equal(normalized.url, 'https://medtech.social/p/events/medtech-formational-event')
   assert.equal(normalized.location.name, 'Checkerspot Brewing, 1421 Ridgely St, Baltimore, MD 21230')
   assert.equal(normalized.medtechOwned, true)
   assert.equal(isMedTechOwnedEvent(normalized), true)
@@ -42,8 +42,8 @@ test('portal-owned MedTech events normalize into the general calendar feed', () 
 })
 
 test('event merging prefers MedTech-owned portal records and deduplicates by URL', () => {
-  const medtech = { name: 'MedTech Formational Event', startDate: '2026-09-29T22:00:00.000Z', url: 'https://community.medtech.social/p/events/medtech-formational-event', medtechOwned: true }
-  const duplicate = { name: 'MedTech Formational Event', startDate: '2026-09-29T22:00:00.000Z', url: 'https://community.medtech.social/p/events/medtech-formational-event' }
+  const medtech = { name: 'MedTech Formational Event', startDate: '2026-09-29T22:00:00.000Z', url: 'https://medtech.social/p/events/medtech-formational-event', medtechOwned: true }
+  const duplicate = { name: 'MedTech Formational Event', startDate: '2026-09-29T22:00:00.000Z', url: 'https://medtech.social/p/events/medtech-formational-event' }
   const regional = { name: 'Clinical AI meetup', startDate: '2026-09-30T22:00:00.000Z', url: 'https://events.example/clinical-ai' }
   assert.deepEqual(mergeEventSources([medtech], [duplicate, regional]), [medtech, regional])
 })
@@ -51,6 +51,6 @@ test('event merging prefers MedTech-owned portal records and deduplicates by URL
 test('MedTech event URLs stay on the MedTech community portal profile', () => {
   assert.equal(
     medtechEventUrl({ public_url: 'https://codecollective.us/p/events/example-event' }),
-    'https://community.medtech.social/p/events/example-event',
+    'https://medtech.social/p/events/example-event',
   )
 })

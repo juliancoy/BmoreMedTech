@@ -14,10 +14,8 @@ const LEGACY_REDIRECTS = new Map([
   ['/datasets/medical-taxonomy.html', '/datasets/medical-science-field-atlas.html'],
 ])
 const DEFAULT_ORG_API_ORIGIN = 'https://org-codecollective.jcloiacon.workers.dev'
-const ORG_PUBLIC_EVENT_PREFIXES = [
-  '/api/org/api/network/orgs/public/baltimore-medtech/events',
-  '/api/org/api/network/events/public',
-]
+const DEFAULT_PIDP_API_ORIGIN = 'https://pidp-codecollective.jcloiacon.workers.dev'
+const DEFAULT_PORTAL_SITE_ORIGIN = 'https://codecollective.us'
 
 function allowedCorsOrigin(request) {
   const origin = request.headers.get('origin')
@@ -36,8 +34,8 @@ function applyCorsHeaders(request, headers) {
   const origin = allowedCorsOrigin(request)
   if (!origin) return headers
   headers.set('access-control-allow-origin', origin)
-  headers.set('access-control-allow-methods', 'GET,HEAD,OPTIONS')
-  headers.set('access-control-allow-headers', request.headers.get('access-control-request-headers') || 'content-type')
+  headers.set('access-control-allow-methods', 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS')
+  headers.set('access-control-allow-headers', request.headers.get('access-control-request-headers') || 'authorization,content-type,x-requested-with')
   headers.set('access-control-max-age', '86400')
   headers.append('vary', 'Origin')
   return headers
@@ -51,36 +49,50 @@ function preflightResponse(request) {
   return new Response(null, { status: 204, headers })
 }
 
-function isPublicOrgEventRequest(path) {
-  return ORG_PUBLIC_EVENT_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))
-}
-
 function trimTrailingSlash(value) {
   return String(value || '').replace(/\/+$/, '')
 }
 
-function orgProxyResponse(request, env, url) {
-  if (!['GET', 'HEAD'].includes(request.method)) {
-    return new Response('Method not allowed\n', {
-      status: 405,
-      headers: { allow: 'GET, HEAD, OPTIONS' },
-    })
-  }
+function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewriteCookieDomain = false } = {}) {
   const targetUrl = new URL(url)
-  const targetOrigin = new URL(trimTrailingSlash(env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN))
+  const targetOrigin = new URL(trimTrailingSlash(targetOriginValue))
   targetUrl.protocol = targetOrigin.protocol
   targetUrl.host = targetOrigin.host
-  targetUrl.pathname = url.pathname.slice('/api/org'.length) || '/'
+  if (stripPrefix && (url.pathname === stripPrefix || url.pathname.startsWith(`${stripPrefix}/`))) {
+    targetUrl.pathname = url.pathname.slice(stripPrefix.length) || '/'
+  }
 
   const headers = new Headers(request.headers)
   headers.set('x-forwarded-host', url.host)
+  headers.set('x-forwarded-proto', url.protocol.replace(':', ''))
   headers.delete('host')
 
-  return fetch(new Request(targetUrl, {
+  const proxiedInit = {
     method: request.method,
     headers,
+    body: ['GET', 'HEAD'].includes(request.method) ? undefined : request.body,
     redirect: 'manual',
-  }))
+  }
+  if (proxiedInit.body) proxiedInit.duplex = 'half'
+
+  return fetch(new Request(targetUrl.toString(), proxiedInit)).then((response) => {
+    if (!rewriteCookieDomain) return response
+    const responseHeaders = new Headers(response.headers)
+    const cookies = typeof response.headers.getSetCookie === 'function' ? response.headers.getSetCookie() : []
+    if (cookies.length) {
+      responseHeaders.delete('set-cookie')
+      for (const cookie of cookies) {
+        responseHeaders.append('set-cookie', cookie.replace(/;\s*Domain=[^;]+/gi, ''))
+      }
+    }
+    responseHeaders.set('cache-control', 'no-store')
+    responseHeaders.set('referrer-policy', 'no-referrer')
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: responseHeaders,
+    })
+  })
 }
 
 function applyApiHeaders(request, response) {
@@ -134,14 +146,31 @@ export default {
     const redirect = legacyRedirect(request, url)
     if (redirect) return redirect
 
+    if (url.pathname === '/auth/callback') {
+      url.pathname = '/p/auth/callback'
+      return Response.redirect(url.toString(), 308)
+    }
+
     if (url.pathname === '/api/datasets' || url.pathname.startsWith('/api/datasets/')) {
       const response = await handleDatasetApi(request, env, url)
       return applyApiHeaders(request, response)
     }
 
-    if (isPublicOrgEventRequest(url.pathname)) {
-      const response = await orgProxyResponse(request, env, url)
+    if (url.pathname === '/api/org' || url.pathname.startsWith('/api/org/')) {
+      const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url, { stripPrefix: '/api/org' })
       return applyApiHeaders(request, response)
+    }
+
+    if (url.pathname === '/pidp' || url.pathname.startsWith('/pidp/')) {
+      const response = await proxyResponse(request, env.PIDP_PROXY_ORIGIN || env.PIDP_API_ORIGIN || DEFAULT_PIDP_API_ORIGIN, url, {
+        stripPrefix: '/pidp',
+        rewriteCookieDomain: true,
+      })
+      return applyApiHeaders(request, response)
+    }
+
+    if (url.pathname === '/p' || url.pathname.startsWith('/p/')) {
+      return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, url)
     }
 
     const response = await env.ASSETS.fetch(request)

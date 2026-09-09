@@ -167,6 +167,12 @@ function isPortalAssetPath(pathname) {
     || /^\/p\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|json|webmanifest)$/.test(pathname)
 }
 
+function isRootPortalAssetPath(pathname) {
+  return pathname === '/images' || pathname.startsWith('/images/')
+    || pathname === '/css' || pathname.startsWith('/css/')
+    || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|json|webmanifest)$/.test(pathname)
+}
+
 function isLegacyPortalRoute(pathname) {
   return pathname === '/p'
     || pathname.startsWith('/p/users/')
@@ -188,7 +194,6 @@ function isPortalRoute(pathname) {
     || pathname === '/community' || pathname.startsWith('/community/')
     || pathname === '/medtech-events' || pathname.startsWith('/medtech-events/')
     || pathname === '/auth/callback'
-    || pathname === '/calendar'
     || pathname === '/email' || pathname.startsWith('/email/')
     || pathname === '/profile'
     || pathname === '/settings'
@@ -201,10 +206,15 @@ export default {
     const url = new URL(request.url)
     if (request.method === 'OPTIONS') return preflightResponse(request)
 
+    if (['/users/login', '/users/register'].includes(url.pathname) && !url.searchParams.has('portalProfile')) {
+      url.searchParams.set('portalProfile', 'baltimore-medtech')
+      return Response.redirect(url.toString(), 302)
+    }
+
     const redirect = legacyRedirect(request, url)
     if (redirect) return redirect
 
-    if (isPortalAssetPath(url.pathname)) {
+    if (isPortalAssetPath(url.pathname) || isRootPortalAssetPath(url.pathname)) {
       return portalProxyResponse(request, env, url)
     }
 

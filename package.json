@@ -19,7 +19,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "deploy": "wrangler deploy",
     "deploy:dry-run": "wrangler deploy --dry-run",
-    "test:selenium": "scripts/run-selenium-regression.sh"
+    "test:selenium": "scripts/run-selenium-regression.sh",
+    "test:clickthrough": "python3 scripts/selenium-clickthrough-smoke.py"
   },
   "devDependencies": {
     "vite": "^7.2.4",

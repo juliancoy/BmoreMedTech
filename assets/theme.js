@@ -79,14 +79,14 @@ function ensureMedTechEventsNavigation() {
   const header = document.querySelector('.site-header')
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
   if (!header || !nav) return
-  const orphan = [...header.querySelectorAll(':scope a[href*="/p/medtech-events"]')]
+  const orphan = [...header.querySelectorAll(':scope a[href*="/medtech-events"]')]
     .find((link) => !nav.contains(link))
-  if (nav.querySelector('a[href*="/p/medtech-events"]')) {
+  if (nav.querySelector('a[href*="/medtech-events"]')) {
     orphan?.remove()
     return
   }
   const link = orphan || document.createElement('a')
-  link.href = link.getAttribute('href') || 'https://medtech.social/p/medtech-events'
+  link.href = link.getAttribute('href') || 'https://medtech.social/medtech-events'
   link.textContent = link.textContent.trim() || 'MedTech Events'
   const insertionPoint = nav.querySelector('a[href="/map.html"]') || nav.querySelector('.theme-control, .nav-cta')
   nav.insertBefore(link, insertionPoint || null)

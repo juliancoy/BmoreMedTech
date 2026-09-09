@@ -33,7 +33,11 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     }
     return new Response('ok')
   })
-  const assets = { fetch: async () => new Response('not found', { status: 404 }) }
+  const assets = {
+    fetch: async (request) => new URL(request.url).pathname === '/index.html'
+      ? new Response('<div id="root"></div>', { headers: { 'content-type': 'text/html' } })
+      : new Response('not found', { status: 404 }),
+  }
   const env = {
     ASSETS: assets,
     ORG_API_ORIGIN: 'https://org.example',
@@ -41,10 +45,30 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     PORTAL_SITE_ORIGIN: 'https://portal.example',
   }
 
-  const portal = await worker.fetch(new Request('https://medtech.social/p/events/medtech-formational-event'), env)
+  const portal = await worker.fetch(new Request('https://medtech.social/events/medtech-formational-event', {
+    headers: { accept: 'text/html' },
+  }), env)
   assert.equal(portal.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/p/events/medtech-formational-event')
   assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'medtech.social')
+
+  const portalAsset = await worker.fetch(new Request('https://medtech.social/p/assets/index.js'), env)
+  assert.equal(portalAsset.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/assets/index.js')
+
+  const portalCss = await worker.fetch(new Request('https://medtech.social/p/css/master.css'), env)
+  assert.equal(portalCss.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/css/master.css')
+
+  const portalIcon = await worker.fetch(new Request('https://medtech.social/p/codecollective_logo.png'), env)
+  assert.equal(portalIcon.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/codecollective_logo.png')
+
+  const legacyPortal = await worker.fetch(new Request('https://medtech.social/p/users/login?portalProfile=baltimore-medtech', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(legacyPortal.status, 308)
+  assert.equal(legacyPortal.headers.get('location'), 'https://medtech.social/users/login?portalProfile=baltimore-medtech')
 
   const orgPost = await worker.fetch(new Request('https://medtech.social/api/org/api/network/events/event-1/attendance', { method: 'POST', body: '{}' }), env)
   assert.equal(orgPost.status, 200)

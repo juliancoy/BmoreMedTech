@@ -1,14 +1,17 @@
 export const MEDICAL_EVENTS_SOURCE_URL = 'https://codecollective.us/baltimore/upcoming_events.json'
 export const MEDTECH_ORG_EVENTS_SOURCE_URL = '/api/org/api/network/orgs/public/baltimore-medtech/events?upcoming_only=true&limit=120'
-export const MEDTECH_EVENTS_URL = 'https://medtech.social/p/medtech-events'
+export const MEDTECH_EVENTS_URL = 'https://medtech.social/medtech-events'
 
 export function medtechEventUrl(event) {
   const slug = typeof event.slug === 'string' ? event.slug.trim() : typeof event.portalSlug === 'string' ? event.portalSlug.trim() : ''
-  if (slug) return `https://medtech.social/p/events/${encodeURIComponent(slug)}`
+  if (slug) return `https://medtech.social/events/${encodeURIComponent(slug)}`
   if (typeof event.public_url === 'string' && event.public_url.trim()) {
     try {
       const url = new URL(event.public_url)
       if (url.pathname.startsWith('/p/events/')) {
+        return `https://medtech.social${url.pathname.slice('/p'.length)}${url.search}${url.hash}`
+      }
+      if (url.pathname.startsWith('/events/')) {
         return `https://medtech.social${url.pathname}${url.search}${url.hash}`
       }
       if (['https:', 'http:'].includes(url.protocol)) return url.href
@@ -69,7 +72,7 @@ export function isMedTechOwnedEvent(event) {
   return tags.includes('medtech')
     || event?.host_org_id === 'org-baltimore-medtech'
     || /(^|\b)baltimore medtech(\b|$)/i.test(blob)
-    || String(event?.url || event?.public_url || '').includes('medtech.social/p/events/')
+    || /medtech\.social\/(?:p\/)?events\//.test(String(event?.url || event?.public_url || ''))
 }
 
 export function isMedicalEvent(event) {

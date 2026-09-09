@@ -17,7 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-PORTAL_URL = "https://medtech.social/p/users/login"
+PORTAL_URL = "https://medtech.social/users/login"
 
 
 def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
@@ -249,7 +249,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         return {
           title: document.title,
           bodyText,
-          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href === 'https://medtech.social/p/users/login'),
+          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href === 'https://medtech.social/users/login'),
           headerLoginHref: document.querySelector('header nav a.button')?.href || '',
           heroLeft: hero.left,
           heroRight: hero.right,

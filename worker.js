@@ -95,6 +95,17 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
   })
 }
 
+function portalProxyResponse(request, env, url, { stripBase = false } = {}) {
+  const targetUrl = new URL(url)
+  if (stripBase && (targetUrl.pathname === '/p' || targetUrl.pathname.startsWith('/p/'))) {
+    targetUrl.pathname = targetUrl.pathname.slice('/p'.length) || '/'
+  }
+  if (!targetUrl.pathname.startsWith('/p/')) {
+    targetUrl.pathname = `/p${targetUrl.pathname === '/' ? '' : targetUrl.pathname}`
+  }
+  return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl)
+}
+
 function applyApiHeaders(request, response) {
   const headers = applyCorsHeaders(request, new Headers(response.headers))
   headers.set('x-content-type-options', 'nosniff')
@@ -132,10 +143,55 @@ function isHtmlNavigation(request) {
 
 function legacyRedirect(request, url) {
   const target = LEGACY_REDIRECTS.get(url.pathname)
-  if (!target || !['GET', 'HEAD'].includes(request.method)) return null
+  if (!['GET', 'HEAD'].includes(request.method)) return null
+  if (isLegacyPortalRoute(url.pathname)) {
+    const destination = new URL(url.toString())
+    destination.pathname = url.pathname.slice('/p'.length) || '/'
+    return Response.redirect(destination.toString(), 308)
+  }
+  if (!target) return null
   const destination = new URL(target, url.origin)
   destination.search = url.search
   return Response.redirect(destination.toString(), 308)
+}
+
+function isPortalAssetPath(pathname) {
+  return pathname === '/p/assets' || pathname.startsWith('/p/assets/')
+    || pathname === '/p/images' || pathname.startsWith('/p/images/')
+    || pathname === '/p/css' || pathname.startsWith('/p/css/')
+    || pathname === '/p/manifest.webmanifest'
+    || pathname === '/p/medtech.webmanifest'
+    || pathname === '/p/push-sw.js'
+    || pathname === '/p/mobile-update.json'
+    || pathname === '/p/orgportal-android-release.apk'
+    || /^\/p\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|json|webmanifest)$/.test(pathname)
+}
+
+function isLegacyPortalRoute(pathname) {
+  return pathname === '/p'
+    || pathname.startsWith('/p/users/')
+    || pathname.startsWith('/p/events')
+    || pathname.startsWith('/p/orgs')
+    || pathname.startsWith('/p/people')
+    || pathname.startsWith('/p/chat')
+    || pathname.startsWith('/p/community')
+    || pathname.startsWith('/p/medtech-events')
+    || pathname.startsWith('/p/auth/callback')
+}
+
+function isPortalRoute(pathname) {
+  return pathname === '/users' || pathname.startsWith('/users/')
+    || pathname === '/events' || pathname.startsWith('/events/')
+    || pathname === '/orgs' || pathname.startsWith('/orgs/')
+    || pathname === '/people' || pathname.startsWith('/people/')
+    || pathname === '/chat' || pathname.startsWith('/chat/')
+    || pathname === '/community' || pathname.startsWith('/community/')
+    || pathname === '/medtech-events' || pathname.startsWith('/medtech-events/')
+    || pathname === '/auth/callback'
+    || pathname === '/calendar'
+    || pathname === '/email' || pathname.startsWith('/email/')
+    || pathname === '/profile'
+    || pathname === '/settings'
 }
 
 export default {
@@ -146,9 +202,8 @@ export default {
     const redirect = legacyRedirect(request, url)
     if (redirect) return redirect
 
-    if (url.pathname === '/auth/callback') {
-      url.pathname = '/p/auth/callback'
-      return Response.redirect(url.toString(), 308)
+    if (isPortalAssetPath(url.pathname)) {
+      return portalProxyResponse(request, env, url)
     }
 
     if (url.pathname === '/api/datasets' || url.pathname.startsWith('/api/datasets/')) {
@@ -174,8 +229,8 @@ export default {
       return applyApiHeaders(request, response)
     }
 
-    if (url.pathname === '/p' || url.pathname.startsWith('/p/')) {
-      return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, url)
+    if (isPortalRoute(url.pathname)) {
+      return portalProxyResponse(request, env, url)
     }
 
     const response = await env.ASSETS.fetch(request)

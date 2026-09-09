@@ -9,7 +9,7 @@ import {
   parseEventDate,
 } from './medical-events.js'
 
-const PORTAL_URL = 'https://medtech.social/p/users/login'
+const PORTAL_URL = 'https://medtech.social/users/login'
 
 const state = {
   events: [],

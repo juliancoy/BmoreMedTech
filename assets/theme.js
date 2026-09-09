@@ -75,8 +75,83 @@ function ensureDatasetNavigation() {
   nav.insertBefore(link, insertionPoint || null)
 }
 
+function ensureMedTechEventsNavigation() {
+  const header = document.querySelector('.site-header')
+  const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
+  if (!header || !nav) return
+  const orphan = [...header.querySelectorAll(':scope a[href*="/p/medtech-events"]')]
+    .find((link) => !nav.contains(link))
+  if (nav.querySelector('a[href*="/p/medtech-events"]')) {
+    orphan?.remove()
+    return
+  }
+  const link = orphan || document.createElement('a')
+  link.href = link.getAttribute('href') || 'https://community.medtech.social/p/medtech-events'
+  link.textContent = link.textContent.trim() || 'MedTech Events'
+  const insertionPoint = nav.querySelector('a[href="/map.html"]') || nav.querySelector('.theme-control, .nav-cta')
+  nav.insertBefore(link, insertionPoint || null)
+}
+
+function setupPrimaryNavigation() {
+  const header = document.querySelector('.site-header')
+  const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
+  if (!header || !nav) return
+
+  let toggle = header.querySelector('.nav-toggle')
+  if (!nav.id) nav.id = 'primary-nav'
+  if (!toggle) {
+    toggle = document.createElement('button')
+    toggle.className = 'nav-toggle'
+    toggle.type = 'button'
+    toggle.setAttribute('aria-expanded', 'false')
+    toggle.setAttribute('aria-controls', nav.id)
+    toggle.innerHTML = '<span>Menu</span><span class="nav-toggle-lines" aria-hidden="true"></span>'
+    nav.parentElement?.insertBefore(toggle, nav)
+  }
+
+  document.documentElement.classList.add('nav-enhanced')
+
+  const setNavOpen = (open, { moveFocus = false } = {}) => {
+    toggle.setAttribute('aria-expanded', String(open))
+    toggle.classList.toggle('is-open', open)
+    nav.classList.toggle('is-open', open)
+    document.body.classList.toggle('nav-open', open)
+    if (open && moveFocus) {
+      requestAnimationFrame(() => nav.querySelector('a, button')?.focus())
+    }
+  }
+
+  setNavOpen(false)
+  requestAnimationFrame(() => nav.classList.add('nav-interactive'))
+
+  toggle.addEventListener('click', () => {
+    setNavOpen(toggle.getAttribute('aria-expanded') !== 'true', { moveFocus: true })
+  })
+
+  nav.addEventListener('click', (event) => {
+    if (event.target.closest('a')) setNavOpen(false)
+  })
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.site-header')) setNavOpen(false)
+  })
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && nav.classList.contains('is-open')) {
+      setNavOpen(false)
+      toggle.focus()
+    }
+  })
+
+  window.matchMedia?.('(min-width: 721px)').addEventListener?.('change', (event) => {
+    if (event.matches) setNavOpen(false)
+  })
+}
+
 setupThemeControls();
 ensureDatasetNavigation();
+ensureMedTechEventsNavigation();
+setupPrimaryNavigation();
 
 if (document.querySelector('.taxonomy-page')) {
   import('./semantic-flow.js')

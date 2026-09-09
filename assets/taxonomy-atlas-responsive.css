@@ -309,3 +309,31 @@
     transition: none;
   }
 }
+
+@media (max-width: 820px) {
+  .nav-enhanced .taxonomy-site-header {
+    min-height: 66px;
+    padding: 10px 14px;
+  }
+
+  .nav-enhanced .taxonomy-site-header .site-header-inner {
+    align-items: center;
+    flex-direction: row;
+    gap: 14px;
+  }
+
+  .nav-enhanced .taxonomy-site-header nav {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    width: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .nav-enhanced .taxonomy-site-header .theme-control,
+  .nav-enhanced .taxonomy-site-header .nav-cta {
+    grid-column: auto;
+  }
+}

@@ -2550,3 +2550,189 @@ h2 {
     gap: 42px;
   }
 }
+
+@media (max-width: 720px) {
+  .nav-enhanced .site-header {
+    min-height: 66px;
+    padding: 10px 14px;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .nav-enhanced .site-header-inner {
+    width: 100%;
+    align-items: center;
+  }
+
+  .nav-enhanced .site-header,
+  .nav-enhanced .site-header-inner {
+    position: relative;
+  }
+
+  .nav-enhanced .site-header {
+    position: sticky;
+  }
+
+  .nav-enhanced .brand {
+    min-width: 0;
+  }
+
+  .nav-enhanced .brand-copy,
+  .nav-enhanced .brand > span {
+    min-width: 0;
+  }
+
+  .nav-enhanced .brand-copy strong,
+  .nav-enhanced .brand > span:not(.brand-copy) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-enhanced .nav-toggle {
+    flex: 0 0 auto;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 8px 24px rgba(11, 22, 31, 0.08);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  :root[data-theme="dark"] .nav-enhanced .nav-toggle {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  }
+
+  .nav-enhanced .nav-toggle[aria-expanded="true"] {
+    border-color: color-mix(in srgb, var(--blue) 45%, var(--line));
+    color: var(--blue);
+  }
+
+  .nav-enhanced .nav-toggle-lines,
+  .nav-enhanced .nav-toggle-lines::before,
+  .nav-enhanced .nav-toggle-lines::after {
+    display: block;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition:
+      transform 160ms ease,
+      opacity 160ms ease;
+  }
+
+  .nav-enhanced .nav-toggle-lines {
+    position: relative;
+  }
+
+  .nav-enhanced .nav-toggle-lines::before,
+  .nav-enhanced .nav-toggle-lines::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
+
+  .nav-enhanced .nav-toggle-lines::before {
+    top: -5px;
+  }
+
+  .nav-enhanced .nav-toggle-lines::after {
+    top: 5px;
+  }
+
+  .nav-enhanced .nav-toggle[aria-expanded="true"] .nav-toggle-lines {
+    background: transparent;
+  }
+
+  .nav-enhanced .nav-toggle[aria-expanded="true"] .nav-toggle-lines::before {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .nav-enhanced .nav-toggle[aria-expanded="true"] .nav-toggle-lines::after {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
+  .nav-enhanced .site-header nav,
+  .nav-enhanced .home-body nav {
+    position: absolute;
+    z-index: 50;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: calc(100svh - 86px);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--paper);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transform: translateY(-6px);
+  }
+
+  .nav-enhanced .site-header > nav {
+    left: 14px;
+    right: 14px;
+  }
+
+  .nav-enhanced .site-header nav.nav-interactive {
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease,
+      visibility 160ms ease;
+  }
+
+  .nav-enhanced .site-header nav.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .nav-enhanced .site-header nav a,
+  .nav-enhanced .site-header nav .button,
+  .nav-enhanced .site-header nav .nav-cta {
+    width: 100%;
+    min-height: 46px;
+    justify-content: flex-start;
+    margin-left: 0;
+    padding-inline: 14px;
+    border-radius: 9px;
+  }
+
+  .nav-enhanced .site-header nav a[aria-current="page"] {
+    box-shadow: inset 3px 0 0 var(--blue);
+  }
+
+  .nav-enhanced .site-header nav .nav-cta,
+  .nav-enhanced .site-header nav a.button:last-child {
+    justify-content: center;
+  }
+
+  .nav-enhanced .site-header nav .theme-control {
+    width: 100%;
+    grid-column: auto;
+    justify-content: stretch;
+    border-radius: 12px;
+  }
+
+  .nav-enhanced .site-header nav .theme-option {
+    flex: 1;
+    min-height: 38px;
+  }
+}

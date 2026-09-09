@@ -226,6 +226,10 @@ const server = https.createServer(
         await serveDatasetApi(req, res, requestUrl)
         return
       }
+      if (requestUrl.pathname === '/.well-known/oauth-protected-resource/api/org/mcp' || requestUrl.pathname.startsWith('/.well-known/oauth-protected-resource/api/org/mcp/')) {
+        await serveProxy(req, res, requestUrl, orgApiOrigin)
+        return
+      }
       if (requestUrl.pathname === '/api/org' || requestUrl.pathname.startsWith('/api/org/')) {
         await serveProxy(req, res, requestUrl, orgApiOrigin, '/api/org')
         return

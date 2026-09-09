@@ -9,6 +9,11 @@ const publicRoot = process.env.PUBLIC_ROOT || ''
 const port = Number.parseInt(process.env.CONTAINER_PORT || '8080', 10)
 const certFile = process.env.TLS_CERT_FILE || '/certs/localhost.crt'
 const keyFile = process.env.TLS_KEY_FILE || '/certs/localhost.key'
+const orgApiOrigin = process.env.ORG_API_ORIGIN || 'https://org-codecollective.jcloiacon.workers.dev'
+const orgPublicEventPrefixes = [
+  '/api/org/api/network/orgs/public/baltimore-medtech/events',
+  '/api/org/api/network/events/public',
+]
 const allowedCorsOrigins = new Set([
   'https://baltimore-medtech.jcloiacon.workers.dev',
   'https://baltimoremedtech.org',
@@ -181,6 +186,36 @@ async function serveDatasetApi(req, res, requestUrl) {
   }
 }
 
+function isPublicOrgEventRequest(pathname) {
+  return orgPublicEventPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+}
+
+async function serveOrgPublicEventApi(req, res, requestUrl) {
+  if (!['GET', 'HEAD'].includes(req.method || 'GET')) {
+    send(res, 405, 'Method not allowed\n', {
+      allow: 'GET, HEAD, OPTIONS',
+      'content-type': 'text/plain; charset=utf-8',
+      ...corsHeaders(req),
+    })
+    return
+  }
+  try {
+    const targetUrl = new URL(requestUrl)
+    const targetOrigin = new URL(orgApiOrigin.replace(/\/+$/, ''))
+    targetUrl.protocol = targetOrigin.protocol
+    targetUrl.host = targetOrigin.host
+    targetUrl.pathname = requestUrl.pathname.slice('/api/org'.length) || '/'
+    const response = await fetch(webRequest(req, targetUrl))
+    await sendWebResponse(req, res, response)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Org event request failed'
+    send(res, 502, JSON.stringify({ ok: false, error: message }), {
+      'content-type': 'application/json; charset=utf-8',
+      ...corsHeaders(req),
+    })
+  }
+}
+
 const server = https.createServer(
   {
     cert: readFileSync(certFile),
@@ -195,6 +230,10 @@ const server = https.createServer(
       const requestUrl = new URL(req.url || '/', `https://${req.headers.host || 'localhost'}`)
       if (requestUrl.pathname === '/api/datasets' || requestUrl.pathname.startsWith('/api/datasets/')) {
         await serveDatasetApi(req, res, requestUrl)
+        return
+      }
+      if (isPublicOrgEventRequest(requestUrl.pathname)) {
+        await serveOrgPublicEventApi(req, res, requestUrl)
         return
       }
       const filePath = await existingFile(cleanPathname(requestUrl.pathname))

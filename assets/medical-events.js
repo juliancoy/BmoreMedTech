@@ -1,4 +1,21 @@
 export const MEDICAL_EVENTS_SOURCE_URL = 'https://codecollective.us/baltimore/upcoming_events.json'
+export const MEDTECH_ORG_EVENTS_SOURCE_URL = '/api/org/api/network/orgs/public/baltimore-medtech/events?upcoming_only=true&limit=120'
+export const MEDTECH_EVENTS_URL = 'https://community.medtech.social/p/medtech-events'
+
+export function medtechEventUrl(event) {
+  const slug = typeof event.slug === 'string' ? event.slug.trim() : typeof event.portalSlug === 'string' ? event.portalSlug.trim() : ''
+  if (slug) return `https://community.medtech.social/p/events/${encodeURIComponent(slug)}`
+  if (typeof event.public_url === 'string' && event.public_url.trim()) {
+    try {
+      const url = new URL(event.public_url)
+      if (url.pathname.startsWith('/p/events/')) {
+        return `https://community.medtech.social${url.pathname}${url.search}${url.hash}`
+      }
+      if (['https:', 'http:'].includes(url.protocol)) return url.href
+    } catch { /* Fall back to the MedTech events page. */ }
+  }
+  return MEDTECH_EVENTS_URL
+}
 
 export function eventImageUrl(event) {
   for (const value of [event.imageUrl, event.orgImageUrl]) {
@@ -45,7 +62,18 @@ function eventBlob(event) {
   ].map(searchableText).join(' ')
 }
 
+export function isMedTechOwnedEvent(event) {
+  if (event?.medtechOwned === true) return true
+  const tags = Array.isArray(event?.tags) ? event.tags.map((tag) => String(tag).toLowerCase()) : []
+  const blob = eventBlob(event).toLowerCase()
+  return tags.includes('medtech')
+    || event?.host_org_id === 'org-baltimore-medtech'
+    || /(^|\b)baltimore medtech(\b|$)/i.test(blob)
+    || String(event?.url || event?.public_url || '').includes('community.medtech.social/p/events/')
+}
+
 export function isMedicalEvent(event) {
+  if (isMedTechOwnedEvent(event)) return true
   const tags = Array.isArray(event.tags) ? event.tags.map((tag) => String(tag).toLowerCase()) : []
   const blob = eventBlob(event)
   const normalizedBlob = blob.toLowerCase()
@@ -56,6 +84,56 @@ export function isMedicalEvent(event) {
   if (sourceMatch || keywordMatch) return true
   if (taggedHealth && !wellnessOnly.test(blob)) return true
   return false
+}
+
+export function normalizeMedTechPortalEvent(event) {
+  const location = typeof event.location === 'string' ? event.location.trim() : ''
+  const organizationName = event.organization_name || event.host_org_name || 'Baltimore MedTech'
+  return {
+    name: event.title || event.name || 'Baltimore MedTech event',
+    description: event.description || '',
+    startDate: event.starts_at || event.startDate || '',
+    endTime: event.ends_at || event.endTime || '',
+    url: medtechEventUrl(event),
+    status: 'ACTIVE',
+    location: {
+      name: location,
+      address: location,
+      city: 'Baltimore',
+      state: 'MD',
+      country: 'US',
+    },
+    imageUrl: event.image_url || event.imageUrl || '',
+    orgImageUrl: event.orgImageUrl || '',
+    tags: Array.isArray(event.tags) ? [...new Set(['medtech', ...event.tags])] : ['medtech'],
+    source: MEDTECH_EVENTS_URL,
+    source_url: MEDTECH_EVENTS_URL,
+    source_group: organizationName,
+    org_name: organizationName,
+    orgName: organizationName,
+    medtechOwned: true,
+    portalEventId: event.id || null,
+    portalSlug: event.slug || null,
+    slug: event.slug || null,
+  }
+}
+
+export function mergeEventSources(...sources) {
+  const seen = new Set()
+  const merged = []
+  for (const events of sources) {
+    if (!Array.isArray(events)) continue
+    for (const event of events) {
+      const dateKey = String(event.startDate || event.starts_at || '').slice(0, 19)
+      const nameKey = String(event.name || event.title || '').trim().toLowerCase()
+      const urlKey = String(event.url || event.public_url || '').trim().toLowerCase()
+      const key = urlKey || `${nameKey}|${dateKey}`
+      if (!key || seen.has(key)) continue
+      seen.add(key)
+      merged.push(event)
+    }
+  }
+  return merged
 }
 
 export function parseEventDate(event) {

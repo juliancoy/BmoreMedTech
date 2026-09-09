@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Start Here | Baltimore MedTech</title>
+    <meta
+      name="description"
+      content="A practical first-step guide for joining Baltimore MedTech, finding events, using the regional data tools, and connecting with medical collaborators."
+    />
+    <link rel="icon" type="image/jpeg" href="/assets/images/baltimore-medtech-logo-square.jpg" />
+    <link rel="apple-touch-icon" href="/assets/images/baltimore-medtech-logo-square.jpg" />
+    <script>
+      (() => {
+        const key = 'bmore-medtech.theme';
+        const stored = (() => { try { return localStorage.getItem(key); } catch { return null; } })();
+        const mode = stored === 'light' || stored === 'dark' ? stored : 'system';
+        const resolved = mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : mode === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.dataset.theme = resolved;
+      })();
+    </script>
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script type="module" src="/assets/theme.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Baltimore MedTech home">
+        <img src="/assets/images/baltimore-medtech-logo-square.jpg" alt="" />
+        <span>Baltimore MedTech</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/calendar.html">General Calendar</a>
+        <a href="https://medtech.social/medtech-events">MedTech Events</a>
+        <a aria-current="page" href="/start.html">Start Here</a>
+        <a href="/map.html">Map</a>
+        <a href="/taxonomy.html">MedTech Index</a>
+        <div class="theme-control" role="group" aria-label="Color theme">
+          <button class="theme-option" type="button" data-theme-mode="system" aria-label="Use system theme" aria-pressed="true" title="System theme">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </button>
+          <button class="theme-option" type="button" data-theme-mode="light" aria-label="Use light theme" aria-pressed="false" title="Light theme">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+          </button>
+          <button class="theme-option" type="button" data-theme-mode="dark" aria-label="Use dark theme" aria-pressed="false" title="Dark theme">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 0 1 0 20.5 15.2Z"/></svg>
+          </button>
+        </div>
+        <a class="button" href="https://medtech.social/users/login">Member login</a>
+      </nav>
+    </header>
+
+    <main id="main-content" class="start-page">
+      <section class="start-hero">
+        <div>
+          <p class="eyebrow">Start Here</p>
+          <h1>Pick the first move that gets you into the room.</h1>
+          <p>
+            Baltimore MedTech works best when your profile, events, and data context point toward the same local
+            network. Start with the action that matches what you need next.
+          </p>
+        </div>
+        <aside class="start-panel">
+          <span class="eyebrow">Next step</span>
+          <strong>Attend the next Baltimore MedTech event.</strong>
+          <a href="https://medtech.social/medtech-events">View event registration</a>
+        </aside>
+      </section>
+
+      <section class="start-section" aria-labelledby="first-actions-title">
+        <p class="eyebrow">First actions</p>
+        <h2 id="first-actions-title">Use the portal and the public tools together.</h2>
+        <div class="start-grid">
+          <a class="start-card" href="https://medtech.social/users/register">
+            <span>Join</span>
+            <strong>Create your profile</strong>
+            <small>Use one account for events, directory visibility, and organization access.</small>
+          </a>
+          <a class="start-card" href="https://medtech.social/medtech-events">
+            <span>Attend</span>
+            <strong>Register for events</strong>
+            <small>MedTech-owned events are handled through OrgPortal registration.</small>
+          </a>
+          <a class="start-card" href="/map.html">
+            <span>Map</span>
+            <strong>Understand the region</strong>
+            <small>Explore institutions, programs, risk layers, and event activity geographically.</small>
+          </a>
+          <a class="start-card" href="/datasets.html">
+            <span>Data</span>
+            <strong>Open the workbook</strong>
+            <small>Use public datasets as shared evidence for planning, programming, and collaboration.</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="start-section" aria-labelledby="lanes-title">
+        <p class="eyebrow">Choose a lane</p>
+        <h2 id="lanes-title">Arrive with context for your role.</h2>
+        <div class="start-grid">
+          <a class="start-card" href="https://medtech.social/search?q=clinician%20medicine&amp;scope=people">
+            <span>Clinicians</span>
+            <strong>Find practical peers</strong>
+            <small>Look for people who can connect care reality to buildable medical technology.</small>
+          </a>
+          <a class="start-card" href="https://medtech.social/search?q=research%20biotech&amp;scope=people">
+            <span>Researchers</span>
+            <strong>Find translation partners</strong>
+            <small>Connect technical or laboratory insight to clinicians, operators, and founders.</small>
+          </a>
+          <a class="start-card" href="/need-availability-distortions.html">
+            <span>Founders</span>
+            <strong>Pressure-test the need</strong>
+            <small>Ground a product idea in shortage signals, capacity, and local workflows.</small>
+          </a>
+          <a class="start-card" href="https://medtech.social/orgs/register">
+            <span>Institutions</span>
+            <strong>Claim an organization</strong>
+            <small>Make programs, events, and collaboration points visible to the network.</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="start-section" aria-labelledby="event-practice-title">
+        <p class="eyebrow">Event practice</p>
+        <h2 id="event-practice-title">Make each gathering compound.</h2>
+        <ol class="start-checklist">
+          <li>
+            <span>Before</span>
+            <p>Register through OrgPortal, add a profile note, and skim the topic track or data page connected to the event.</p>
+          </li>
+          <li>
+            <span>During</span>
+            <p>Use the public attendee context to find relevant people while respecting professional privacy norms.</p>
+          </li>
+          <li>
+            <span>After</span>
+            <p>Follow up through the directory, add missing organizations, and turn useful leads into future programming.</p>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer-grid">
+        <div>
+          <a class="footer-brand" href="/">Baltimore MedTech</a>
+          <p>Connecting health, medicine, and biotech across the Baltimore region.</p>
+        </div>
+        <div class="footer-links" aria-label="Footer navigation">
+          <a href="/calendar.html">General Calendar</a>
+          <a href="https://medtech.social/medtech-events">MedTech Events</a>
+          <a href="/map.html">Medical map</a>
+          <a href="/taxonomy.html">MedTech index</a>
+          <a href="/datasets.html">Data sheets</a>
+        </div>
+        <div class="footer-action">
+          <span>Your next connection starts here.</span>
+          <a href="https://medtech.social/users/register">Join Baltimore MedTech <span aria-hidden="true">&nearr;</span></a>
+        </div>
+      </div>
+    </footer>
+    <div class="social-links" aria-label="Community links">
+      <a class="social-link" href="https://github.com/juliancoy/BmoreMedTech" target="_blank" rel="noopener noreferrer" aria-label="View Baltimore MedTech on GitHub" title="View Baltimore MedTech on GitHub"><span class="social-button"><svg class="social-icon github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.39 7.86 10.92.58.11.79-.25.79-.56v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18A10.98 10.98 0 0 1 12 6.04c.98 0 1.96.13 2.88.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.42-2.7 5.4-5.27 5.68.42.36.79 1.07.79 2.16v3.14c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg></span></a>
+      <a class="social-link" href="https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V" target="_blank" rel="noopener noreferrer" aria-label="Join Baltimore MedTech on WhatsApp" title="Join Baltimore MedTech on WhatsApp"><span class="social-button"><img src="/assets/images/whatsapp.webp" alt="" class="social-icon" /></span></a>
+    </div>
+  </body>
+</html>

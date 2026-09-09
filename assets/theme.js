@@ -92,6 +92,16 @@ function ensureMedTechEventsNavigation() {
   nav.insertBefore(link, insertionPoint || null)
 }
 
+function ensureStartNavigation() {
+  const nav = document.querySelector('.site-header nav')
+  if (!nav || nav.querySelector('a[href="/start.html"]')) return
+  const link = document.createElement('a')
+  link.href = '/start.html'
+  link.textContent = 'Start Here'
+  const insertionPoint = nav.querySelector('a[href="/map.html"]') || nav.querySelector('.theme-control, .nav-cta')
+  nav.insertBefore(link, insertionPoint || null)
+}
+
 function setupPrimaryNavigation() {
   const header = document.querySelector('.site-header')
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
@@ -151,6 +161,7 @@ function setupPrimaryNavigation() {
 setupThemeControls();
 ensureDatasetNavigation();
 ensureMedTechEventsNavigation();
+ensureStartNavigation();
 setupPrimaryNavigation();
 
 if (document.querySelector('.taxonomy-page')) {

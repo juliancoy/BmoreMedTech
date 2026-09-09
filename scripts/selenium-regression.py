@@ -32,6 +32,11 @@ def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
     options.add_argument("--no-sandbox")
     options.set_capability("acceptInsecureCerts", True)
     driver = webdriver.Remote(command_executor=selenium_url, options=options)
+    # Headless Chrome cannot answer the permission prompt used by map sharing.
+    driver.execute_cdp_cmd(
+        "Browser.grantPermissions",
+        {"permissions": ["clipboardReadWrite", "clipboardSanitizedWrite"]},
+    )
     driver.execute_cdp_cmd(
         "Page.addScriptToEvaluateOnNewDocument",
         {

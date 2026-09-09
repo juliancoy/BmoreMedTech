@@ -1,6 +1,5 @@
 {
-  "schemaVersion": 1,
-  "provider": "luma",
+  "organizationId": "MEDTECH_ORGANIZATION_DATABASE_ID",
   "eventId": "evt-HcIBdMOolELnKgY",
   "update": {
     "startAt": "2026-09-29T22:00:00.000Z",
@@ -8,13 +7,6 @@
     "timezone": "America/New_York",
     "tintColor": "#0f6f8f"
   },
-  "coverFile": "../assets/images/baltimore-medtech-social-preview.png",
-  "hosts": [
-    {
-      "email": "daniel.kai@palavahut.co",
-      "name": "Palava Hut",
-      "accessLevel": "manager",
-      "isVisible": true
-    }
-  ]
+  "applyBranding": true,
+  "confirm": false
 }

@@ -64,6 +64,12 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(portalIcon.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/p/codecollective_logo.png')
 
+  const portalSearch = await worker.fetch(new Request('https://medtech.social/search?q=medtech&scope=people', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(portalSearch.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/search?q=medtech&scope=people')
+
   const legacyPortal = await worker.fetch(new Request('https://medtech.social/p/users/login?portalProfile=baltimore-medtech', {
     headers: { accept: 'text/html' },
   }), env)

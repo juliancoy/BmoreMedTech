@@ -27,6 +27,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
+        start: 'start.html',
         calendar: 'calendar.html',
         map: 'map.html',
         taxonomy: 'taxonomy.html',

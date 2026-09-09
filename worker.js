@@ -192,6 +192,8 @@ function isPortalRoute(pathname) {
     || pathname === '/email' || pathname.startsWith('/email/')
     || pathname === '/profile'
     || pathname === '/settings'
+    || pathname === '/search'
+    || pathname === '/tools' || pathname.startsWith('/tools/')
 }
 
 export default {

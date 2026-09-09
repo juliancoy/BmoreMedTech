@@ -10,6 +10,7 @@ import {
 } from './medical-events.js'
 
 const PORTAL_URL = 'https://medtech.social/users/login'
+const EVENT_TIME_ZONE = 'America/New_York'
 
 const state = {
   events: [],
@@ -58,6 +59,7 @@ function dayKey(date) {
 
 function formatTime(date) {
   return date.toLocaleString(undefined, {
+    timeZone: EVENT_TIME_ZONE,
     weekday: 'short',
     month: 'short',
     day: 'numeric',

@@ -1,5 +1,5 @@
 const SEMANTIC_DATA_URL = '/clinical-semantic-systems.json'
-const MEDTECH_INDEX_URL = '/medtech-index.json'
+const MEDTECH_INDEX_URL = '/medical-science-field-atlas.json'
 
 if (document.body.classList.contains('taxonomy-body')) {
   const state = {

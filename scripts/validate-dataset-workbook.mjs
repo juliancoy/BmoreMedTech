@@ -1,10 +1,12 @@
 import { readFile } from 'node:fs/promises'
+import { access } from 'node:fs/promises'
 import { buildOewsSeriesId, handleDatasetApi } from '../worker/datasets.js'
 
 const root = new URL('../', import.meta.url)
 const text = (path) => readFile(new URL(path, root), 'utf8')
 const json = async (path) => JSON.parse(await text(path))
 const assert = (condition, message) => { if (!condition) throw new Error(message) }
+const exists = async (path) => access(new URL(path, root)).then(() => true, () => false)
 
 const registryManifest = await json('assets/data/dataset-registry.json')
 const registryParts = await Promise.all(registryManifest.parts.map((path) => json(`assets/data/${path.split('/').at(-1)}`)))
@@ -13,7 +15,6 @@ const [
   metaIndex,
   taxonomyDatabases,
   publicFieldAtlas,
-  compatibilityFieldAsset,
   catalog,
   catalogJs,
   sheetJs,
@@ -24,12 +25,10 @@ const [
   pkg,
   theme,
   buildScript,
-  legacyPage,
 ] = await Promise.all([
   json('assets/data/medtech-meta-index.json'),
   json('assets/data/taxonomy-databases.json'),
   json('assets/data/medical-science-field-atlas.json'),
-  json('assets/data/medtech-index.json'),
   text('datasets.html'),
   text('assets/dataset-catalog.js'),
   text('assets/dataset-sheet.js'),
@@ -46,7 +45,6 @@ const [
   json('package.json'),
   text('assets/theme.js'),
   text('scripts/build-medical-science-field-atlas.mjs'),
-  text('datasets/medical-taxonomy.html'),
 ])
 
 assert(registry.meta?.as_of === '2026-09-03', 'Dataset registry must declare the review date')
@@ -107,9 +105,10 @@ for (const [index, [expectedId, expectedMode, expectedAdapter]] of expected.entr
 assert(!ids.has('medical-taxonomy'), 'The former medical-taxonomy dataset id must be retired')
 assert(vite.includes('datasetPages.map'), 'Vite must generate dataset entries from the registry-aligned page list')
 assert(vite.includes('`datasets/${id}.html`'), 'Vite dataset input template is missing')
-assert(vite.includes("legacyMedicalTaxonomy: 'datasets/medical-taxonomy.html'"), 'The retired dataset route must remain a redirect build entry')
-assert(legacyPage.includes('/datasets/medical-science-field-atlas.html'), 'The retired dataset route must redirect to the Field Atlas')
-assert(workerRoot.includes("['/datasets/medical-taxonomy.html', '/datasets/medical-science-field-atlas.html']"), 'The Worker must preserve the retired dataset route')
+assert(!vite.includes('medical-taxonomy.html'), 'The retired medical-taxonomy route must not remain a build entry')
+assert(!workerRoot.includes('medical-taxonomy.html'), 'The Worker must not preserve the retired medical-taxonomy route')
+assert(!(await exists('datasets/medical-taxonomy.html')), 'The retired medical-taxonomy redirect page must be removed')
+assert(!(await exists('assets/data/medtech-index.json')), 'The legacy medtech-index compatibility asset must be removed')
 
 const live = registry.datasets.filter((dataset) => dataset.mode.startsWith('live-'))
 const snapshots = registry.datasets.filter((dataset) => dataset.mode === 'repository-snapshot')
@@ -139,9 +138,8 @@ assert(taxonomyDatabases[0]?.name === 'Medical Science Field Atlas', 'The former
 assert(taxonomyDatabases[0]?.source_url === '/medical-science-field-atlas.json', 'Field Atlas framework must use the renamed public JSON route')
 assert(taxonomyDatabases.every((database) => !database.name.includes('MedTech Index') && !database.description.includes('MedTech Index')), 'Legacy title must not remain in user-facing framework metadata')
 assert(Array.isArray(publicFieldAtlas) && publicFieldAtlas.length === 223, `Public Field Atlas should contain 223 records, found ${publicFieldAtlas.length}`)
-assert(JSON.stringify(publicFieldAtlas) === JSON.stringify(compatibilityFieldAsset), 'The renamed public JSON and compatibility asset must be identical')
 assert(buildScript.includes("const atlasPath = 'assets/data/medical-science-field-atlas.json'"), 'Field Atlas build must publish the renamed asset')
-assert(pkg.scripts['build:index'] === 'node scripts/build-medical-science-field-atlas.mjs', 'Build must use the renamed Field Atlas wrapper')
+assert(pkg.scripts['build:field-atlas'] === 'node scripts/build-medical-science-field-atlas.mjs', 'Build must use the Field Atlas wrapper')
 
 assert(catalog.includes('Open the MedTech Meta Index'), 'Workbook catalog must prominently link the Meta Index')
 assert(catalog.includes('Medical Science Field Atlas'), 'Workbook catalog must expose the renamed Field Atlas')
@@ -155,6 +153,7 @@ assert(workerRoot.includes("url.pathname.startsWith('/api/datasets/')"), 'Root W
 assert(theme.includes("link.href = '/datasets.html'"), 'Shared navigation must expose the data workbook')
 assert(pkg.scripts['dev:worker'] === 'wrangler dev', 'A Worker-backed local development command is required')
 assert(pkg.scripts['test:datasets'] === 'node scripts/validate-dataset-workbook.mjs', 'Dataset validator must be wired into package scripts')
+assert(pkg.scripts['test:data'].includes('npm run test:field-atlas'), 'Field Atlas validation must run during the build')
 assert(pkg.scripts['test:data'].includes('npm run test:datasets'), 'Dataset validation must run during the build')
 
 assert(buildOewsSeriesId({ areatype: 'M', code: '0012580' }, '291123', '01') === 'OEUM001258000000029112301', 'Baltimore OEWS series construction changed unexpectedly')

@@ -8,6 +8,7 @@ import {
 
 const revealItems = [...document.querySelectorAll('[data-reveal]')]
 const nextEventEl = document.getElementById('next-medtech-event')
+const EVENT_TIME_ZONE = 'America/New_York'
 
 function cleanText(value) {
   const div = document.createElement('div')
@@ -26,6 +27,7 @@ function escapeHtml(value) {
 
 function formatHeroEventDate(date) {
   return date.toLocaleString(undefined, {
+    timeZone: EVENT_TIME_ZONE,
     weekday: 'short',
     month: 'short',
     day: 'numeric',

@@ -29,7 +29,7 @@ MedTech-specific provider client as a fallback.
 
 `applyBranding` uses the portal's approved MedTech branding configuration.
 The proposed local cover remains
-[`assets/images/baltimore-medtech-social-preview.png`](../assets/images/baltimore-medtech-social-preview.png).
+[`assets/data/assets/images/baltimore-medtech-social-preview-v2.jpg`](../assets/data/assets/images/baltimore-medtech-social-preview-v2.jpg).
 OrgPortal accepts an already uploaded cover URL, not `coverFile`; upload and
 approve the asset through the provider's administration workflow before setting
 the shared branding configuration. This draft does not perform that upload.

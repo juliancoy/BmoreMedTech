@@ -208,6 +208,13 @@ export default {
       return portalProxyResponse(request, env, url)
     }
 
+    if (url.pathname === '/p' || url.pathname.startsWith('/p/')) {
+      return new Response('Not found\n', {
+        status: 404,
+        headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300, must-revalidate' },
+      })
+    }
+
     if (url.pathname === '/api/datasets' || url.pathname.startsWith('/api/datasets/')) {
       const response = await handleDatasetApi(request, env, url)
       return applyApiHeaders(request, response)

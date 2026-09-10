@@ -75,16 +75,53 @@ def open_page(driver: webdriver.Remote, base_url: str, path: str, expected_text:
 
 
 def click_link(driver: webdriver.Remote, text: str) -> None:
-    element = driver.execute_script(
-        """
-        const needle = arguments[0].toLowerCase();
-        return Array.from(document.querySelectorAll('a, button'))
-          .find((el) => el.textContent.trim().replace(/\\s+/g, ' ').toLowerCase().includes(needle));
-        """,
-        text,
-    )
+    def find_target():
+        return driver.execute_script(
+            """
+            const needle = arguments[0].toLowerCase();
+            return Array.from(document.querySelectorAll('a, button'))
+              .find((el) => [
+                el.textContent,
+                el.getAttribute('aria-label'),
+                el.getAttribute('href')
+              ].filter(Boolean).join(' ').trim().replace(/\\s+/g, ' ').toLowerCase().includes(needle));
+            """,
+            text,
+        )
+
+    element = find_target()
+    if not element:
+        driver.execute_script(
+            """
+            const toggle = document.querySelector('.nav-toggle');
+            if (toggle && toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+            """
+        )
+        element = find_target()
+    if not element and text.lower() in {"login", "member login"}:
+        element = driver.execute_script(
+            """
+            return Array.from(document.querySelectorAll('a'))
+              .find((link) => (link.getAttribute('href') || '').includes('/users/login'));
+            """
+        )
     if not element:
         raise AssertionError(f"Missing click target: {text}")
+    driver.execute_script("arguments[0].click()", element)
+    settle(driver)
+
+
+def click_current_login(driver: webdriver.Remote) -> None:
+    element = driver.execute_script(
+        """
+        const toggle = document.querySelector('.nav-toggle');
+        if (toggle && toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+        return Array.from(document.querySelectorAll('a'))
+          .find((link) => (link.getAttribute('href') || '').includes('/users/login'));
+        """
+    )
+    if not element:
+        raise AssertionError("Missing login link")
     driver.execute_script("arguments[0].click()", element)
     settle(driver)
 
@@ -123,7 +160,7 @@ def simulate_login(driver: webdriver.Remote, base_url: str) -> None:
         raise AssertionError(f"Login form could not be submitted: {submitted}")
 
     WebDriverWait(driver, 15).until(
-        lambda d: "Member login" in visible_text(d)
+        lambda d: "Login" in visible_text(d)
         or "invalid" in visible_text(d).lower()
         or "incorrect" in visible_text(d).lower()
         or "failed" in visible_text(d).lower()
@@ -147,9 +184,9 @@ def run(base_url: str, selenium_url: str) -> None:
 
         driver.get(urljoin(base_url, "/"))
         settle(driver)
-        click_link(driver, "Member login")
+        click_current_login(driver)
         WebDriverWait(driver, 45).until(lambda d: "Welcome to Baltimore MedTech" in visible_text(d))
-        assert_no_broken_images(driver, "member login clickthrough")
+        assert_no_broken_images(driver, "login clickthrough")
     finally:
         driver.quit()
 

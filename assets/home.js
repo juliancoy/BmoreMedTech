@@ -54,14 +54,17 @@ async function showNextMedTechEvent() {
     const location = typeof next.event.location === 'object'
       ? [next.event.location.name, next.event.location.address].filter(Boolean)[0]
       : ''
+    const eventName = cleanText(next.event.name)
     nextEventEl.innerHTML = `
-      ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="" loading="eager" decoding="async" />` : ''}
-      <div>
-        <p class="hero-event-label">Next Baltimore MedTech event</p>
-        <h2>${escapeHtml(cleanText(next.event.name))}</h2>
-        <p>${escapeHtml(formatHeroEventDate(next.date))}${location ? ` | ${escapeHtml(cleanText(location))}` : ''}</p>
-        <a href="${escapeHtml(medtechEventUrl(next.event))}">Register <span aria-hidden="true">&rarr;</span></a>
-      </div>
+      <a class="hero-event-card${imageUrl ? ' has-image' : ''}" href="${escapeHtml(medtechEventUrl(next.event))}" aria-label="Open ${escapeHtml(eventName)}">
+        ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="" loading="eager" decoding="async" />` : ''}
+        <span class="hero-event-copy">
+          <span class="hero-event-label">Next Baltimore MedTech event</span>
+          <span class="hero-event-title">${escapeHtml(eventName)}</span>
+          <span class="hero-event-meta">${escapeHtml(formatHeroEventDate(next.date))}${location ? ` | ${escapeHtml(cleanText(location))}` : ''}</span>
+        </span>
+        <span class="hero-event-cue">View event <span aria-hidden="true">&rarr;</span></span>
+      </a>
     `
     nextEventEl.hidden = false
     nextEventEl.querySelector('img')?.addEventListener('error', (event) => {

@@ -14,13 +14,20 @@ const state = { data: null }
 
 function injectDashboard() {
   const flowHero = document.querySelector('.global-flow-hero')
-  if (!flowHero || document.getElementById('strategy-dashboard')) return false
+  if (!flowHero) return false
 
-  const dashboard = element('section', 'strategy-dashboard')
+  const dashboard = document.getElementById('strategy-dashboard') || element('section', 'strategy-dashboard')
+  if (dashboard.dataset.enhanced === 'true') return true
+  dashboard.className = 'strategy-dashboard'
   dashboard.id = 'strategy-dashboard'
   dashboard.setAttribute('aria-labelledby', 'strategy-dashboard-title')
   dashboard.innerHTML = strategyDashboardMarkup
+  dashboard.dataset.enhanced = 'true'
+  dashboard.hidden = false
   flowHero.insertAdjacentElement('afterend', dashboard)
+  if (window.location.hash === '#strategy-dashboard') {
+    requestAnimationFrame(() => dashboard.scrollIntoView({ block: 'start' }))
+  }
 
   const jumps = document.querySelector('.global-flow-jumps')
   if (jumps && !jumps.querySelector('[href="#strategy-dashboard"]')) {

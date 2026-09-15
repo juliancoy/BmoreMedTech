@@ -3,7 +3,7 @@
 MedTech's public site contains medical datasets, taxonomy and strategy views,
 and medical event discovery. Organization services in the live deployment are
 provided by [OrgPortal](https://github.com/juliancoy/OrgPortal). The active
-local deployment checkout is `../CodeCollective/portal`; this repository no
+local deployment checkout is `../OrgPortal`; this repository no
 longer vendors OrgPortal as a submodule.
 
 ```sh
@@ -13,7 +13,7 @@ npm run dev
 ```
 
 The static site builds independently of OrgPortal's services. Shared portal work
-belongs in `../CodeCollective/portal` or upstream OrgPortal, and production
+belongs in `../OrgPortal`, and production
 portal deployment is handled through the CodeCollective deployment flow.
 
 ## Ownership

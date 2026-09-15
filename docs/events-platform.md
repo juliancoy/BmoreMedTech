@@ -2,7 +2,7 @@
 
 MedTech already uses OrgPortal in the live deployment. OrgPortal is not vendored
 in this checkout; the active local deployment checkout is
-`../CodeCollective/portal`.
+`../OrgPortal`.
 
 OrgPortal owns event providers, updates, collaborators, authorization, branding
 application, previews, and operation auditing. MedTech's former event CLI,
@@ -10,7 +10,7 @@ provider registry, and external-provider adapter have been removed. Use the
 existing portal for event administration. Shared event changes belong in
 OrgPortal.
 
-See `../CodeCollective/portal/docs/deployment/EVENTS_MCP.md` for MCP tools,
+See `../OrgPortal/docs/deployment/EVENTS_MCP.md` for MCP tools,
 configuration, and verification. The presence of local code does not establish
 which MCP features are enabled in the live deployment.
 

@@ -16,5 +16,6 @@ branding, and medical presentation/filtering of the existing public event feed.
 Its static-site build and local regression harness remain local tooling.
 
 See `README.md` and `docs/events-platform.md` for the ownership boundary and
-event workflow. Deploying MedTech does not deploy the portal unless the
-CodeCollective deploy wrapper is explicitly run.
+event workflow. Deploying MedTech from this repository must not deploy
+OrgPortal, CodeCollective, PIdP, or chat; use the CodeCollective checkout for
+the shared portal release path.

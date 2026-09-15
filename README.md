@@ -33,6 +33,19 @@ The static site builds independently of OrgPortal's services. Shared portal work
 belongs in `../OrgPortal`, and production
 portal deployment is handled through the CodeCollective deployment flow.
 
+## Deployment
+
+Deploying this repository only publishes the Baltimore MedTech static
+site/Worker at `medtech.social`:
+
+```sh
+./deploy.sh
+```
+
+This deploy path intentionally does not deploy OrgPortal, PIdP, chat, or the
+CodeCollective site bundle. Deploy shared portal changes from the CodeCollective
+repository so there is one OrgPortal production release path.
+
 ## Ownership
 
 | Capability | Owner |

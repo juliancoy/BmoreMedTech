@@ -1,5 +1,7 @@
 import {
   MEDTECH_ORG_EVENTS_SOURCE_URL,
+  MEDTECH_IN_HUT_EVENT_SLUG,
+  eventAttachmentImages,
   eventImageUrl,
   medtechEventUrl,
   normalizeMedTechPortalEvent,
@@ -8,6 +10,8 @@ import {
 
 const revealItems = [...document.querySelectorAll('[data-reveal]')]
 const nextEventEl = document.getElementById('next-medtech-event')
+const eventMediaSection = document.getElementById('medtech-in-hut-media')
+const eventMediaGrid = document.getElementById('medtech-in-hut-gallery')
 const EVENT_TIME_ZONE = 'America/New_York'
 
 function cleanText(value) {
@@ -37,7 +41,7 @@ function formatHeroEventDate(date) {
 }
 
 async function showNextMedTechEvent() {
-  if (!nextEventEl) return
+  if (!nextEventEl && !eventMediaSection) return
   try {
     const response = await fetch(MEDTECH_ORG_EVENTS_SOURCE_URL, { cache: 'no-store' })
     if (!response.ok) throw new Error(`MedTech events returned ${response.status}`)
@@ -48,7 +52,22 @@ async function showNextMedTechEvent() {
       .map((event) => ({ event, date: parseEventDate(event) }))
       .filter((item) => item.date && item.date >= now)
       .sort((a, b) => a.date.getTime() - b.date.getTime())[0]
-    if (!next) return
+    const medtechInHut = (Array.isArray(events) ? events : [])
+      .map(normalizeMedTechPortalEvent)
+      .find((event) => event.slug === MEDTECH_IN_HUT_EVENT_SLUG || event.portalSlug === MEDTECH_IN_HUT_EVENT_SLUG)
+    if (medtechInHut && eventMediaSection && eventMediaGrid) {
+      const images = eventAttachmentImages(medtechInHut)
+      if (images.length) {
+        eventMediaGrid.innerHTML = images.map((image) => `
+          <a class="event-media-card" href="${escapeHtml(image.src)}" target="_blank" rel="noopener noreferrer">
+            <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}" loading="lazy" decoding="async" />
+            <span>${escapeHtml(image.label)}</span>
+          </a>
+        `).join('')
+        eventMediaSection.hidden = false
+      }
+    }
+    if (!next || !nextEventEl) return
 
     const imageUrl = eventImageUrl(next.event)
     const location = typeof next.event.location === 'object'

@@ -1,6 +1,7 @@
 import {
   MEDICAL_EVENTS_SOURCE_URL,
   MEDTECH_ORG_EVENTS_SOURCE_URL,
+  eventAttachmentImages,
   eventImageUrl,
   isMedicalEvent,
   isMedTechOwnedEvent,
@@ -171,6 +172,7 @@ function renderList() {
     const description = cleanText(item.event.description).replace(/\s+/g, ' ').trim()
     const eventUrl = safeUrl(item.event.url)
     const imageUrl = eventImageUrl(item.event)
+    const attachmentImages = eventAttachmentImages(item.event)
     const medtechOwned = isMedTechOwnedEvent(item.event)
     if (medtechOwned) article.classList.add('medtech-owned')
     if (imageUrl) article.classList.add('has-image')
@@ -182,6 +184,16 @@ function renderList() {
         <h3>${escapeHtml(cleanText(item.event.name))}</h3>
         <p>${escapeHtml(formatEventMeta(item.event, item.date))}</p>
         ${description ? `<p>${escapeHtml(description.slice(0, 180))}${description.length > 180 ? '...' : ''}</p>` : ''}
+        ${attachmentImages.length ? `
+          <div class="event-attachment-gallery" aria-label="Event menu images">
+            ${attachmentImages.map((image) => `
+              <a href="${escapeHtml(image.src)}" target="_blank" rel="noopener noreferrer">
+                <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}" loading="lazy" decoding="async" />
+                <span>${escapeHtml(image.label)}</span>
+              </a>
+            `).join('')}
+          </div>
+        ` : ''}
         <a href="${escapeHtml(eventUrl)}" target="_blank" rel="noopener noreferrer">${medtechOwned ? 'Register for this event' : 'Open event'}</a>
       </div>
       ${imageUrl ? `<a class="event-image-link" href="${escapeHtml(eventUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(cleanText(item.event.name))}"><img class="event-image" src="${escapeHtml(imageUrl)}" alt="" loading="lazy" decoding="async" /></a>` : ''}

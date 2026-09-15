@@ -1,6 +1,32 @@
 export const MEDICAL_EVENTS_SOURCE_URL = 'https://codecollective.us/baltimore/upcoming_events.json'
 export const MEDTECH_ORG_EVENTS_SOURCE_URL = '/api/org/api/network/orgs/public/baltimore-medtech/events?upcoming_only=true&limit=120'
 export const MEDTECH_EVENTS_URL = 'https://medtech.social/medtech-events'
+export const MEDTECH_IN_HUT_EVENT_SLUG = 'medtech-in-the-hut'
+
+const eventAttachmentImagesBySlug = {
+  [MEDTECH_IN_HUT_EVENT_SLUG]: [
+    {
+      src: '/assets/images/events/tech-in-the-hut-cocktails.jpg',
+      alt: 'Tech in the Hut launch party cocktail menu for the MedTech in the Hut event.',
+      label: 'Launch party cocktail menu',
+    },
+    {
+      src: '/assets/images/events/nola-starters-classics-menu.jpg',
+      alt: 'NOLA Seafood and Spirits starters, salads, and classics menu.',
+      label: 'NOLA starters and classics',
+    },
+    {
+      src: '/assets/images/events/nola-main-menu.jpg',
+      alt: 'NOLA Seafood and Spirits mains, po boys, sides, and dessert menu.',
+      label: 'NOLA mains and sides',
+    },
+    {
+      src: '/assets/images/events/nola-fat-tuesday-menu.jpg',
+      alt: 'NOLA Fat Tuesday cocktails and food specials menu.',
+      label: 'Fat Tuesday specials',
+    },
+  ],
+}
 
 export function medtechEventUrl(event) {
   const slug = typeof event.slug === 'string' ? event.slug.trim() : typeof event.portalSlug === 'string' ? event.portalSlug.trim() : ''
@@ -18,6 +44,21 @@ export function medtechEventUrl(event) {
     } catch { /* Fall back to the MedTech events page. */ }
   }
   return MEDTECH_EVENTS_URL
+}
+
+export function eventAttachmentImages(event) {
+  if (Array.isArray(event?.media)) {
+    const media = event.media
+      .map((item) => ({
+        src: typeof item?.url === 'string' ? item.url.trim() : '',
+        alt: typeof item?.alt === 'string' ? item.alt.trim() : '',
+        label: typeof item?.label === 'string' ? item.label.trim() : '',
+      }))
+      .filter((item) => item.src)
+    if (media.length) return media
+  }
+  const slug = typeof event?.slug === 'string' ? event.slug.trim() : typeof event?.portalSlug === 'string' ? event.portalSlug.trim() : ''
+  return eventAttachmentImagesBySlug[slug] || []
 }
 
 export function eventImageUrl(event) {
@@ -118,6 +159,7 @@ export function normalizeMedTechPortalEvent(event) {
     portalEventId: event.id || null,
     portalSlug: event.slug || null,
     slug: event.slug || null,
+    media: Array.isArray(event.media) ? event.media : [],
   }
 }
 

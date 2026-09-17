@@ -50,12 +50,23 @@ repository so there is one OrgPortal production release path.
 
 | Capability | Owner |
 | --- | --- |
-| Organizations, membership, identity, permissions, governance, chat, personal calendars, and event administration/provider integrations | OrgPortal and its services |
+| Credentials, social sign-in, sessions, core identity profiles, account security, and OAuth consent/tokens | PIdP, consumed through shared portal interfaces |
+| Organizations, membership, domain permissions, member profiles, governance, chat, personal calendars, and event administration/provider integrations including gallery storage | OrgPortal |
 | Medical datasets and APIs, clinical taxonomy, workforce/strategy analysis, branding, and medical filtering/presentation of the public event feed | MedTech |
 | MedTech static build and local site/Selenium harness | MedTech |
 
 Reuse the existing portal for shared capabilities. Implement shared behavior in
 OrgPortal/CodeCollective; do not copy its services or build another provider
 adapter here.
+
+OrgPortal owns branded sign-in entry points and application routing; reusable
+authentication and account-security behavior belongs in PIdP. Neither an OAuth
+grant nor a successful login creates organization membership or event-management
+permission. Preserve the existing portal account context, permission checks, and
+preview/apply workflow for image uploads. MedTech must not implement another
+login, token issuer, membership service, or event-media store.
+
+See the [OrgPortal account boundary](../OrgPortal/README.md#account-and-service-boundaries)
+and [PIdP account boundary](../pidp/README.md#account-boundaries).
 
 See [event administration and draft migration](docs/events-platform.md).

@@ -9,6 +9,7 @@ and runs the Selenium regression against that mounted server.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import ssl
@@ -28,6 +29,248 @@ PREFIX = "bmoremedtech-"
 DEFAULT_NODE_IMAGE = "node:22-bookworm-slim"
 DEFAULT_PYTHON_IMAGE = "python:3.13-alpine"
 DEFAULT_SELENIUM_IMAGE = "selenium/standalone-chrome:latest"
+DEFAULT_SYSTEM_NETWORK = "bmoremedtech"
+DEFAULT_SYSTEM_PREFIX = "bmoremedtech-"
+DEFAULT_ORG_API_ORIGIN = "https://org-codecollective.jcloiacon.workers.dev"
+DEFAULT_PIDP_IMAGE = "python:3.11-slim"
+DEFAULT_PORTAL_IMAGE = "node:24-alpine"
+
+
+def ensure_network(network_name: str) -> None:
+    try:
+        docker_utils.DOCKER_CLIENT.networks.get(network_name)
+    except Exception:
+        docker_utils.DOCKER_CLIENT.networks.create(network_name)
+
+
+def load_pidp_editme(pidp_dir: Path):
+    path = pidp_dir / "pidp_editme.py"
+    if not path.is_file():
+        example = pidp_dir / "pidp_editme.example.py"
+        raise RuntimeError(f"PIdP config not found at {path}; copy/edit {example} first")
+    spec = importlib.util.spec_from_file_location("bmoremedtech_pidp_editme", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Could not load PIdP config at {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def wait_for_container_healthy(container_name: str, label: str, attempts: int = 80) -> None:
+    for _ in range(attempts):
+        container = docker_utils.DOCKER_CLIENT.containers.get(container_name)
+        container.reload()
+        health = container.attrs.get("State", {}).get("Health", {}).get("Status")
+        if health == "healthy":
+            return
+        time.sleep(1)
+    raise RuntimeError(f"Timed out waiting for {label} container {container_name} to become healthy")
+
+
+def wait_for_container_port(container_name: str, port: int, label: str, runtime: str, attempts: int = 180) -> None:
+    if runtime == "node":
+        command = [
+            "node",
+            "-e",
+            (
+                "const net=require('net');"
+                f"const s=net.createConnection({port}, '127.0.0.1');"
+                "s.setTimeout(1000);"
+                "s.on('connect',()=>{s.destroy();process.exit(0)});"
+                "s.on('timeout',()=>process.exit(1));"
+                "s.on('error',()=>process.exit(1));"
+            ),
+        ]
+    else:
+        command = [
+            "python",
+            "-c",
+            (
+                "import socket;"
+                "s=socket.socket();"
+                "s.settimeout(1);"
+                f"s.connect(('127.0.0.1',{port}));"
+                "s.close()"
+            ),
+        ]
+
+    for _ in range(attempts):
+        container = docker_utils.DOCKER_CLIENT.containers.get(container_name)
+        container.reload()
+        if container.status != "running":
+            raise RuntimeError(f"{label} container {container_name} is {container.status}")
+        result = container.exec_run(command)
+        if result.exit_code == 0:
+            return
+        time.sleep(1)
+    raise RuntimeError(f"Timed out waiting for {label} at {container_name}:{port}")
+
+
+def local_system_values(args: argparse.Namespace) -> dict[str, str]:
+    public_base = f"https://127.0.0.1:{args.site_port}"
+    pidp_public_base = f"{public_base}/pidp"
+    portal_internal_base = f"http://{args.system_prefix}portal-dev:5173"
+    allowed_origins = ",".join(
+        [
+            public_base,
+            f"https://localhost:{args.site_port}",
+            f"https://host.docker.internal:{args.site_port}",
+        ]
+    )
+
+    return {
+        "public_base": public_base,
+        "pidp_public_base": pidp_public_base,
+        "portal_internal_base": portal_internal_base,
+        "allowed_origins": allowed_origins,
+    }
+
+
+def start_pidp(args: argparse.Namespace, values: dict[str, str]) -> None:
+    pidp_dir = Path(args.pidp_dir)
+    pidp_editme = load_pidp_editme(pidp_dir)
+    db_name = f"{args.system_prefix}pidpdb"
+    pidp_name = f"{args.system_prefix}pidp-dev"
+    db_url = (
+        f"postgresql+asyncpg://{pidp_editme.PIDP_POSTGRES_USER}:"
+        f"{pidp_editme.PIDP_POSTGRES_PASSWORD}@{db_name}:5432/PIdP"
+    )
+
+    docker_utils.run_container(
+        {
+            "image": "postgres:15-alpine",
+            "detach": True,
+            "name": db_name,
+            "network": args.system_network,
+            "restart_policy": {"Name": "unless-stopped"},
+            "user": "postgres",
+            "environment": {
+                "POSTGRES_PASSWORD": pidp_editme.PIDP_POSTGRES_PASSWORD,
+                "POSTGRES_USER": pidp_editme.PIDP_POSTGRES_USER,
+                "POSTGRES_DB": "PIdP",
+            },
+            "volumes": {
+                f"{args.system_prefix}PIdP_POSTGRES": {"bind": "/var/lib/postgresql/data", "mode": "rw"}
+            },
+            "healthcheck": {
+                "test": ["CMD-SHELL", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""],
+                "interval": 5000000000,
+                "timeout": 5000000000,
+                "retries": 20,
+            },
+        }
+    )
+    wait_for_container_healthy(db_name, "PIdP database")
+
+    docker_utils.remove_container(pidp_name)
+    docker_utils.run_container(
+        {
+            "image": args.pidp_image,
+            "name": pidp_name,
+            "detach": True,
+            "network": args.system_network,
+            "restart_policy": {"Name": "unless-stopped"},
+            "working_dir": "/app",
+            "volumes": {
+                str(pidp_dir): {"bind": "/app", "mode": "rw"},
+                f"{args.system_prefix}pidp-venv": {"bind": "/venv", "mode": "rw"},
+            },
+            "environment": {
+                "ENV": "dev",
+                "DATABASE_URL": db_url,
+                "SECRET_KEY": os.getenv("PIDP_SECRET_KEY", "bmoremedtech-local-dev-secret"),
+                "PII_ENCRYPTION_KEYS": os.getenv("PIDP_PII_ENCRYPTION_KEYS", ""),
+                "AUTO_CREATE_TABLES": "true",
+                "ALLOWED_ORIGINS": values["allowed_origins"],
+                "ALLOWED_NATIVE_REDIRECT_SCHEMES": os.getenv(
+                    "PIDP_ALLOWED_NATIVE_REDIRECT_SCHEMES",
+                    "org.arkavo.portal",
+                ),
+                "ALLOW_CROSS_LANE_REDIRECT": "false",
+                "ACCESS_TOKEN_EXPIRE_MINUTES": os.getenv("PIDP_ACCESS_TOKEN_EXPIRE_MINUTES", "525600"),
+                "GOOGLE_CLIENT_ID": pidp_editme.PIDP_GOOGLE_CLIENT_ID,
+                "GOOGLE_CLIENT_SECRET": pidp_editme.PIDP_GOOGLE_CLIENT_SECRET,
+                "GOOGLE_REDIRECT_URI": f"{values['pidp_public_base']}/auth/google/callback",
+                "GITHUB_CLIENT_ID": pidp_editme.PIDP_GITHUB_CLIENT_ID,
+                "GITHUB_CLIENT_SECRET": pidp_editme.PIDP_GITHUB_CLIENT_SECRET,
+                "GITHUB_REDIRECT_URI": f"{values['pidp_public_base']}/auth/github/callback",
+                "FRONTEND_REDIRECT_URL": f"{values['public_base']}/auth/callback",
+                "MINIO_ENDPOINT": pidp_editme.MINIO_ENDPOINT,
+                "MINIO_ACCESS_KEY": pidp_editme.MINIO_ACCESS_KEY,
+                "MINIO_SECRET_KEY": pidp_editme.MINIO_SECRET_KEY,
+                "MINIO_BUCKET": pidp_editme.MINIO_BUCKET,
+                "MINIO_PUBLIC_BASE_URL": f"{values['pidp_public_base']}/s3",
+                "MINIO_USE_SSL": os.getenv("PIDP_MINIO_USE_SSL", "true"),
+                "MINIO_SERVER_SIDE_ENCRYPTION": os.getenv("PIDP_MINIO_SERVER_SIDE_ENCRYPTION", "AES256"),
+            },
+            "command": [
+                "sh",
+                "-c",
+                (
+                    "python -m venv /venv && "
+                    "/venv/bin/pip install --quiet --disable-pip-version-check -r requirements.txt && "
+                    "exec /venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app"
+                ),
+            ],
+        }
+    )
+    wait_for_container_port(pidp_name, 8000, "PIdP", "python", attempts=240)
+
+
+def start_orgportal(args: argparse.Namespace, values: dict[str, str]) -> None:
+    portal_dir = Path(args.orgportal_dir) / "web"
+    if not (portal_dir / "package.json").is_file():
+        raise RuntimeError(f"OrgPortal web checkout not found at {portal_dir}")
+    portal_name = f"{args.system_prefix}portal-dev"
+    docker_utils.remove_container(portal_name)
+    docker_utils.run_container(
+        {
+            "image": args.portal_image,
+            "name": portal_name,
+            "detach": True,
+            "network": args.system_network,
+            "restart_policy": {"Name": "unless-stopped"},
+            "working_dir": "/app",
+            "volumes": {
+                str(portal_dir): {"bind": "/app", "mode": "rw"},
+                f"{args.system_prefix}orgportal-node-modules": {"bind": "/app/node_modules", "mode": "rw"},
+            },
+            "environment": {
+                "NODE_ENV": "development",
+                "CHOKIDAR_USEPOLLING": os.getenv("ORGPORTAL_DEV_CHOKIDAR_USEPOLLING", "1"),
+                "CHOKIDAR_INTERVAL": os.getenv("ORGPORTAL_DEV_CHOKIDAR_INTERVAL", "200"),
+                "WATCHPACK_POLLING": os.getenv("ORGPORTAL_DEV_WATCHPACK_POLLING", "true"),
+                "VITE_PIDP_BASE_URL": "/pidp",
+                "VITE_DATA_SOURCE": os.getenv("ORGPORTAL_DATA_SOURCE", "api"),
+                "VITE_PUBLIC_BASE": "/",
+                "VITE_HMR_HOST": "localhost",
+                "VITE_HMR_PROTOCOL": "ws",
+                "VITE_HMR_CLIENT_PORT": "5173",
+                "VITE_ALLOWED_HOSTS": ",".join(
+                    [
+                        "localhost",
+                        "127.0.0.1",
+                        f"{args.system_prefix}portal-dev",
+                    ]
+                ),
+                "PIDP_PROXY_ORIGIN": args.pidp_origin,
+                "ORG_API_ORIGIN": args.org_api_origin,
+            },
+            "command": [
+                "sh",
+                "-c",
+                "npm ci --no-audit --no-fund && npm run dev -- --host 0.0.0.0 --port 5173 --strictPort",
+            ],
+        }
+    )
+    wait_for_container_port(portal_name, 5173, "OrgPortal", "node", attempts=180)
+
+
+def start_shared_system(args: argparse.Namespace) -> None:
+    ensure_network(args.system_network)
+    values = local_system_values(args)
+    start_pidp(args, values)
+    start_orgportal(args, values)
 
 
 def wait_for_http(url: str, label: str, attempts: int = 80) -> None:
@@ -139,31 +382,42 @@ def start_site(args: argparse.Namespace) -> None:
     cert_dir = root / ".local" / "certs"
     ensure_local_certificates(cert_dir)
     docker_utils.remove_container(args.site_container_name)
+    environment = {
+        "SITE_ROOT": f"{WORKSPACE}/dist",
+        "CONTAINER_PORT": "8080",
+        "TLS_CERT_FILE": "/certs/localhost.crt",
+        "TLS_KEY_FILE": "/certs/localhost.key",
+    }
+    if args.org_api_origin:
+        environment["ORG_API_ORIGIN"] = args.org_api_origin
+    if args.pidp_origin:
+        environment["PIDP_PROXY_ORIGIN"] = args.pidp_origin
+    if args.portal_origin:
+        environment["PORTAL_SITE_ORIGIN"] = args.portal_origin
+
+    config = {
+        "image": args.node_image,
+        "name": args.site_container_name,
+        "detach": True,
+        "restart_policy": {"Name": "unless-stopped"},
+        "ports": {"8080/tcp": args.site_port},
+        "working_dir": WORKSPACE,
+        "extra_hosts": {"host.docker.internal": "host-gateway"},
+        "volumes": {
+            str(root): {"bind": WORKSPACE, "mode": "rw"},
+            f"{PREFIX}node-modules": {"bind": f"{WORKSPACE}/node_modules", "mode": "rw"},
+            str(cert_dir): {"bind": "/certs", "mode": "ro"},
+        },
+        "environment": environment,
+        "command": [
+            "node",
+            "scripts/local-static-server.mjs",
+        ],
+    }
+    if not args.medtech_only:
+        config["network"] = args.system_network
     docker_utils.run_container(
-        {
-            "image": args.node_image,
-            "name": args.site_container_name,
-            "detach": True,
-            "restart_policy": {"Name": "unless-stopped"},
-            "ports": {"8080/tcp": args.site_port},
-            "working_dir": WORKSPACE,
-            "extra_hosts": {"host.docker.internal": "host-gateway"},
-            "volumes": {
-                str(root): {"bind": WORKSPACE, "mode": "rw"},
-                f"{PREFIX}node-modules": {"bind": f"{WORKSPACE}/node_modules", "mode": "rw"},
-                str(cert_dir): {"bind": "/certs", "mode": "ro"},
-            },
-            "environment": {
-                "SITE_ROOT": f"{WORKSPACE}/dist",
-                "CONTAINER_PORT": "8080",
-                "TLS_CERT_FILE": "/certs/localhost.crt",
-                "TLS_KEY_FILE": "/certs/localhost.key",
-            },
-            "command": [
-                "node",
-                "scripts/local-static-server.mjs",
-            ],
-        }
+        config
     )
     wait_for_http(f"https://127.0.0.1:{args.site_port}/", "Baltimore MedTech local site")
 
@@ -189,16 +443,24 @@ def start_selenium(args: argparse.Namespace) -> None:
 
 
 def start(args: argparse.Namespace) -> None:
+    if not args.medtech_only:
+        start_shared_system(args)
     if args.build:
         build_site(args)
     start_site(args)
     start_selenium(args)
     print(f"Local site:       https://127.0.0.1:{args.site_port}/")
     print(f"Selenium status:  http://127.0.0.1:{args.selenium_port}/status")
+    if not args.medtech_only:
+        print(f"Portal proxy:     {args.portal_origin}")
+        print(f"PIdP proxy:       {args.pidp_origin}")
+        print(f"Shared network:   {args.system_network}")
     print(f"Live source mount: {root} -> {WORKSPACE}")
 
 
 def run_tests(args: argparse.Namespace) -> None:
+    if not args.medtech_only:
+        start_shared_system(args)
     build_site(args)
     start_site(args)
     start_selenium(args)
@@ -235,12 +497,22 @@ def run_tests(args: argparse.Namespace) -> None:
 
 
 def stop(args: argparse.Namespace) -> None:
-    for name in (
+    names = [
         args.site_container_name,
         args.selenium_container_name,
         f"{PREFIX}build",
         f"{PREFIX}selenium-regression",
-    ):
+    ]
+    names.extend(
+        [
+            f"{args.system_prefix}pidpdb",
+            f"{args.system_prefix}pidp",
+            f"{args.system_prefix}pidp-dev",
+            f"{args.system_prefix}portal",
+            f"{args.system_prefix}portal-dev",
+        ]
+    )
+    for name in names:
         docker_utils.remove_container(name)
 
 
@@ -256,6 +528,31 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--node-image", default=os.getenv("NODE_IMAGE", DEFAULT_NODE_IMAGE))
     parser.add_argument("--python-image", default=os.getenv("PYTHON_IMAGE", DEFAULT_PYTHON_IMAGE))
     parser.add_argument("--selenium-image", default=os.getenv("SELENIUM_IMAGE", DEFAULT_SELENIUM_IMAGE))
+    parser.add_argument("--pidp-image", default=os.getenv("PIDP_DEV_BASE_IMAGE", DEFAULT_PIDP_IMAGE))
+    parser.add_argument("--portal-image", default=os.getenv("ORGPORTAL_DEV_BASE_IMAGE", DEFAULT_PORTAL_IMAGE))
+    parser.add_argument("--medtech-only", action="store_true", help="Start only the MedTech site and Selenium harness.")
+    parser.add_argument("--system-network", default=os.getenv("BMORE_MEDTECH_SYSTEM_NETWORK", DEFAULT_SYSTEM_NETWORK))
+    parser.add_argument("--system-prefix", default=os.getenv("BMORE_MEDTECH_SYSTEM_PREFIX", DEFAULT_SYSTEM_PREFIX))
+    parser.add_argument("--orgportal-dir", default=os.getenv("ORGPORTAL_DIR", str(root.parent / "OrgPortal")))
+    parser.add_argument("--pidp-dir", default=os.getenv("PIDP_DIR", str(root.parent / "pidp")))
+    parser.add_argument("--org-api-origin", default=os.getenv("ORG_API_ORIGIN", DEFAULT_ORG_API_ORIGIN))
+    parser.add_argument("--pidp-origin", default=os.getenv("PIDP_PROXY_ORIGIN"))
+    parser.add_argument("--portal-origin", default=os.getenv("PORTAL_SITE_ORIGIN"))
+
+
+def normalize_args(args: argparse.Namespace) -> argparse.Namespace:
+    if hasattr(args, "orgportal_dir"):
+        args.orgportal_dir = str(Path(args.orgportal_dir).expanduser().resolve())
+    if hasattr(args, "pidp_dir"):
+        args.pidp_dir = str(Path(args.pidp_dir).expanduser().resolve())
+    if getattr(args, "medtech_only", True):
+        return args
+    prefix = args.system_prefix
+    if not args.pidp_origin:
+        args.pidp_origin = f"http://{prefix}pidp-dev:8000"
+    if not args.portal_origin:
+        args.portal_origin = f"http://{prefix}portal-dev:5173"
+    return args
 
 
 def parse_args() -> argparse.Namespace:
@@ -284,9 +581,10 @@ def parse_args() -> argparse.Namespace:
     stop_parser.set_defaults(func=stop)
 
     status_parser = subparsers.add_parser("status")
+    add_common_options(status_parser)
     status_parser.set_defaults(func=status)
 
-    return parser.parse_args()
+    return normalize_args(parser.parse_args())
 
 
 def main() -> int:

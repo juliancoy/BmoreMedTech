@@ -259,6 +259,13 @@ function isRootPortalAssetPath(pathname) {
     || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
 }
 
+function isPortalDevAssetPath(pathname) {
+  return pathname === '/@vite' || pathname.startsWith('/@vite/')
+    || pathname === '/@react-refresh'
+    || pathname === '/src' || pathname.startsWith('/src/')
+    || pathname === '/node_modules' || pathname.startsWith('/node_modules/')
+}
+
 function isPortalRoute(pathname) {
   return pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
@@ -301,6 +308,10 @@ const server = https.createServer(
       }
       if (requestUrl.pathname === '/pidp' || requestUrl.pathname.startsWith('/pidp/')) {
         await serveProxy(req, res, requestUrl, pidpApiOrigin, '/pidp')
+        return
+      }
+      if (isPortalDevAssetPath(requestUrl.pathname)) {
+        await serveProxy(req, res, requestUrl, portalSiteOrigin)
         return
       }
       if (isPortalAssetPath(requestUrl.pathname) || isRootPortalAssetPath(requestUrl.pathname)) {

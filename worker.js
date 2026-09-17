@@ -178,6 +178,13 @@ function isRootPortalAssetPath(pathname) {
     || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
 }
 
+function isPortalDevAssetPath(pathname) {
+  return pathname === '/@vite' || pathname.startsWith('/@vite/')
+    || pathname === '/@react-refresh'
+    || pathname === '/src' || pathname.startsWith('/src/')
+    || pathname === '/node_modules' || pathname.startsWith('/node_modules/')
+}
+
 function isPortalRoute(pathname) {
   return pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
@@ -202,6 +209,10 @@ export default {
     if (['/users/login', '/users/register'].includes(url.pathname) && !url.searchParams.has('portalProfile')) {
       url.searchParams.set('portalProfile', 'baltimore-medtech')
       return Response.redirect(url.toString(), 302)
+    }
+
+    if (isPortalDevAssetPath(url.pathname)) {
+      return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, url, { rewriteCookieDomain: true })
     }
 
     if (isPortalAssetPath(url.pathname) || isRootPortalAssetPath(url.pathname)) {

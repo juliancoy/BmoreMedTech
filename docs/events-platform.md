@@ -14,6 +14,26 @@ See `../OrgPortal/docs/deployment/EVENTS_MCP.md` for MCP tools,
 configuration, and verification. The presence of local code does not establish
 which MCP features are enabled in the live deployment.
 
+## Account-authorized photo uploads
+
+Use OrgPortal's shared browser-authorized uploader for local gallery images:
+
+```sh
+node ../OrgPortal/org-worker/scripts/event-upload.mjs \
+  --resource https://medtech.social/api/org/mcp \
+  --organization org-baltimore-medtech \
+  --event medtech-in-the-hut \
+  --directory "$HOME/Downloads/NOLA_MENU"
+```
+
+This opens PIdP login/consent tied to the user's account, then previews and applies
+each upload with OrgPortal's event permissions. No API key or copied session token
+is needed. Credentials stay in memory for the task. See
+`../OrgPortal/docs/deployment/EVENT_UPLOADS.md` for client registration, release
+prerequisites and failure recovery. The feature must be released in PIdP and
+OrgPortal before this command works against production; deploying MedTech alone
+does not enable it.
+
 ## Portal-owned events
 
 The live portal-owned formational event is `medtech-formational-event`,

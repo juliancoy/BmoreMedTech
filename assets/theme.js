@@ -158,11 +158,34 @@ function setupPrimaryNavigation() {
   })
 }
 
+async function setupAuthNavigation() {
+  const loginLinks = [...document.querySelectorAll('a[href*="/users/login"]')]
+  if (!loginLinks.length) return
+
+  try {
+    const response = await fetch('/pidp/auth/session-token', {
+      credentials: 'include',
+      cache: 'no-store',
+    })
+    if (!response.ok) return
+  } catch {
+    return
+  }
+
+  for (const link of loginLinks) {
+    link.href = '/community'
+    link.innerHTML = link.innerHTML.replace(/\bLogin\b/g, 'Community')
+    if (link.textContent.trim() === 'Login') link.textContent = 'Community'
+    link.setAttribute('aria-label', 'Open Baltimore MedTech community')
+  }
+}
+
 setupThemeControls();
 ensureDatasetNavigation();
 ensureMedTechEventsNavigation();
 ensureStartNavigation();
 setupPrimaryNavigation();
+setupAuthNavigation();
 
 if (document.querySelector('.taxonomy-page')) {
   import('./semantic-flow.js')

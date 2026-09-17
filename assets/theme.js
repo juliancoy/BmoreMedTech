@@ -79,14 +79,14 @@ function ensureMedTechEventsNavigation() {
   const header = document.querySelector('.site-header')
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
   if (!header || !nav) return
-  const orphan = [...header.querySelectorAll(':scope a[href*="/medtech-events"]')]
+  const orphan = [...header.querySelectorAll(':scope a[href*="/org-events"]')]
     .find((link) => !nav.contains(link))
-  if (nav.querySelector('a[href*="/medtech-events"]')) {
+  if (nav.querySelector('a[href*="/org-events"]')) {
     orphan?.remove()
     return
   }
   const link = orphan || document.createElement('a')
-  link.href = link.getAttribute('href') || 'https://medtech.social/medtech-events'
+  link.href = link.getAttribute('href') || '/org-events'
   link.textContent = link.textContent.trim() || 'MedTech Events'
   const insertionPoint = nav.querySelector('a[href="/map.html"]') || nav.querySelector('.theme-control, .nav-cta')
   nav.insertBefore(link, insertionPoint || null)
@@ -173,10 +173,10 @@ async function setupAuthNavigation() {
   }
 
   for (const link of loginLinks) {
-    link.href = '/community'
-    link.innerHTML = link.innerHTML.replace(/\bLogin\b/g, 'Community')
-    if (link.textContent.trim() === 'Login') link.textContent = 'Community'
-    link.setAttribute('aria-label', 'Open Baltimore MedTech community')
+    link.href = '/chat'
+    link.innerHTML = link.innerHTML.replace(/\bLogin\b/g, 'Messages')
+    if (link.textContent.trim() === 'Login') link.textContent = 'Messages'
+    link.setAttribute('aria-label', 'Open Baltimore MedTech messages')
   }
 }
 

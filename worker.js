@@ -199,11 +199,10 @@ function isPortalDevAssetPath(pathname) {
 function isPortalRoute(pathname) {
   return pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
+    || pathname === '/org-events' || pathname.startsWith('/org-events/')
     || pathname === '/orgs' || pathname.startsWith('/orgs/')
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
-    || pathname === '/community' || pathname.startsWith('/community/')
-    || pathname === '/medtech-events' || pathname.startsWith('/medtech-events/')
     || pathname === '/auth/callback'
     || pathname === '/email' || pathname.startsWith('/email/')
     || pathname === '/profile'
@@ -220,6 +219,15 @@ export default {
     if (['/users/login', '/users/register'].includes(url.pathname) && !url.searchParams.has('portalProfile')) {
       url.searchParams.set('portalProfile', 'baltimore-medtech')
       return Response.redirect(url.toString(), 302)
+    }
+
+    if (url.pathname === '/community' || url.pathname.startsWith('/community/')) {
+      return Response.redirect(`${url.origin}/`, 301)
+    }
+
+    if (url.pathname === '/medtech-events' || url.pathname.startsWith('/medtech-events/')) {
+      url.pathname = url.pathname.replace(/^\/medtech-events/, '/org-events')
+      return Response.redirect(url.toString(), 301)
     }
 
     if (isPortalDevAssetPath(url.pathname)) {
@@ -249,6 +257,16 @@ export default {
 
     if (url.pathname === '/api/org' || url.pathname.startsWith('/api/org/')) {
       const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url, { stripPrefix: '/api/org' })
+      return applyApiHeaders(request, response)
+    }
+
+    if (url.pathname === '/api/network' || url.pathname.startsWith('/api/network/')) {
+      const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url)
+      return applyApiHeaders(request, response)
+    }
+
+    if (url.pathname === '/api/chat' || url.pathname.startsWith('/api/chat/')) {
+      const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url, { stripPrefix: '/api/chat' })
       return applyApiHeaders(request, response)
     }
 

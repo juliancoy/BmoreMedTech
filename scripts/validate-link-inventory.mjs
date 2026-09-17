@@ -1,4 +1,5 @@
-import { readdir, readFile, stat } from 'node:fs/promises'
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
+import { dirname } from 'node:path'
 import { relative } from 'node:path'
 
 const root = new URL('../', import.meta.url)
@@ -15,6 +16,11 @@ const knownExternalOrigins = new Set([
   'https://github.com',
   'https://medtech.social',
 ])
+const knownPortalRoutes = new Set([
+  '/org-events',
+])
+const writeIndex = process.argv.indexOf('--write')
+const plannedOutputPath = writeIndex === -1 ? '' : process.argv[writeIndex + 1]
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(message)
@@ -41,6 +47,7 @@ function normalizePage(pathname) {
   if (pathname === '/') return 'index.html'
   const trimmed = pathname.replace(/^\/+/, '')
   if (!trimmed || trimmed.endsWith('/')) return `${trimmed}index.html`
+  if (/\.[A-Za-z0-9]+$/.test(trimmed)) return trimmed
   return trimmed.endsWith('.html') ? trimmed : `${trimmed}.html`
 }
 
@@ -62,11 +69,18 @@ function attrsFrom(anchor) {
 }
 
 async function fileExists(path) {
+  if (plannedOutputPath && path === plannedOutputPath.replace(/^\/+/, '')) return true
+  if (plannedOutputPath && `assets/data/${path}` === plannedOutputPath.replace(/^\/+/, '')) return true
   try {
     const details = await stat(new URL(path, root))
     return details.isFile()
   } catch {
-    return false
+    try {
+      const details = await stat(new URL(`assets/data/${path}`, root))
+      return details.isFile()
+    } catch {
+      return false
+    }
   }
 }
 
@@ -134,6 +148,13 @@ for (const [source, page] of pages) {
       continue
     }
 
+    if (knownPortalRoutes.has(url.pathname)) {
+      item.kind = 'portal-route'
+      item.target = url.pathname
+      inventory.push(item)
+      continue
+    }
+
     item.kind = 'internal-page'
     item.target = normalizePage(url.pathname)
     item.fragment = url.hash ? decodeURIComponent(url.hash.slice(1)) : ''
@@ -151,12 +172,23 @@ for (const [source, page] of pages) {
 
 inventory.sort((a, b) => `${a.source} ${a.href}`.localeCompare(`${b.source} ${b.href}`))
 
-if (process.argv.includes('--json')) {
-  console.log(JSON.stringify({
-    pages: [...pagePaths].sort(),
-    linkCount: inventory.length,
-    links: inventory,
-  }, null, 2))
+const output = {
+  schema_version: 1,
+  scope: 'checked-in-html-static-links',
+  note: 'Bounded static link inventory. This is not an exhaustive dynamic click-through hierarchy.',
+  pages: [...pagePaths].sort(),
+  linkCount: inventory.length,
+  links: inventory,
+}
+
+if (writeIndex !== -1) {
+  const destination = plannedOutputPath
+  assert(destination, '--write requires an output path')
+  await mkdir(dirname(new URL(destination, root).pathname), { recursive: true })
+  await writeFile(new URL(destination, root), `${JSON.stringify(output, null, 2)}\n`)
+  console.log(`Wrote ${output.linkCount} links across ${output.pages.length} pages to ${destination}`)
+} else if (process.argv.includes('--json')) {
+  console.log(JSON.stringify(output, null, 2))
 } else {
   const counts = inventory.reduce((acc, item) => {
     acc[item.kind] = (acc[item.kind] || 0) + 1

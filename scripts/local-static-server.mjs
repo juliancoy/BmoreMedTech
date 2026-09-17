@@ -86,6 +86,14 @@ function send(res, status, body, headers = {}) {
   res.end(body)
 }
 
+function redirect(res, location, status = 302) {
+  res.writeHead(status, {
+    location,
+    'cache-control': 'no-store',
+  })
+  res.end()
+}
+
 function allowedCorsOrigin(req) {
   const origin = req.headers.origin
   if (!origin) return null
@@ -282,11 +290,10 @@ function isPortalDevAssetPath(pathname) {
 function isPortalRoute(pathname) {
   return pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
+    || pathname === '/org-events' || pathname.startsWith('/org-events/')
     || pathname === '/orgs' || pathname.startsWith('/orgs/')
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
-    || pathname === '/community' || pathname.startsWith('/community/')
-    || pathname === '/medtech-events' || pathname.startsWith('/medtech-events/')
     || pathname === '/auth/callback'
     || pathname === '/email' || pathname.startsWith('/email/')
     || pathname === '/profile'
@@ -307,6 +314,15 @@ const server = https.createServer(
         return
       }
       const requestUrl = new URL(req.url || '/', `https://${req.headers.host || 'localhost'}`)
+      if (requestUrl.pathname === '/community' || requestUrl.pathname.startsWith('/community/')) {
+        redirect(res, '/')
+        return
+      }
+      if (requestUrl.pathname === '/medtech-events' || requestUrl.pathname.startsWith('/medtech-events/')) {
+        requestUrl.pathname = requestUrl.pathname.replace(/^\/medtech-events/, '/org-events')
+        redirect(res, `${requestUrl.pathname}${requestUrl.search}${requestUrl.hash}`)
+        return
+      }
       if (requestUrl.pathname === '/api/datasets' || requestUrl.pathname.startsWith('/api/datasets/')) {
         await serveDatasetApi(req, res, requestUrl)
         return
@@ -317,6 +333,14 @@ const server = https.createServer(
       }
       if (requestUrl.pathname === '/api/org' || requestUrl.pathname.startsWith('/api/org/')) {
         await serveProxy(req, res, requestUrl, orgApiOrigin, '/api/org')
+        return
+      }
+      if (requestUrl.pathname === '/api/network' || requestUrl.pathname.startsWith('/api/network/')) {
+        await serveProxy(req, res, requestUrl, orgApiOrigin)
+        return
+      }
+      if (requestUrl.pathname === '/api/chat' || requestUrl.pathname.startsWith('/api/chat/')) {
+        await serveProxy(req, res, requestUrl, orgApiOrigin, '/api/chat')
         return
       }
       if (requestUrl.pathname === '/pidp' || requestUrl.pathname.startsWith('/pidp/')) {

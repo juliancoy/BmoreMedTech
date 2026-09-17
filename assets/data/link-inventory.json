@@ -1,0 +1,3234 @@
+{
+  "schema_version": 1,
+  "scope": "checked-in-html-static-links",
+  "note": "Bounded static link inventory. This is not an exhaustive dynamic click-through hierarchy.",
+  "pages": [
+    "calendar.html",
+    "clickthrough.html",
+    "datasets.html",
+    "datasets/allied-care-teams.html",
+    "datasets/bls-oews-baltimore.html",
+    "datasets/clinical-code-systems.html",
+    "datasets/clinical-semantic-systems.html",
+    "datasets/cms-doctors-clinicians.html",
+    "datasets/cms-provider-services.html",
+    "datasets/hrsa-ahrf.html",
+    "datasets/maryland-medicaid-provider-finder.html",
+    "datasets/maryland-medicaid-pvs.html",
+    "datasets/medical-science-field-atlas.html",
+    "datasets/medtech-meta-index.html",
+    "datasets/need-availability-distortions.html",
+    "datasets/nppes-registry.html",
+    "datasets/strategy-field-metrics.html",
+    "index.html",
+    "map.html",
+    "need-availability-distortions.html",
+    "start.html",
+    "taxonomy.html"
+  ],
+  "linkCount": 425,
+  "links": [
+    {
+      "source": "calendar.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "calendar.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "calendar.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "calendar.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "calendar.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "calendar.html",
+      "href": "https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V",
+      "textRole": "Join Baltimore MedTech on WhatsApp",
+      "kind": "external-handoff",
+      "origin": "https://chat.whatsapp.com"
+    },
+    {
+      "source": "calendar.html",
+      "href": "https://github.com/juliancoy/bmoremedtech",
+      "textRole": "View Baltimore MedTech on GitHub",
+      "kind": "external-handoff",
+      "origin": "https://github.com"
+    },
+    {
+      "source": "calendar.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "calendar.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "/clickthrough.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "clickthrough.html",
+      "fragment": ""
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "/link-inventory.json",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "link-inventory.json",
+      "fragment": ""
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "clickthrough.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "clickthrough.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/datasets/medical-science-field-atlas.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets/medical-science-field-atlas.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/datasets/medtech-meta-index.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets/medtech-meta-index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/datasets/medtech-meta-index.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets/medtech-meta-index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/datasets/medtech-meta-index.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets/medtech-meta-index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/allied-care-teams.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/allied-care-teams.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/bls-oews-baltimore.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/bls-oews-baltimore.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/clinical-code-systems.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/clinical-code-systems.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/clinical-semantic-systems.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/clinical-semantic-systems.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/cms-doctors-clinicians.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/cms-doctors-clinicians.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/cms-provider-services.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/cms-provider-services.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/hrsa-ahrf.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/hrsa-ahrf.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/maryland-medicaid-provider-finder.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/maryland-medicaid-provider-finder.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/maryland-medicaid-pvs.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/maryland-medicaid-pvs.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/medical-science-field-atlas.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/medical-science-field-atlas.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/medtech-meta-index.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/medtech-meta-index.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/need-availability-distortions.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/need-availability-distortions.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/nppes-registry.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/nppes-registry.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "datasets/strategy-field-metrics.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "datasets/strategy-field-metrics.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "index.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "index.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "index.html",
+      "href": "#regional-glossary",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "index.html",
+      "fragment": "regional-glossary"
+    },
+    {
+      "source": "index.html",
+      "href": "#ways-in",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "index.html",
+      "fragment": "ways-in"
+    },
+    {
+      "source": "index.html",
+      "href": "https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V",
+      "textRole": "Join Baltimore MedTech on WhatsApp",
+      "kind": "external-handoff",
+      "origin": "https://chat.whatsapp.com"
+    },
+    {
+      "source": "index.html",
+      "href": "https://github.com/juliancoy/BmoreMedTech",
+      "textRole": "View Baltimore MedTech on GitHub",
+      "kind": "external-handoff",
+      "origin": "https://github.com"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/people",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/search?q=medtech&scope=people",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "index.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "map.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "map.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "map.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "map.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "map.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "map.html",
+      "href": "https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V",
+      "textRole": "Join Baltimore MedTech on WhatsApp",
+      "kind": "external-handoff",
+      "origin": "https://chat.whatsapp.com"
+    },
+    {
+      "source": "map.html",
+      "href": "https://github.com/juliancoy/bmoremedtech",
+      "textRole": "View Baltimore MedTech on GitHub",
+      "kind": "external-handoff",
+      "origin": "https://github.com"
+    },
+    {
+      "source": "map.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "map.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/taxonomy.html#coding-layer",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": "coding-layer"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/taxonomy.html#field-index",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": "field-index"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/taxonomy.html#strategy-dashboard",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": "strategy-dashboard"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "/taxonomy.html#strategy-dashboard",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": "strategy-dashboard"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "#distortion-care-team",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "need-availability-distortions.html",
+      "fragment": "distortion-care-team"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "#distortion-charts",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "need-availability-distortions.html",
+      "fragment": "distortion-charts"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "#distortion-profiles",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "need-availability-distortions.html",
+      "fragment": "distortion-profiles"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "#distortion-ranking",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "need-availability-distortions.html",
+      "fragment": "distortion-ranking"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "need-availability-distortions.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "need-availability-distortions.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "start.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "start.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "start.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "start.html",
+      "href": "https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V",
+      "textRole": "Join Baltimore MedTech on WhatsApp",
+      "kind": "external-handoff",
+      "origin": "https://chat.whatsapp.com"
+    },
+    {
+      "source": "start.html",
+      "href": "https://github.com/juliancoy/BmoreMedTech",
+      "textRole": "View Baltimore MedTech on GitHub",
+      "kind": "external-handoff",
+      "origin": "https://github.com"
+    },
+    {
+      "source": "start.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "start.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "start.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "start.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "start.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "start.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "start.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "#coding-layer",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "taxonomy.html",
+      "fragment": "coding-layer"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "#coding-layer",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "taxonomy.html",
+      "fragment": "coding-layer"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "#coordinate-map",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "taxonomy.html",
+      "fragment": "coordinate-map"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "#field-index",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "taxonomy.html",
+      "fragment": "field-index"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "#field-index",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "taxonomy.html",
+      "fragment": "field-index"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "#icd-chapters",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "taxonomy.html",
+      "fragment": "icd-chapters"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "target": "taxonomy.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V",
+      "textRole": "Join Baltimore MedTech on WhatsApp",
+      "kind": "external-handoff",
+      "origin": "https://chat.whatsapp.com"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "https://github.com/juliancoy/BmoreMedTech",
+      "textRole": "View Baltimore MedTech on GitHub",
+      "kind": "external-handoff",
+      "origin": "https://github.com"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "https://medtech.social/medtech-events",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "taxonomy.html",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "origin": "https://medtech.social"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { cpSync, existsSync } from 'node:fs'
 
 const datasetPages = [
   'medtech-meta-index',
@@ -23,6 +24,14 @@ const datasetInputs = Object.fromEntries(
 
 export default defineConfig({
   publicDir: 'assets/data',
+  plugins: [{
+    name: 'copy-medtech-static-images',
+    closeBundle() {
+      if (existsSync('assets/images')) {
+        cpSync('assets/images', 'dist/assets/images', { recursive: true })
+      }
+    },
+  }],
   build: {
     rollupOptions: {
       input: {
@@ -33,6 +42,7 @@ export default defineConfig({
         taxonomy: 'taxonomy.html',
         needAvailabilityDistortions: 'need-availability-distortions.html',
         datasets: 'datasets.html',
+        clickthrough: 'clickthrough.html',
         ...datasetInputs,
       },
     },

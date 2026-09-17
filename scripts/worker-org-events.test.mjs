@@ -89,6 +89,18 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(portalSearch.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/p/search?q=medtech&scope=people')
 
+  const oldCommunity = await worker.fetch(new Request('https://medtech.social/community', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(oldCommunity.status, 301)
+  assert.equal(oldCommunity.headers.get('location'), 'https://medtech.social/')
+
+  const oldMedtechEvents = await worker.fetch(new Request('https://medtech.social/medtech-events?from=old', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(oldMedtechEvents.status, 301)
+  assert.equal(oldMedtechEvents.headers.get('location'), 'https://medtech.social/org-events?from=old')
+
   const tenantLogin = await worker.fetch(new Request('https://medtech.social/users/login', {
     headers: { accept: 'text/html' },
   }), env)
@@ -112,6 +124,17 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(orgPost.status, 200)
   assert.equal(seen.at(-1).url, 'https://org.example/api/network/events/event-1/attendance')
   assert.equal(seen.at(-1).method, 'POST')
+
+  const publicMedia = await worker.fetch(new Request('https://medtech.social/api/network/events/public/event-1/media/media-1'), env)
+  assert.equal(publicMedia.status, 200)
+  assert.equal(seen.at(-1).url, 'https://org.example/api/network/events/public/event-1/media/media-1')
+
+  const chatList = await worker.fetch(new Request('https://medtech.social/api/chat/api/network/chat/conversations', {
+    headers: { authorization: 'Bearer test-token' },
+  }), env)
+  assert.equal(chatList.status, 200)
+  assert.equal(seen.at(-1).url, 'https://org.example/api/network/chat/conversations')
+  assert.equal(seen.at(-1).headers.get('authorization'), 'Bearer test-token')
 
   const mcp = await worker.fetch(new Request('https://medtech.social/.well-known/oauth-protected-resource/api/org/mcp'), env)
   assert.equal(mcp.status, 200)

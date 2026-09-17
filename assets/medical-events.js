@@ -1,6 +1,6 @@
 export const MEDICAL_EVENTS_SOURCE_URL = 'https://codecollective.us/baltimore/upcoming_events.json'
 export const MEDTECH_ORG_EVENTS_SOURCE_URL = '/api/org/api/network/orgs/public/baltimore-medtech/events?upcoming_only=true&limit=120'
-export const MEDTECH_EVENTS_URL = 'https://medtech.social/medtech-events'
+export const MEDTECH_EVENTS_URL = '/org-events'
 export const MEDTECH_IN_HUT_EVENT_SLUG = 'medtech-in-the-hut'
 
 const eventAttachmentImagesBySlug = {

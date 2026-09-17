@@ -26,10 +26,11 @@ npm run build:links
 node scripts/validate-link-inventory.mjs --json
 ```
 
-The check verifies checked-in HTML links, same-page and cross-page anchors,
-known external handoffs, and the small set of runtime-populated placeholder
-links. Run the site and open `/clickthrough.html` to visualize the generated
-`/link-inventory.json` as a source-page graph.
+The check verifies MedTech checked-in HTML links, same-page and cross-page
+anchors, known external handoffs, and the small set of runtime-populated
+placeholder links. The generated visualization also includes bounded link
+surfaces from the sibling OrgPortal and PIdP checkouts. Run the site and open
+`/clickthrough.html` to visualize `/link-inventory.json` as a source-page graph.
 
 The static site builds independently of OrgPortal's services. Shared portal work
 belongs in `../OrgPortal`, and production

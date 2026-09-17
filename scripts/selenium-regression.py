@@ -14,6 +14,7 @@ from urllib.parse import parse_qs, urlparse
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 
@@ -225,11 +226,56 @@ def assert_theme_control(driver: webdriver.Remote, viewport: str, screenshot_dir
     return {**metrics, "system": system_metrics, "darkScreenshot": str(dark_screenshot)}
 
 
+def assert_primary_navigation(driver: webdriver.Remote) -> None:
+    nav = driver.find_element(By.CSS_SELECTOR, 'nav[aria-label="Primary navigation"]')
+    toggle = driver.find_element(By.CSS_SELECTOR, '.nav-toggle')
+    account = driver.find_element(By.CSS_SELECTOR, '.account-controls')
+    signed_in = bool(driver.find_elements(By.CSS_SELECTOR, '.site-header.has-account'))
+    compact = driver.execute_script('return innerWidth <= 720')
+    if signed_in:
+        assert account.find_element(By.CSS_SELECTOR, 'a[href="/profile"]').is_displayed()
+        assert account.find_element(By.CSS_SELECTOR, 'a[aria-label="Messages"]').is_displayed()
+        assert not account.find_elements(By.LINK_TEXT, 'Login')
+        menu = account.find_element(By.CSS_SELECTOR, 'summary[aria-label="Account menu"]')
+        menu.click()
+        assert account.find_element(By.LINK_TEXT, 'My profile').is_displayed()
+        if compact:
+            assert not toggle.is_displayed()
+            assert account.find_element(By.LINK_TEXT, 'MedTech meetups').is_displayed()
+        menu.send_keys(Keys.ESCAPE)
+        if compact:
+            return
+    else:
+        assert account.find_element(By.LINK_TEXT, 'Login').is_displayed()
+        assert not account.find_elements(By.CSS_SELECTOR, 'a[href="/chat"]')
+    mobile = toggle.is_displayed()
+    if mobile:
+        toggle.click()
+    summaries = nav.find_elements(By.CSS_SELECTOR, '.nav-group > summary')
+    assert [item.text for item in summaries] == ['Events', 'Research']
+    summaries[0].click()
+    events = nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')
+    assert [item.text for item in events] == ['MedTech meetups', 'Community calendar', 'Event map']
+    assert [urlparse(item.get_attribute('href')).path for item in events] == [
+        '/org-events', '/calendar.html', '/map.html'
+    ]
+    summaries[1].click()
+    WebDriverWait(driver, 5).until(lambda d: len(nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')) == 1)
+    assert [item.text for item in nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')] == ['Medical atlas', 'Datasets']
+    summaries[1].send_keys(Keys.ESCAPE)
+    assert not nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')
+    assert driver.switch_to.active_element == summaries[1]
+    assert nav.find_element(By.LINK_TEXT, 'Get involved').get_attribute('href').endswith('/start.html')
+    if mobile:
+        toggle.click()
+
+
 def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
     driver.get(f"{base_url.rstrip('/')}/")
     settle(driver)
     WebDriverWait(driver, 20).until(lambda d: d.find_element(By.CSS_SELECTOR, ".hero-copy h1"))
     assert_no_horizontal_overflow(driver, f"{viewport} home")
+    assert_primary_navigation(driver)
 
     screenshot = screenshot_dir / f"{viewport}-home.png"
     driver.save_screenshot(str(screenshot))

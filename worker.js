@@ -200,7 +200,7 @@ function isPortalRoute(pathname) {
   return pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')
-    || pathname === '/orgs' || pathname.startsWith('/orgs/')
+    || isMedTechTenantOrgRoute(pathname)
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
     || pathname === '/auth/callback'
@@ -209,6 +209,37 @@ function isPortalRoute(pathname) {
     || pathname === '/settings'
     || pathname === '/search'
     || pathname === '/tools' || pathname.startsWith('/tools/')
+}
+
+function isMedTechTenantOrgRoute(pathname) {
+  return pathname === '/orgs/login'
+    || pathname.startsWith('/orgs/login/')
+    || pathname === '/orgs/initiatives'
+    || pathname.startsWith('/orgs/initiatives/')
+    || pathname === '/orgs/profile'
+    || pathname.startsWith('/orgs/profile/')
+    || pathname === '/orgs/account'
+    || pathname.startsWith('/orgs/account/')
+    || pathname === '/orgs/events'
+    || pathname.startsWith('/orgs/events/')
+}
+
+function isMasterPortalOrgRoute(pathname) {
+  return pathname === '/orgs/register'
+    || pathname.startsWith('/orgs/register/')
+    || pathname === '/orgs'
+    || (pathname.startsWith('/orgs/') && !isMedTechTenantOrgRoute(pathname))
+    || pathname === '/create'
+    || pathname.startsWith('/create/')
+}
+
+function masterPortalRedirect(url, env, status = 301) {
+  const target = new URL(url)
+  const origin = new URL(trimTrailingSlash(env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN))
+  target.protocol = origin.protocol
+  target.hostname = origin.hostname
+  target.port = origin.port
+  return Response.redirect(target.toString(), status)
 }
 
 export default {
@@ -228,6 +259,10 @@ export default {
     if (url.pathname === '/medtech-events' || url.pathname.startsWith('/medtech-events/')) {
       url.pathname = url.pathname.replace(/^\/medtech-events/, '/org-events')
       return Response.redirect(url.toString(), 301)
+    }
+
+    if (isMasterPortalOrgRoute(url.pathname)) {
+      return masterPortalRedirect(url, env)
     }
 
     if (isPortalDevAssetPath(url.pathname)) {

@@ -68,7 +68,7 @@
 
 .link-tool-controls {
   display: grid;
-  grid-template-columns: minmax(220px, 0.8fr) minmax(220px, 1fr) minmax(320px, auto);
+  grid-template-columns: minmax(150px, 0.45fr) minmax(220px, 0.8fr) minmax(150px, 0.45fr) minmax(220px, 1fr) minmax(380px, auto) minmax(260px, auto);
   gap: 12px;
   align-items: end;
   padding: 12px;
@@ -99,14 +99,16 @@
   text-transform: none;
 }
 
-.link-kind-toggles {
+.link-kind-toggles,
+.link-repo-toggles {
   display: grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(3, auto);
   gap: 8px;
   justify-content: end;
 }
 
-.link-kind-toggles label {
+.link-kind-toggles label,
+.link-repo-toggles label {
   display: inline-flex;
   grid-template-columns: none;
   gap: 7px;
@@ -165,6 +167,28 @@
 .link-edge[data-kind="same-page-anchor"] { stroke: #7565c7; }
 .link-edge[data-kind="external-handoff"] { stroke: #ce5d50; }
 .link-edge[data-kind="runtime-placeholder"] { stroke: #b37b18; stroke-dasharray: 7 7; }
+.link-edge[data-kind="app-handoff"] { stroke-width: 3; }
+.link-edge[data-kind="portal-route"] { stroke-dasharray: 11 6; }
+
+.link-edge[data-repo="medtech"] { stroke: #168aa4; }
+.link-edge[data-repo="orgportal"] { stroke: #5b6ee1; }
+.link-edge[data-repo="pidp"] { stroke: #c04f92; }
+.link-edge[data-repo="external"] { stroke: #ce5d50; }
+
+.link-swimlane rect {
+  fill: color-mix(in srgb, var(--surface) 72%, transparent);
+  stroke: var(--line);
+  stroke-width: 1;
+  rx: 8;
+}
+
+.link-swimlane text {
+  fill: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
 
 .link-node rect {
   fill: var(--paper);
@@ -182,6 +206,22 @@
 .link-node[data-kind="same-page-anchor"] rect { stroke: #7565c7; }
 .link-node[data-kind="external-handoff"] rect { stroke: #ce5d50; }
 .link-node[data-kind="runtime-placeholder"] rect { stroke: #b37b18; }
+.link-node[data-repo="medtech"] rect {
+  fill: color-mix(in srgb, #168aa4 9%, var(--paper));
+  stroke: #168aa4;
+}
+.link-node[data-repo="orgportal"] rect {
+  fill: color-mix(in srgb, #5b6ee1 9%, var(--paper));
+  stroke: #5b6ee1;
+}
+.link-node[data-repo="pidp"] rect {
+  fill: color-mix(in srgb, #c04f92 9%, var(--paper));
+  stroke: #c04f92;
+}
+.link-node[data-repo="external"] rect {
+  fill: color-mix(in srgb, #ce5d50 9%, var(--paper));
+  stroke: #ce5d50;
+}
 
 .link-node text {
   fill: var(--ink);
@@ -307,6 +347,8 @@
 }
 
 .link-kind-badge[data-kind="internal-page"] { background: #168aa4; }
+.link-kind-badge[data-kind="app-handoff"] { background: #5b6ee1; }
+.link-kind-badge[data-kind="portal-route"] { background: #4253bd; }
 .link-kind-badge[data-kind="same-page-anchor"] { background: #7565c7; }
 .link-kind-badge[data-kind="external-handoff"] { background: #ce5d50; }
 .link-kind-badge[data-kind="runtime-placeholder"] { background: #b37b18; color: #101010; }
@@ -318,12 +360,14 @@
     grid-template-columns: 1fr;
   }
 
-  .link-kind-toggles {
+  .link-kind-toggles,
+  .link-repo-toggles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-content: stretch;
   }
 
-  .link-kind-toggles label {
+  .link-kind-toggles label,
+  .link-repo-toggles label {
     justify-content: start;
   }
 }
@@ -337,7 +381,8 @@
     grid-template-columns: 1fr;
   }
 
-  .link-kind-toggles {
+  .link-kind-toggles,
+  .link-repo-toggles {
     grid-template-columns: 1fr;
   }
 

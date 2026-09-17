@@ -1,9 +1,37 @@
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
-import { relative } from 'node:path'
+import { basename, relative } from 'node:path'
 
 const root = new URL('../', import.meta.url)
-const ignoredDirs = new Set(['.git', '.local', '.wrangler', 'dist', 'node_modules', '__pycache__'])
+const workspaces = [
+  {
+    id: 'medtech',
+    label: 'MedTech',
+    root,
+    strict: true,
+    extensions: new Set(['.html']),
+    ignoredDirs: new Set(['.git', '.local', '.wrangler', 'dist', 'node_modules', '__pycache__']),
+  },
+  {
+    id: 'orgportal',
+    label: 'OrgPortal',
+    root: new URL('../../OrgPortal/web/', import.meta.url),
+    strict: false,
+    extensions: new Set(['.html', '.tsx', '.ts', '.jsx', '.js']),
+    ignoredDirs: new Set(['.git', '.vite-playwright-cache', 'dist', 'node_modules', 'playwright-report', 'coverage']),
+    ignoredPathParts: ['public/specialty/baltimore-medtech'],
+  },
+  {
+    id: 'pidp',
+    label: 'PIdP',
+    root: new URL('../../pidp/', import.meta.url),
+    strict: false,
+    extensions: new Set(['.html', '.tsx', '.ts', '.jsx', '.js', '.py', '.mjs']),
+    ignoredDirs: new Set(['.git', '.stable-backups', 'dist', 'node_modules', '__pycache__', '.pytest_cache']),
+    ignoredPathParts: ['frontend/stable'],
+  },
+]
+const scannableExtensions = new Set(['.html', '.tsx', '.ts', '.jsx', '.js', '.py', '.mjs'])
 const allowedPlaceholderIds = new Set([
   'dataset-api-link',
   'dataset-csv-link',
@@ -27,20 +55,39 @@ const assert = (condition, message) => {
 }
 
 async function walkHtml(dirUrl = root) {
+  return walkFiles(workspaces[0], dirUrl)
+}
+
+async function walkFiles(workspace, dirUrl = workspace.root) {
   const entries = await readdir(dirUrl, { withFileTypes: true })
   const files = []
   for (const entry of entries) {
     if (entry.isDirectory()) {
-      if (!ignoredDirs.has(entry.name)) files.push(...await walkHtml(new URL(`${entry.name}/`, dirUrl)))
+      if (workspace.ignoredDirs.has(entry.name)) continue
+      const next = new URL(`${entry.name}/`, dirUrl)
+      const rel = relative(workspace.root.pathname, next.pathname)
+      if (workspace.ignoredPathParts?.some((part) => rel.startsWith(part))) continue
+      files.push(...await walkFiles(workspace, next))
       continue
     }
-    if (entry.isFile() && entry.name.endsWith('.html')) files.push(new URL(entry.name, dirUrl))
+    const extensions = workspace.extensions || scannableExtensions
+    if (entry.isFile() && extensions.has(extensionOf(entry.name))) files.push(new URL(entry.name, dirUrl))
   }
   return files
 }
 
-function repoPath(fileUrl) {
-  return relative(root.pathname, fileUrl.pathname)
+function extensionOf(path) {
+  const name = basename(path)
+  const index = name.lastIndexOf('.')
+  return index === -1 ? '' : name.slice(index)
+}
+
+function repoPath(workspace, fileUrl) {
+  return relative(workspace.root.pathname, fileUrl.pathname)
+}
+
+function pageId(workspace, path) {
+  return `${workspace.id}:${path}`
 }
 
 function normalizePage(pathname) {
@@ -68,6 +115,29 @@ function attrsFrom(anchor) {
   return attrs
 }
 
+function sourceFromFile(workspace, fileUrl, content) {
+  const path = repoPath(workspace, fileUrl)
+  const anchors = [...content.matchAll(/<a\b[^>]*>/gi)].map((match) => attrsFrom(match[0]))
+  const ids = new Set([...content.matchAll(/\bid\s*=\s*("([^"]+)"|'([^']+)')/gi)].map((match) => decodeHtml(match[2] ?? match[3])))
+  const sourceLinks = anchors.map((attrs) => ({
+    href: attrs.href,
+    textRole: attrs['aria-label'] || attrs.title || '',
+    element: 'a',
+    attrs,
+  })).filter((link) => link.href)
+
+  if (extensionOf(path) !== '.html') {
+    for (const match of content.matchAll(/\b(?:href|to|action)\s*=\s*(?:"([^"]+)"|'([^']+)'|{`([^`]+)`}|{"([^"]+)"}|{'([^']+)'})/g)) {
+      const href = decodeHtml(match[1] ?? match[2] ?? match[3] ?? match[4] ?? match[5] ?? '')
+      if (href && !href.includes('${') && !sourceLinks.some((link) => link.href === href)) {
+        sourceLinks.push({ href, textRole: '', element: 'literal' })
+      }
+    }
+  }
+
+  return { id: pageId(workspace, path), path, workspace: workspace.id, links: sourceLinks, ids }
+}
+
 async function fileExists(path) {
   if (plannedOutputPath && path === plannedOutputPath.replace(/^\/+/, '')) return true
   if (plannedOutputPath && `assets/data/${path}` === plannedOutputPath.replace(/^\/+/, '')) return true
@@ -84,37 +154,67 @@ async function fileExists(path) {
   }
 }
 
-const htmlFiles = await walkHtml()
+const sources = new Map()
 const pages = new Map()
 
-for (const fileUrl of htmlFiles) {
-  const path = repoPath(fileUrl)
-  const html = await readFile(fileUrl, 'utf8')
-  const anchors = [...html.matchAll(/<a\b[^>]*>/gi)].map((match) => attrsFrom(match[0]))
-  const ids = new Set([...html.matchAll(/\bid\s*=\s*("([^"]+)"|'([^']+)')/gi)].map((match) => decodeHtml(match[2] ?? match[3])))
-  pages.set(path, { anchors, ids })
+for (const workspace of workspaces) {
+  let files = []
+  try {
+    files = await walkFiles(workspace)
+  } catch {
+    continue
+  }
+  for (const fileUrl of files) {
+    const content = await readFile(fileUrl, 'utf8')
+    const source = sourceFromFile(workspace, fileUrl, content)
+    if (source.links.length === 0 && source.ids.size === 0) continue
+    sources.set(source.id, source)
+    if (workspace.strict && extensionOf(source.path) === '.html') pages.set(source.path, source)
+  }
 }
 
 const pagePaths = new Set(pages.keys())
 const inventory = []
 const failures = []
 
-for (const [source, page] of pages) {
-  for (const attrs of page.anchors) {
-    const href = attrs.href
+function classifyWorkspaceForUrl(url, sourceRepo = 'medtech') {
+  if (url.origin === 'https://medtech.local') {
+    if (url.pathname.startsWith('/pidp') || url.pathname.startsWith('/oauth') || url.pathname.startsWith('/auth/') || url.pathname.startsWith('/session/')) return 'pidp'
+    if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/create')) return 'orgportal'
+    if (sourceRepo !== 'medtech') return sourceRepo
+    return 'medtech'
+  }
+  if (url.hostname === 'medtech.social') {
+    if (url.pathname.startsWith('/pidp') || url.pathname.startsWith('/oauth') || url.pathname.startsWith('/auth/') || url.pathname.startsWith('/session/')) return 'pidp'
+    if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/medtech-events') || url.pathname.startsWith('/create')) return 'orgportal'
+    return 'medtech'
+  }
+  if (url.hostname.includes('pidp')) return 'pidp'
+  if (url.hostname.includes('portal') || url.hostname.includes('codecollective')) return 'orgportal'
+  return ''
+}
+
+for (const [source, page] of sources) {
+  const sourceRepo = page.workspace
+  const strict = workspaces.find((workspace) => workspace.id === sourceRepo)?.strict
+  for (const link of page.links) {
+    const href = link.href
     if (!href) continue
 
     const item = {
       source,
+      sourcePath: page.path,
+      sourceRepo,
       href,
-      textRole: attrs['aria-label'] || attrs.title || '',
+      textRole: link.textRole || '',
       kind: 'unknown',
+      targetRepo: '',
     }
 
     if (href === '#') {
       item.kind = 'runtime-placeholder'
-      if (!allowedPlaceholderIds.has(attrs.id)) {
-        failures.push(`${source}: href="#" must be runtime-populated and whitelisted; found id="${attrs.id || ''}"`)
+      if (strict && !allowedPlaceholderIds.has(link.attrs?.id)) {
+        failures.push(`${source}: href="#" must be runtime-populated and whitelisted; found id="${link.attrs?.id || ''}"`)
       }
       inventory.push(item)
       continue
@@ -123,8 +223,9 @@ for (const [source, page] of pages) {
     if (href.startsWith('#')) {
       item.kind = 'same-page-anchor'
       item.target = source
+      item.targetRepo = sourceRepo
       item.fragment = href.slice(1)
-      if (!page.ids.has(item.fragment)) failures.push(`${source}: missing anchor target ${href}`)
+      if (strict && extensionOf(page.path) === '.html' && !page.ids.has(item.fragment)) failures.push(`${source}: missing anchor target ${href}`)
       inventory.push(item)
       continue
     }
@@ -141,7 +242,8 @@ for (const [source, page] of pages) {
     if (url.origin !== 'https://medtech.local') {
       item.kind = 'external-handoff'
       item.origin = url.origin
-      if (!knownExternalOrigins.has(url.origin)) {
+      item.targetRepo = classifyWorkspaceForUrl(url, sourceRepo)
+      if (strict && !knownExternalOrigins.has(url.origin)) {
         failures.push(`${source}: unexpected external origin ${url.origin} in "${href}"`)
       }
       inventory.push(item)
@@ -151,16 +253,18 @@ for (const [source, page] of pages) {
     if (knownPortalRoutes.has(url.pathname)) {
       item.kind = 'portal-route'
       item.target = url.pathname
+      item.targetRepo = 'orgportal'
       inventory.push(item)
       continue
     }
 
-    item.kind = 'internal-page'
+    item.targetRepo = classifyWorkspaceForUrl(url, sourceRepo)
+    item.kind = item.targetRepo && item.targetRepo !== sourceRepo ? 'app-handoff' : 'internal-page'
     item.target = normalizePage(url.pathname)
     item.fragment = url.hash ? decodeURIComponent(url.hash.slice(1)) : ''
-    if (!pagePaths.has(item.target) && !(await fileExists(item.target))) {
+    if (strict && !pagePaths.has(item.target) && !(await fileExists(item.target))) {
       failures.push(`${source}: missing internal page ${url.pathname} from "${href}"`)
-    } else if (item.fragment) {
+    } else if (strict && item.fragment) {
       const targetPage = pages.get(item.target)
       if (targetPage && !targetPage.ids.has(item.fragment)) {
         failures.push(`${source}: ${href} points to missing #${item.fragment} in ${item.target}`)
@@ -173,10 +277,11 @@ for (const [source, page] of pages) {
 inventory.sort((a, b) => `${a.source} ${a.href}`.localeCompare(`${b.source} ${b.href}`))
 
 const output = {
-  schema_version: 1,
-  scope: 'checked-in-html-static-links',
-  note: 'Bounded static link inventory. This is not an exhaustive dynamic click-through hierarchy.',
-  pages: [...pagePaths].sort(),
+  schema_version: 2,
+  scope: 'bounded-static-and-source-link-literals',
+  note: 'Bounded static/source link inventory across MedTech, OrgPortal, and PIdP. This is not an exhaustive dynamic click-through hierarchy.',
+  repositories: workspaces.map(({ id, label, strict }) => ({ id, label, strict })),
+  pages: [...sources.keys()].sort(),
   linkCount: inventory.length,
   links: inventory,
 }

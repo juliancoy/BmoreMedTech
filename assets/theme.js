@@ -1,3 +1,5 @@
+import { createElement, Menu, MessageCircle, UserRound } from 'lucide';
+
 const THEME_STORAGE_KEY = 'bmore-medtech.theme';
 const VALID_MODES = new Set(['system', 'light', 'dark']);
 
@@ -65,41 +67,60 @@ function setupThemeControls() {
   };
 }
 
-function ensureDatasetNavigation() {
-  const nav = document.querySelector('.site-header nav')
-  if (!nav || nav.querySelector('a[href="/datasets.html"]')) return
-  const link = document.createElement('a')
-  link.href = '/datasets.html'
-  link.textContent = 'Data sheets'
-  const insertionPoint = nav.querySelector('.theme-control, .nav-cta')
-  nav.insertBefore(link, insertionPoint || null)
-}
-
-function ensureMedTechEventsNavigation() {
+function organizeNavigation() {
   const header = document.querySelector('.site-header')
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
-  if (!header || !nav) return
-  const orphan = [...header.querySelectorAll(':scope a[href*="/org-events"]')]
-    .find((link) => !nav.contains(link))
-  if (nav.querySelector('a[href*="/org-events"]')) {
-    orphan?.remove()
-    return
+  if (!nav) return
+  const destinations = [
+    ['/org-events', 'MedTech meetups'],
+    ['/calendar.html', 'Community calendar'],
+    ['/map.html', 'Event map'],
+    ['/taxonomy.html', 'Medical atlas'],
+    ['/datasets.html', 'Datasets'],
+    ['/start.html', 'Get involved'],
+  ]
+  const links = destinations.map(([path, label]) => {
+    const matches = [...header.querySelectorAll('a[href]')]
+      .filter((link) => new URL(link.href).pathname === path)
+    const link = matches.shift() || document.createElement('a')
+    matches.forEach((duplicate) => duplicate.remove())
+    link.href = path
+    link.textContent = label
+    link.removeAttribute('aria-current')
+    if (location.pathname === path || (path === '/datasets.html' && location.pathname.startsWith('/datasets/'))) {
+      link.setAttribute('aria-current', 'page')
+    }
+    return link
+  })
+  const groups = []
+  function group(label, children) {
+    const details = document.createElement('details')
+    details.className = 'nav-group'
+    const summary = document.createElement('summary')
+    summary.textContent = label
+    if (children.some((link) => link.hasAttribute('aria-current'))) details.classList.add('has-current')
+    const list = document.createElement('div')
+    list.className = 'nav-group-links'
+    list.append(...children)
+    details.append(summary, list)
+    details.addEventListener('toggle', () => {
+      if (details.open) groups.filter((other) => other !== details).forEach((other) => { other.open = false })
+    })
+    groups.push(details)
+    return details
   }
-  const link = orphan || document.createElement('a')
-  link.href = link.getAttribute('href') || '/org-events'
-  link.textContent = link.textContent.trim() || 'MedTech Events'
-  const insertionPoint = nav.querySelector('a[href="/map.html"]') || nav.querySelector('.theme-control, .nav-cta')
-  nav.insertBefore(link, insertionPoint || null)
-}
-
-function ensureStartNavigation() {
-  const nav = document.querySelector('.site-header nav')
-  if (!nav || nav.querySelector('a[href="/start.html"]')) return
-  const link = document.createElement('a')
-  link.href = '/start.html'
-  link.textContent = 'Start Here'
-  const insertionPoint = nav.querySelector('a[href="/map.html"]') || nav.querySelector('.theme-control, .nav-cta')
-  nav.insertBefore(link, insertionPoint || null)
+  nav.prepend(group('Events', links.slice(0, 3)), group('Research', links.slice(3, 5)), links[5])
+  document.addEventListener('click', (event) => {
+    groups.forEach((group) => { if (!group.contains(event.target) || event.target.closest('a')) group.open = false })
+  })
+  nav.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return
+    const open = groups.find((group) => group.open)
+    if (!open) return
+    event.stopPropagation()
+    open.open = false
+    open.querySelector('summary').focus()
+  })
 }
 
 function setupPrimaryNavigation() {
@@ -127,7 +148,7 @@ function setupPrimaryNavigation() {
     nav.classList.toggle('is-open', open)
     document.body.classList.toggle('nav-open', open)
     if (open && moveFocus) {
-      requestAnimationFrame(() => nav.querySelector('a, button')?.focus())
+      requestAnimationFrame(() => nav.querySelector('summary, a, button')?.focus())
     }
   }
 
@@ -159,8 +180,17 @@ function setupPrimaryNavigation() {
 }
 
 async function setupAuthNavigation() {
-  const loginLinks = [...document.querySelectorAll('a[href*="/users/login"]')]
-  if (!loginLinks.length) return
+  const header = document.querySelector('.site-header')
+  const login = header?.querySelector('a[href*="/users/login"]')
+  if (!login) return
+  const controls = document.createElement('div')
+  controls.className = 'account-controls'
+  controls.setAttribute('role', 'group')
+  controls.setAttribute('aria-label', 'Your account')
+  controls.append(login)
+  ;(header.querySelector('.site-header-inner') || header).append(controls)
+  login.textContent = 'Login'
+  login.className = 'button account-login'
 
   try {
     const response = await fetch('/pidp/auth/session-token', {
@@ -168,22 +198,104 @@ async function setupAuthNavigation() {
       cache: 'no-store',
     })
     if (!response.ok) return
-  } catch {
-    return
-  }
+    const session = await response.json()
+    if (typeof session.access_token !== 'string' || !session.access_token.trim()) return
+    const profileResponse = await fetch('/pidp/auth/me', {
+      credentials: 'include',
+      cache: 'no-store',
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+    if (!profileResponse.ok) return
+    const user = await profileResponse.json()
+    if (!user.id || !user.email) return
+    const name = user.identity_data?.display_name || user.full_name || user.email
+    const icon = (node) => createElement(node, { width: 20, height: 20, 'aria-hidden': 'true' })
+    const profile = document.createElement('a')
+    profile.href = '/profile'
+    profile.className = 'account-icon account-avatar'
+    profile.title = `Profile: ${name}`
+    profile.setAttribute('aria-label', profile.title)
+    profile.append(icon(UserRound))
+    const avatar = user.identity_data?.avatar_url || user.avatar_url
+    if (typeof avatar === 'string' && avatar.trim()) {
+      let url
+      try { url = new URL(avatar, location.origin) } catch { /* Keep the fallback avatar. */ }
+      if (url && (url.protocol === 'https:' || (url.protocol === 'http:' && url.origin === location.origin))) {
+        const img = document.createElement('img')
+        img.alt = ''
+        img.referrerPolicy = 'no-referrer'
+        img.onload = () => profile.replaceChildren(img)
+        img.src = url.href
+      }
+    }
+    const messages = document.createElement('a')
+    messages.href = '/chat'
+    messages.className = 'account-icon'
+    messages.title = 'Messages'
+    messages.setAttribute('aria-label', 'Messages')
+    messages.append(icon(MessageCircle))
+    const menu = document.createElement('details')
+    menu.className = 'account-menu'
+    const summary = document.createElement('summary')
+    summary.className = 'account-icon'
+    summary.title = 'Account menu'
+    summary.setAttribute('aria-label', 'Account menu')
+    summary.append(icon(Menu))
+    const items = document.createElement('div')
+    items.className = 'account-menu-items'
+    const mobileLinks = document.createElement('div')
+    mobileLinks.className = 'account-mobile-links'
+    for (const link of header.querySelectorAll('nav .nav-group-links a, nav > a')) {
+      mobileLinks.append(link.cloneNode(true))
+    }
+    items.append(mobileLinks)
+    for (const [label, href] of [['My profile', '/profile'], ['Dashboard', '/users/dashboard']]) {
+      const link = document.createElement('a')
+      link.textContent = label
+      link.href = href
+      items.append(link)
+    }
+    const logout = document.createElement('button')
+    logout.type = 'button'
+    logout.textContent = 'Sign out'
+    const error = document.createElement('p')
+    error.setAttribute('role', 'alert')
+    error.hidden = true
+    logout.addEventListener('click', async () => {
+      logout.disabled = true
+      error.hidden = true
+      try {
+        const result = await fetch('/pidp/auth/session/logout', { method: 'POST', credentials: 'include' })
+        if (!result.ok) throw new Error('Sign out failed')
+        location.reload()
+      } catch {
+        error.textContent = 'Unable to sign out. Please try again.'
+        error.hidden = false
+        logout.disabled = false
+      }
+    })
+    items.append(logout, error)
+    menu.append(summary, items)
+    controls.replaceChildren(profile, messages, menu)
+    header.classList.add('has-account')
+    document.addEventListener('click', (event) => {
+      if (!menu.contains(event.target)) menu.open = false
+    })
+    menu.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        menu.open = false
+        summary.focus()
+        event.stopPropagation()
+      }
+    })
 
-  for (const link of loginLinks) {
-    link.href = '/chat'
-    link.innerHTML = link.innerHTML.replace(/\bLogin\b/g, 'Messages')
-    if (link.textContent.trim() === 'Login') link.textContent = 'Messages'
-    link.setAttribute('aria-label', 'Open Baltimore MedTech messages')
+  } catch {
+    // An unavailable or non-JSON session endpoint must never imply a signed-in user.
   }
 }
 
 setupThemeControls();
-ensureDatasetNavigation();
-ensureMedTechEventsNavigation();
-ensureStartNavigation();
+organizeNavigation();
 setupPrimaryNavigation();
 setupAuthNavigation();
 

@@ -101,6 +101,42 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(oldMedtechEvents.status, 301)
   assert.equal(oldMedtechEvents.headers.get('location'), 'https://medtech.social/org-events?from=old')
 
+  const orgRegister = await worker.fetch(new Request('https://medtech.social/orgs/register?from=medtech', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(orgRegister.status, 301)
+  assert.equal(orgRegister.headers.get('location'), 'https://portal.example/orgs/register?from=medtech')
+
+  const createForProfit = await worker.fetch(new Request('https://medtech.social/create/for-profit', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(createForProfit.status, 301)
+  assert.equal(createForProfit.headers.get('location'), 'https://portal.example/create/for-profit')
+
+  const orgDirectory = await worker.fetch(new Request('https://medtech.social/orgs?q=medtech', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(orgDirectory.status, 301)
+  assert.equal(orgDirectory.headers.get('location'), 'https://portal.example/orgs?q=medtech')
+
+  const publicOrgProfile = await worker.fetch(new Request('https://medtech.social/orgs/baltimore-medtech', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(publicOrgProfile.status, 301)
+  assert.equal(publicOrgProfile.headers.get('location'), 'https://portal.example/orgs/baltimore-medtech')
+
+  const tenantOrgEvents = await worker.fetch(new Request('https://medtech.social/orgs/events', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(tenantOrgEvents.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/orgs/events')
+
+  const tenantOrgInitiatives = await worker.fetch(new Request('https://medtech.social/orgs/initiatives/new', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(tenantOrgInitiatives.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/orgs/initiatives/new')
+
   const tenantLogin = await worker.fetch(new Request('https://medtech.social/users/login', {
     headers: { accept: 'text/html' },
   }), env)

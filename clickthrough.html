@@ -80,8 +80,23 @@
 
         <section class="link-tool-controls" aria-label="Graph controls">
           <label>
-            <span>Source page</span>
+            <span>View</span>
+            <select id="link-view-mode">
+              <option value="source">Source file</option>
+              <option value="route">Route ownership</option>
+            </select>
+          </label>
+          <label>
+            <span>Focus</span>
             <select id="link-source-select"></select>
+          </label>
+          <label>
+            <span>Direction</span>
+            <select id="link-direction">
+              <option value="outgoing">Outgoing</option>
+              <option value="incoming">Incoming</option>
+              <option value="all">Connected</option>
+            </select>
           </label>
           <label>
             <span>Find</span>
@@ -89,9 +104,17 @@
           </label>
           <div class="link-kind-toggles" role="group" aria-label="Link kinds">
             <label><input type="checkbox" value="internal-page" checked /> Internal</label>
+            <label><input type="checkbox" value="app-handoff" checked /> App handoff</label>
+            <label><input type="checkbox" value="portal-route" checked /> Portal route</label>
             <label><input type="checkbox" value="same-page-anchor" checked /> Anchors</label>
             <label><input type="checkbox" value="external-handoff" checked /> External</label>
             <label><input type="checkbox" value="runtime-placeholder" checked /> Runtime</label>
+          </div>
+          <div class="link-repo-toggles" role="group" aria-label="Linked systems">
+            <label><input type="checkbox" value="medtech" checked /> MedTech</label>
+            <label><input type="checkbox" value="orgportal" checked /> OrgPortal</label>
+            <label><input type="checkbox" value="pidp" checked /> PIdP</label>
+            <label><input type="checkbox" value="external" checked /> External</label>
           </div>
         </section>
 

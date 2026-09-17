@@ -175,8 +175,19 @@ function webRequest(req, requestUrl) {
   return new Request(requestUrl, init)
 }
 
-async function sendWebResponse(req, res, response) {
+function prefixProxyLocation(location, stripPrefix) {
+  if (!stripPrefix || !location || !location.startsWith('/')) return location
+  if (location === stripPrefix || location.startsWith(`${stripPrefix}/`)) return location
+  return `${stripPrefix}${location}`
+}
+
+async function sendWebResponse(req, res, response, { stripPrefix = '' } = {}) {
   const headers = Object.fromEntries(response.headers.entries())
+  const locationHeader = headers.location || headers.Location
+  if (locationHeader) {
+    headers.location = prefixProxyLocation(locationHeader, stripPrefix)
+    delete headers.Location
+  }
   res.writeHead(response.status, {
     'cache-control': 'no-store',
     ...headers,
@@ -215,13 +226,15 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
     const proxiedRequest = webRequest(req, targetUrl)
     proxiedRequest.headers.set('x-forwarded-host', req.headers.host || '')
     proxiedRequest.headers.set('x-forwarded-proto', requestUrl.protocol.replace(':', ''))
+    if (stripPrefix) proxiedRequest.headers.set('x-forwarded-prefix', stripPrefix)
     const response = await fetch(targetUrl, {
       method: req.method,
       headers: proxiedRequest.headers,
       body: ['GET', 'HEAD'].includes(req.method || 'GET') ? undefined : req,
       duplex: ['GET', 'HEAD'].includes(req.method || 'GET') ? undefined : 'half',
+      redirect: 'manual',
     })
-    await sendWebResponse(req, res, response)
+    await sendWebResponse(req, res, response, { stripPrefix })
   } catch (error) {
     const cause = error instanceof Error && error.cause instanceof Error ? `: ${error.cause.message}` : ''
     const message = error instanceof Error ? `${error.message}${cause}` : 'Proxy request failed'

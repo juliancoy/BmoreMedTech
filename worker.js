@@ -73,7 +73,13 @@ function stripCookieDomains(responseHeaders, cookies) {
   }
 }
 
-function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewriteCookieDomain = false } = {}) {
+function prefixProxyLocation(location, prefix) {
+  if (!prefix || !location || !location.startsWith('/')) return location
+  if (location === prefix || location.startsWith(`${prefix}/`)) return location
+  return `${prefix}${location}`
+}
+
+function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewriteCookieDomain = false, forwardedPrefix = '' } = {}) {
   const targetUrl = new URL(url)
   const targetOrigin = new URL(trimTrailingSlash(targetOriginValue))
   targetUrl.protocol = targetOrigin.protocol
@@ -86,6 +92,7 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
   const headers = new Headers(request.headers)
   headers.set('x-forwarded-host', url.host)
   headers.set('x-forwarded-proto', url.protocol.replace(':', ''))
+  if (forwardedPrefix) headers.set('x-forwarded-prefix', forwardedPrefix)
   headers.delete('host')
 
   const proxiedInit = {
@@ -97,14 +104,18 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
   if (proxiedInit.body) proxiedInit.duplex = 'half'
 
   return fetch(new Request(targetUrl.toString(), proxiedInit)).then((response) => {
-    if (!rewriteCookieDomain) return response
     const responseHeaders = new Headers(response.headers)
-    const cookies = responseSetCookies(response.headers)
-    if (cookies.length) {
-      stripCookieDomains(responseHeaders, cookies)
+    if (forwardedPrefix && responseHeaders.has('location')) {
+      responseHeaders.set('location', prefixProxyLocation(responseHeaders.get('location') || '', forwardedPrefix))
     }
-    responseHeaders.set('cache-control', 'no-store')
-    responseHeaders.set('referrer-policy', 'no-referrer')
+    if (rewriteCookieDomain) {
+      const cookies = responseSetCookies(response.headers)
+      if (cookies.length) {
+        stripCookieDomains(responseHeaders, cookies)
+      }
+      responseHeaders.set('cache-control', 'no-store')
+      responseHeaders.set('referrer-policy', 'no-referrer')
+    }
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,
@@ -244,6 +255,7 @@ export default {
     if (url.pathname === '/pidp' || url.pathname.startsWith('/pidp/')) {
       const response = await proxyResponse(request, env.PIDP_PROXY_ORIGIN || env.PIDP_API_ORIGIN || DEFAULT_PIDP_API_ORIGIN, url, {
         stripPrefix: '/pidp',
+        forwardedPrefix: '/pidp',
         rewriteCookieDomain: true,
       })
       return applyApiHeaders(request, response)

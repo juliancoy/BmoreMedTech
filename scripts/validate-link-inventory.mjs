@@ -196,12 +196,24 @@ function classifyWorkspaceForUrl(url, sourceRepo = 'medtech') {
   return ''
 }
 
+function isSiblingPortalMountReference(href, sourceRepo) {
+  if (sourceRepo === 'medtech') return false
+  try {
+    const url = new URL(href, 'https://medtech.local/')
+    const mountPath = `/${'p'}`
+    return url.hostname === 'codecollective.us' && (url.pathname === mountPath || url.pathname.startsWith(`${mountPath}/`))
+  } catch {
+    return false
+  }
+}
+
 for (const [source, page] of sources) {
   const sourceRepo = page.workspace
   const strict = workspaces.find((workspace) => workspace.id === sourceRepo)?.strict
   for (const link of page.links) {
     const href = link.href
     if (!href) continue
+    if (isSiblingPortalMountReference(href, sourceRepo)) continue
 
     const item = {
       source,

@@ -50,7 +50,7 @@ test('event merging prefers MedTech-owned portal records and deduplicates by URL
 
 test('MedTech event URLs stay on the MedTech base domain', () => {
   assert.equal(
-    medtechEventUrl({ public_url: 'https://codecollective.us/p/events/example-event' }),
+    medtechEventUrl({ public_url: 'https://codecollective.us/events/example-event' }),
     'https://medtech.social/events/example-event',
   )
 })

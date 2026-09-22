@@ -114,7 +114,7 @@
     "pidp:serverless/src/profilePage.ts",
     "pidp:serverless/test/mcp-authorization.test.mjs"
   ],
-  "linkCount": 551,
+  "linkCount": 549,
   "links": [
     {
       "source": "medtech:calendar.html",
@@ -4632,16 +4632,6 @@
       "fragment": ""
     },
     {
-      "source": "orgportal:src/infrastructure/platform/inAppBrowser.test.ts",
-      "sourcePath": "src/infrastructure/platform/inAppBrowser.test.ts",
-      "sourceRepo": "orgportal",
-      "href": "https://codecollective.us/p/users/thewolfonworldstreetsllc?from=linkedin#login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://codecollective.us"
-    },
-    {
       "source": "orgportal:src/ui/components/FloatingSocialDock.tsx",
       "sourcePath": "src/ui/components/FloatingSocialDock.tsx",
       "sourceRepo": "orgportal",
@@ -5097,16 +5087,6 @@
       "targetRepo": "orgportal",
       "target": "tools/business-cards.html",
       "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/shell/Header.tsx",
-      "sourcePath": "src/ui/shell/Header.tsx",
-      "sourceRepo": "orgportal",
-      "href": "https://codecollective.us/p/",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://codecollective.us"
     },
     {
       "source": "orgportal:src/ui/shell/TimebankHeader.tsx",

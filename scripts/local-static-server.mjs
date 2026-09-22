@@ -253,14 +253,6 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
   }
 }
 
-async function servePortalProxy(req, res, requestUrl) {
-  const targetUrl = new URL(requestUrl)
-  if (!targetUrl.pathname.startsWith('/p/')) {
-    targetUrl.pathname = `/p${targetUrl.pathname === '/' ? '' : targetUrl.pathname}`
-  }
-  await serveProxy(req, res, targetUrl, portalSiteOrigin)
-}
-
 async function servePortalRootAssetProxy(req, res, requestUrl) {
   const targetUrl = new URL(requestUrl)
   targetUrl.pathname = `/__portal_root${targetUrl.pathname}`
@@ -271,18 +263,6 @@ async function servePortalRootNavigationProxy(req, res, requestUrl) {
   const targetUrl = new URL(requestUrl)
   targetUrl.pathname = '/__portal_root/'
   await serveProxy(req, res, targetUrl, portalSiteOrigin)
-}
-
-function isPortalAssetPath(pathname) {
-  return pathname === '/p/assets' || pathname.startsWith('/p/assets/')
-    || pathname === '/p/images' || pathname.startsWith('/p/images/')
-    || pathname === '/p/css' || pathname.startsWith('/p/css/')
-    || pathname === '/p/manifest.webmanifest'
-    || pathname === '/p/medtech.webmanifest'
-    || pathname === '/p/push-sw.js'
-    || pathname === '/p/mobile-update.json'
-    || pathname === '/p/orgportal-android-release.apk'
-    || /^\/p\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|json|webmanifest)$/.test(pathname)
 }
 
 function isRootPortalAssetPath(pathname) {
@@ -408,10 +388,6 @@ const server = https.createServer(
       }
       if (requestUrl.pathname === '/specialty' || requestUrl.pathname.startsWith('/specialty/')) {
         await servePortalRootAssetProxy(req, res, requestUrl)
-        return
-      }
-      if (isPortalAssetPath(requestUrl.pathname)) {
-        await servePortalProxy(req, res, requestUrl)
         return
       }
       if (isRootPortalAssetPath(requestUrl.pathname)) {

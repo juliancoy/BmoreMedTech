@@ -34,9 +34,6 @@ export function medtechEventUrl(event) {
   if (typeof event.public_url === 'string' && event.public_url.trim()) {
     try {
       const url = new URL(event.public_url)
-      if (url.pathname.startsWith('/p/events/')) {
-        return `https://medtech.social${url.pathname.slice('/p'.length)}${url.search}${url.hash}`
-      }
       if (url.pathname.startsWith('/events/')) {
         return `https://medtech.social${url.pathname}${url.search}${url.hash}`
       }
@@ -113,7 +110,7 @@ export function isMedTechOwnedEvent(event) {
   return tags.includes('medtech')
     || event?.host_org_id === 'org-baltimore-medtech'
     || /(^|\b)baltimore medtech(\b|$)/i.test(blob)
-    || /medtech\.social\/(?:p\/)?events\//.test(String(event?.url || event?.public_url || ''))
+    || /medtech\.social\/events\//.test(String(event?.url || event?.public_url || ''))
 }
 
 export function isMedicalEvent(event) {

@@ -62,22 +62,17 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     'portal_session=fixture; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax',
   ])
 
-  const portalAsset = await worker.fetch(new Request('https://medtech.social/p/assets/index.js'), env)
+  const portalAsset = await worker.fetch(new Request('https://medtech.social/assets/index.js'), env)
   assert.equal(portalAsset.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/assets/index.js')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/assets/index.js')
 
-  const portalCss = await worker.fetch(new Request('https://medtech.social/p/css/master.css'), env)
+  const portalCss = await worker.fetch(new Request('https://medtech.social/css/master.css'), env)
   assert.equal(portalCss.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/css/master.css')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/css/master.css')
 
-  const portalIcon = await worker.fetch(new Request('https://medtech.social/p/codecollective_logo.png'), env)
+  const portalIcon = await worker.fetch(new Request('https://medtech.social/codecollective_logo.png'), env)
   assert.equal(portalIcon.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/codecollective_logo.png')
-
-  const oldPortalPath = await worker.fetch(new Request('https://medtech.social/p/users/login?portalProfile=baltimore-medtech', {
-    headers: { accept: 'text/html' },
-  }), env)
-  assert.equal(oldPortalPath.status, 404)
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/codecollective_logo.png')
 
   const rootPortalIcon = await worker.fetch(new Request('https://medtech.social/images/google-g-logo.svg'), env)
   assert.equal(rootPortalIcon.status, 200)

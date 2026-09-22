@@ -124,17 +124,6 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
   })
 }
 
-function portalProxyResponse(request, env, url, { stripBase = false } = {}) {
-  const targetUrl = new URL(url)
-  if (stripBase && (targetUrl.pathname === '/p' || targetUrl.pathname.startsWith('/p/'))) {
-    targetUrl.pathname = targetUrl.pathname.slice('/p'.length) || '/'
-  }
-  if (!targetUrl.pathname.startsWith('/p/')) {
-    targetUrl.pathname = `/p${targetUrl.pathname === '/' ? '' : targetUrl.pathname}`
-  }
-  return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
-}
-
 function portalRootAssetProxyResponse(request, env, url) {
   const targetUrl = new URL(url)
   targetUrl.pathname = `/__portal_root${targetUrl.pathname}`
@@ -180,18 +169,6 @@ function isHtmlNavigation(request) {
   if (request.method !== 'GET') return false
   const accept = request.headers.get('accept') || ''
   return accept.includes('text/html')
-}
-
-function isPortalAssetPath(pathname) {
-  return pathname === '/p/assets' || pathname.startsWith('/p/assets/')
-    || pathname === '/p/images' || pathname.startsWith('/p/images/')
-    || pathname === '/p/css' || pathname.startsWith('/p/css/')
-    || pathname === '/p/manifest.webmanifest'
-    || pathname === '/p/medtech.webmanifest'
-    || pathname === '/p/push-sw.js'
-    || pathname === '/p/mobile-update.json'
-    || pathname === '/p/orgportal-android-release.apk'
-    || /^\/p\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|json|webmanifest)$/.test(pathname)
 }
 
 function isRootPortalAssetPath(pathname) {
@@ -294,19 +271,8 @@ export default {
       return portalRootAssetProxyResponse(request, env, url)
     }
 
-    if (isPortalAssetPath(url.pathname)) {
-      return portalProxyResponse(request, env, url)
-    }
-
     if (isRootPortalAssetPath(url.pathname)) {
       return portalRootAssetProxyResponse(request, env, url)
-    }
-
-    if (url.pathname === '/p' || url.pathname.startsWith('/p/')) {
-      return new Response('Not found\n', {
-        status: 404,
-        headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300, must-revalidate' },
-      })
     }
 
     if (url.pathname === '/api/datasets' || url.pathname.startsWith('/api/datasets/')) {

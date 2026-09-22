@@ -261,6 +261,18 @@ async function servePortalProxy(req, res, requestUrl) {
   await serveProxy(req, res, targetUrl, portalSiteOrigin)
 }
 
+async function servePortalRootAssetProxy(req, res, requestUrl) {
+  const targetUrl = new URL(requestUrl)
+  targetUrl.pathname = `/__portal_root${targetUrl.pathname}`
+  await serveProxy(req, res, targetUrl, portalSiteOrigin)
+}
+
+async function servePortalRootNavigationProxy(req, res, requestUrl) {
+  const targetUrl = new URL(requestUrl)
+  targetUrl.pathname = '/__portal_root/'
+  await serveProxy(req, res, targetUrl, portalSiteOrigin)
+}
+
 function isPortalAssetPath(pathname) {
   return pathname === '/p/assets' || pathname.startsWith('/p/assets/')
     || pathname === '/p/images' || pathname.startsWith('/p/images/')
@@ -274,7 +286,8 @@ function isPortalAssetPath(pathname) {
 }
 
 function isRootPortalAssetPath(pathname) {
-  return pathname === '/images' || pathname.startsWith('/images/')
+  return pathname === '/assets' || pathname.startsWith('/assets/')
+    || pathname === '/images' || pathname.startsWith('/images/')
     || pathname === '/css' || pathname.startsWith('/css/')
     || pathname === '/mobile-update.json'
     || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
@@ -394,11 +407,15 @@ const server = https.createServer(
         return
       }
       if (requestUrl.pathname === '/specialty' || requestUrl.pathname.startsWith('/specialty/')) {
-        await serveProxy(req, res, requestUrl, portalSiteOrigin)
+        await servePortalRootAssetProxy(req, res, requestUrl)
         return
       }
-      if (isPortalAssetPath(requestUrl.pathname) || isRootPortalAssetPath(requestUrl.pathname)) {
+      if (isPortalAssetPath(requestUrl.pathname)) {
         await servePortalProxy(req, res, requestUrl)
+        return
+      }
+      if (isRootPortalAssetPath(requestUrl.pathname)) {
+        await servePortalRootAssetProxy(req, res, requestUrl)
         return
       }
       const filePath = await existingFile(cleanPathname(requestUrl.pathname))
@@ -407,7 +424,7 @@ const server = https.createServer(
         return
       }
       if (isPortalRoute(requestUrl.pathname)) {
-        await servePortalProxy(req, res, requestUrl)
+        await servePortalRootNavigationProxy(req, res, requestUrl)
         return
       }
       send(res, 404, 'Not found\n', { 'content-type': 'text/plain; charset=utf-8' })

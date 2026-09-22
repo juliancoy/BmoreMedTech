@@ -26,7 +26,7 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   const seen = []
   t.mock.method(globalThis, 'fetch', async (request) => {
     seen.push({ url: request.url, method: request.method, headers: request.headers })
-    if (request.url === 'https://portal.example/p/events/medtech-formational-event') {
+    if (request.url === 'https://portal.example/__portal_root/') {
       const headers = new Headers()
       headers.append('set-cookie', 'portal_session=fixture; Domain=codecollective.us; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax')
       return new Response('ok', { headers })
@@ -56,7 +56,7 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(portal.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/events/medtech-formational-event')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
   assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'medtech.social')
   assert.deepEqual(portal.headers.getSetCookie(), [
     'portal_session=fixture; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax',
@@ -81,11 +81,15 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
 
   const rootPortalIcon = await worker.fetch(new Request('https://medtech.social/images/google-g-logo.svg'), env)
   assert.equal(rootPortalIcon.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/images/google-g-logo.svg')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/images/google-g-logo.svg')
+
+  const rootPortalAsset = await worker.fetch(new Request('https://medtech.social/assets/index.js'), env)
+  assert.equal(rootPortalAsset.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/assets/index.js')
 
   const tenantBranding = await worker.fetch(new Request('https://medtech.social/branding'), env)
   assert.equal(tenantBranding.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/branding')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
 
   const oldTenantBranding = await worker.fetch(new Request('https://medtech.social/branding.html?from=old'), env)
   assert.equal(oldTenantBranding.status, 301)
@@ -95,13 +99,13 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(portalSearch.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/search?q=medtech&scope=people')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/?q=medtech&scope=people')
 
   const portalResources = await worker.fetch(new Request('https://medtech.social/resources', {
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(portalResources.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/resources')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
 
   const oldCommunity = await worker.fetch(new Request('https://medtech.social/community', {
     headers: { accept: 'text/html' },
@@ -143,13 +147,13 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(tenantOrgEvents.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/orgs/events')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
 
   const tenantOrgInitiatives = await worker.fetch(new Request('https://medtech.social/orgs/initiatives/new', {
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(tenantOrgInitiatives.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/p/orgs/initiatives/new')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
 
   const tenantLogin = await worker.fetch(new Request('https://medtech.social/users/login', {
     headers: { accept: 'text/html' },

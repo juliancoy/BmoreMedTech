@@ -135,6 +135,18 @@ function portalProxyResponse(request, env, url, { stripBase = false } = {}) {
   return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
 }
 
+function portalRootAssetProxyResponse(request, env, url) {
+  const targetUrl = new URL(url)
+  targetUrl.pathname = `/__portal_root${targetUrl.pathname}`
+  return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
+}
+
+function portalRootNavigationProxyResponse(request, env, url) {
+  const targetUrl = new URL(url)
+  targetUrl.pathname = '/__portal_root/'
+  return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
+}
+
 function applyApiHeaders(request, response) {
   const headers = applyCorsHeaders(request, new Headers(response.headers))
   headers.set('x-content-type-options', 'nosniff')
@@ -183,7 +195,8 @@ function isPortalAssetPath(pathname) {
 }
 
 function isRootPortalAssetPath(pathname) {
-  return pathname === '/images' || pathname.startsWith('/images/')
+  return pathname === '/assets' || pathname.startsWith('/assets/')
+    || pathname === '/images' || pathname.startsWith('/images/')
     || pathname === '/css' || pathname.startsWith('/css/')
     || pathname === '/mobile-update.json'
     || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
@@ -278,11 +291,15 @@ export default {
     }
 
     if (url.pathname === '/specialty' || url.pathname.startsWith('/specialty/')) {
-      return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, url, { rewriteCookieDomain: true })
+      return portalRootAssetProxyResponse(request, env, url)
     }
 
-    if (isPortalAssetPath(url.pathname) || isRootPortalAssetPath(url.pathname)) {
+    if (isPortalAssetPath(url.pathname)) {
       return portalProxyResponse(request, env, url)
+    }
+
+    if (isRootPortalAssetPath(url.pathname)) {
+      return portalRootAssetProxyResponse(request, env, url)
     }
 
     if (url.pathname === '/p' || url.pathname.startsWith('/p/')) {
@@ -327,7 +344,7 @@ export default {
     }
 
     if (isPortalRoute(url.pathname)) {
-      return portalProxyResponse(request, env, url)
+      return portalRootNavigationProxyResponse(request, env, url)
     }
 
     const response = await env.ASSETS.fetch(request)

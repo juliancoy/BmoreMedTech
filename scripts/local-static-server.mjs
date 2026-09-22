@@ -291,6 +291,7 @@ function isPortalRoute(pathname) {
   return pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')
+    || pathname === '/specialty' || pathname.startsWith('/specialty/')
     || isMedTechTenantOrgRoute(pathname)
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
@@ -299,6 +300,8 @@ function isPortalRoute(pathname) {
     || pathname === '/profile'
     || pathname === '/settings'
     || pathname === '/search'
+    || pathname === '/branding'
+    || pathname === '/resources' || pathname.startsWith('/resources/')
     || pathname === '/tools' || pathname.startsWith('/tools/')
 }
 
@@ -354,6 +357,10 @@ const server = https.createServer(
         redirect(res, `${requestUrl.pathname}${requestUrl.search}${requestUrl.hash}`)
         return
       }
+      if (requestUrl.pathname === '/branding.html') {
+        redirect(res, `/branding${requestUrl.search}${requestUrl.hash}`, 301)
+        return
+      }
       if (isMasterPortalOrgRoute(requestUrl.pathname)) {
         redirect(res, masterPortalLocation(requestUrl), 301)
         return
@@ -383,6 +390,10 @@ const server = https.createServer(
         return
       }
       if (isPortalDevAssetPath(requestUrl.pathname)) {
+        await serveProxy(req, res, requestUrl, portalSiteOrigin)
+        return
+      }
+      if (requestUrl.pathname === '/specialty' || requestUrl.pathname.startsWith('/specialty/')) {
         await serveProxy(req, res, requestUrl, portalSiteOrigin)
         return
       }

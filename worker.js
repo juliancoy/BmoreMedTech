@@ -200,6 +200,7 @@ function isPortalRoute(pathname) {
   return pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')
+    || pathname === '/specialty' || pathname.startsWith('/specialty/')
     || isMedTechTenantOrgRoute(pathname)
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
@@ -208,6 +209,8 @@ function isPortalRoute(pathname) {
     || pathname === '/profile'
     || pathname === '/settings'
     || pathname === '/search'
+    || pathname === '/branding'
+    || pathname === '/resources' || pathname.startsWith('/resources/')
     || pathname === '/tools' || pathname.startsWith('/tools/')
 }
 
@@ -261,11 +264,20 @@ export default {
       return Response.redirect(url.toString(), 301)
     }
 
+    if (url.pathname === '/branding.html') {
+      url.pathname = '/branding'
+      return Response.redirect(url.toString(), 301)
+    }
+
     if (isMasterPortalOrgRoute(url.pathname)) {
       return masterPortalRedirect(url, env)
     }
 
     if (isPortalDevAssetPath(url.pathname)) {
+      return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, url, { rewriteCookieDomain: true })
+    }
+
+    if (url.pathname === '/specialty' || url.pathname.startsWith('/specialty/')) {
       return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, url, { rewriteCookieDomain: true })
     }
 

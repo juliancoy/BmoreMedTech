@@ -18,7 +18,7 @@ const workspaces = [
     root: new URL('../../OrgPortal/web/', import.meta.url),
     strict: false,
     extensions: new Set(['.html', '.tsx', '.ts', '.jsx', '.js']),
-    ignoredDirs: new Set(['.git', '.vite-playwright-cache', 'dist', 'node_modules', 'playwright-report', 'coverage']),
+    ignoredDirs: new Set(['.git', '.vite-local-check-cache', '.vite-playwright-cache', 'dist', 'node_modules', 'playwright-report', 'coverage']),
     ignoredPathParts: ['public/specialty/baltimore-medtech'],
   },
   {
@@ -45,7 +45,9 @@ const knownExternalOrigins = new Set([
   'https://medtech.social',
 ])
 const knownPortalRoutes = new Set([
+  '/branding',
   '/org-events',
+  '/resources',
 ])
 const writeIndex = process.argv.indexOf('--write')
 const plannedOutputPath = writeIndex === -1 ? '' : process.argv[writeIndex + 1]
@@ -180,13 +182,13 @@ const failures = []
 function classifyWorkspaceForUrl(url, sourceRepo = 'medtech') {
   if (url.origin === 'https://medtech.local') {
     if (url.pathname.startsWith('/pidp') || url.pathname.startsWith('/oauth') || url.pathname.startsWith('/auth/') || url.pathname.startsWith('/session/')) return 'pidp'
-    if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/create')) return 'orgportal'
+    if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/create') || url.pathname.startsWith('/branding') || url.pathname.startsWith('/resources')) return 'orgportal'
     if (sourceRepo !== 'medtech') return sourceRepo
     return 'medtech'
   }
   if (url.hostname === 'medtech.social') {
     if (url.pathname.startsWith('/pidp') || url.pathname.startsWith('/oauth') || url.pathname.startsWith('/auth/') || url.pathname.startsWith('/session/')) return 'pidp'
-    if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/medtech-events') || url.pathname.startsWith('/create')) return 'orgportal'
+    if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/medtech-events') || url.pathname.startsWith('/create') || url.pathname.startsWith('/branding') || url.pathname.startsWith('/resources')) return 'orgportal'
     return 'medtech'
   }
   if (url.hostname.includes('pidp')) return 'pidp'

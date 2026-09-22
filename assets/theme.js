@@ -77,6 +77,7 @@ function organizeNavigation() {
     ['/map.html', 'Event map'],
     ['/taxonomy.html', 'Medical atlas'],
     ['/datasets.html', 'Datasets'],
+    ['/branding', 'Brand guide'],
     ['/start.html', 'Get involved'],
   ]
   const links = destinations.map(([path, label]) => {
@@ -84,7 +85,8 @@ function organizeNavigation() {
       .filter((link) => new URL(link.href).pathname === path)
     const link = matches.shift() || document.createElement('a')
     matches.forEach((duplicate) => duplicate.remove())
-    link.href = path
+    if (path === '/datasets.html') link.href = '/datasets.html'
+    else link.href = path
     link.textContent = label
     link.removeAttribute('aria-current')
     if (location.pathname === path || (path === '/datasets.html' && location.pathname.startsWith('/datasets/'))) {
@@ -109,7 +111,7 @@ function organizeNavigation() {
     groups.push(details)
     return details
   }
-  nav.prepend(group('Events', links.slice(0, 3)), group('Research', links.slice(3, 5)), links[5])
+  nav.prepend(group('Events', links.slice(0, 3)), group('Research', links.slice(3, 6)), links[6])
   document.addEventListener('click', (event) => {
     groups.forEach((group) => { if (!group.contains(event.target) || event.target.closest('a')) group.open = false })
   })

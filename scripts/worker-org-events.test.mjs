@@ -83,11 +83,25 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.equal(rootPortalIcon.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/p/images/google-g-logo.svg')
 
+  const tenantBranding = await worker.fetch(new Request('https://medtech.social/branding'), env)
+  assert.equal(tenantBranding.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/branding')
+
+  const oldTenantBranding = await worker.fetch(new Request('https://medtech.social/branding.html?from=old'), env)
+  assert.equal(oldTenantBranding.status, 301)
+  assert.equal(oldTenantBranding.headers.get('location'), 'https://medtech.social/branding?from=old')
+
   const portalSearch = await worker.fetch(new Request('https://medtech.social/search?q=medtech&scope=people', {
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(portalSearch.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/p/search?q=medtech&scope=people')
+
+  const portalResources = await worker.fetch(new Request('https://medtech.social/resources', {
+    headers: { accept: 'text/html' },
+  }), env)
+  assert.equal(portalResources.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/p/resources')
 
   const oldCommunity = await worker.fetch(new Request('https://medtech.social/community', {
     headers: { accept: 'text/html' },

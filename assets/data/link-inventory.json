@@ -70,6 +70,7 @@
     "orgportal:src/ui/views/LifeInsurancePage.tsx",
     "orgportal:src/ui/views/NotFoundPage.tsx",
     "orgportal:src/ui/views/PeoplePage.tsx",
+    "orgportal:src/ui/views/TenantBrandingPage.tsx",
     "orgportal:src/ui/views/TenantHomePage.tsx",
     "orgportal:src/ui/views/TenantResourcesPage.tsx",
     "orgportal:src/ui/views/TermsPage.tsx",
@@ -113,7 +114,7 @@
     "pidp:serverless/src/profilePage.ts",
     "pidp:serverless/test/mcp-authorization.test.mjs"
   ],
-  "linkCount": 550,
+  "linkCount": 551,
   "links": [
     {
       "source": "medtech:calendar.html",
@@ -4679,10 +4680,9 @@
       "sourceRepo": "orgportal",
       "href": "/resources",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "resources.html",
-      "fragment": ""
+      "target": "/resources"
     },
     {
       "source": "orgportal:src/ui/router/createAppRouter.tsx",
@@ -4694,6 +4694,16 @@
       "targetRepo": "orgportal",
       "target": "index.html",
       "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/router/createAppRouter.tsx",
+      "sourcePath": "src/ui/router/createAppRouter.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/branding",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/branding"
     },
     {
       "source": "orgportal:src/ui/router/createAppRouter.tsx",
@@ -5051,10 +5061,9 @@
       "sourceRepo": "orgportal",
       "href": "/resources",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "resources.html",
-      "fragment": ""
+      "target": "/resources"
     },
     {
       "source": "orgportal:src/ui/shell/Header.tsx",
@@ -5549,15 +5558,15 @@
       "fragment": ""
     },
     {
-      "source": "orgportal:src/ui/views/public/PublicContactPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicContactPage.tsx",
+      "source": "orgportal:src/ui/views/TenantBrandingPage.tsx",
+      "sourcePath": "src/ui/views/TenantBrandingPage.tsx",
       "sourceRepo": "orgportal",
-      "href": "#profile-editor",
+      "href": "/",
       "textRole": "",
-      "kind": "same-page-anchor",
+      "kind": "internal-page",
       "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicContactPage.tsx",
-      "fragment": "profile-editor"
+      "target": "index.html",
+      "fragment": ""
     },
     {
       "source": "orgportal:src/ui/views/TenantHomePage.tsx",

@@ -23,8 +23,8 @@
     linear-gradient(90deg, rgba(11, 22, 31, 0.08), rgba(11, 22, 31, 0.38) 44%, rgba(11, 22, 31, 0.78)),
     linear-gradient(180deg, rgba(11, 22, 31, 0.08), rgba(11, 22, 31, 0.72));
   --blue: #0f6f8f;
-  --teal: #18a79d;
-  --coral: #cf4f3f;
+  --teal: #08756f;
+  --coral: #b84636;
   --gold: #d99a2b;
   --gold-ink: #8d6a30;
   --shadow: 0 18px 50px rgba(23, 32, 42, 0.12);
@@ -2959,7 +2959,7 @@ h2 {
   margin: 2px 0 0;
   border: 1px solid color-mix(in srgb, var(--home-coral) 55%, var(--line));
   border-radius: 50%;
-  color: var(--home-coral);
+  color: var(--coral);
 }
 
 .home-body .glossary-category {

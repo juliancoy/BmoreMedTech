@@ -179,6 +179,12 @@ function isRootPortalAssetPath(pathname) {
     || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
 }
 
+async function localAssetResponse(request, env, path) {
+  const response = await env.ASSETS.fetch(request)
+  if (response.status === 404) return null
+  return applyStaticHeaders(request, path, response)
+}
+
 function isPortalDevAssetPath(pathname) {
   return pathname === '/@vite' || pathname.startsWith('/@vite/')
     || pathname === '/@react-refresh'
@@ -272,6 +278,8 @@ export default {
     }
 
     if (isRootPortalAssetPath(url.pathname)) {
+      const response = await localAssetResponse(request, env, url.pathname)
+      if (response) return response
       return portalRootAssetProxyResponse(request, env, url)
     }
 

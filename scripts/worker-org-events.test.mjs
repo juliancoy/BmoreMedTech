@@ -41,6 +41,8 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   const assets = {
     fetch: async (request) => ['/index.html', '/calendar'].includes(new URL(request.url).pathname)
       ? new Response('<div id="root"></div>', { headers: { 'content-type': 'text/html' } })
+      : new URL(request.url).pathname === '/assets/theme-fixture.css'
+        ? new Response('body{color:#123}', { headers: { 'content-type': 'text/css' } })
       : new URL(request.url).pathname === '/medical-science-field-atlas.json'
         ? Response.json([{ id: 'neurology', name: 'Neurology' }])
         : new Response('not found', { status: 404 }),
@@ -61,6 +63,12 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   assert.deepEqual(portal.headers.getSetCookie(), [
     'portal_session=fixture; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax',
   ])
+
+  const localThemeAsset = await worker.fetch(new Request('https://medtech.social/assets/theme-fixture.css'), env)
+  assert.equal(localThemeAsset.status, 200)
+  assert.equal(localThemeAsset.headers.get('cache-control'), 'public, max-age=31536000, immutable')
+  assert.equal(await localThemeAsset.text(), 'body{color:#123}')
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
 
   const portalAsset = await worker.fetch(new Request('https://medtech.social/assets/index.js'), env)
   assert.equal(portalAsset.status, 200)

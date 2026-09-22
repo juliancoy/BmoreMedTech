@@ -26,6 +26,7 @@
   --teal: #18a79d;
   --coral: #cf4f3f;
   --gold: #d99a2b;
+  --gold-ink: #8d6a30;
   --shadow: 0 18px 50px rgba(23, 32, 42, 0.12);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -58,6 +59,7 @@
   --teal: #5ce1d8;
   --coral: #ff8878;
   --gold: #ffc96d;
+  --gold-ink: #ffc96d;
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
 }
 
@@ -374,7 +376,7 @@ nav a[aria-current="page"] {
 .social-links { position: fixed; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 30; display: flex; align-items: center; gap: 8px; }
 .social-link { display: block; border-radius: 12px; background: transparent; color: #fff; text-decoration: none; }
 .social-button { width: 54px; height: 45px; display: grid; place-items: center; border: 3px solid #002a61; border-radius: 12px; background: #002a61; box-shadow: 0 2px 4px #bdbdbd; transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease; }
-.social-link:hover .social-button { border-color: #ffff00; background: #ffff00; transform: translateY(-1px); }
+.social-link:hover .social-button { border-color: #7a520c; background: #d99a2b; transform: translateY(-1px); }
 .social-link:hover .github-icon { fill: #002a61; }
 .social-link:focus-visible { outline: 3px solid color-mix(in srgb, var(--blue) 45%, transparent); outline-offset: 3px; }
 .social-icon { width: 29px; height: 29px; object-fit: contain; }

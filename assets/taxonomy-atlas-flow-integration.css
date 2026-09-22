@@ -8,7 +8,7 @@
 
 .taxonomy-object-semantic { --object-color: var(--teal); }
 .taxonomy-object-exchange { --object-color: #766bc8; }
-.taxonomy-object-code { --object-color: var(--gold); }
+.taxonomy-object-code { --object-color: var(--gold-ink); }
 .taxonomy-object-payment { --object-color: var(--coral); }
 
 .semantic-inspector-section {

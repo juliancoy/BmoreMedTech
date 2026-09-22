@@ -112,7 +112,7 @@
 
 .taxonomy-object-field { --object-color: var(--blue); }
 .taxonomy-object-diagnosis { --object-color: var(--coral); }
-.taxonomy-object-service { --object-color: var(--gold); }
+.taxonomy-object-service { --object-color: var(--gold-ink); }
 .taxonomy-object-payment { --object-color: var(--teal); }
 
 .taxonomy-explorer {

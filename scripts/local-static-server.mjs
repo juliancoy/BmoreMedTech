@@ -391,6 +391,11 @@ const server = https.createServer(
         return
       }
       if (isRootPortalAssetPath(requestUrl.pathname)) {
+        const filePath = await existingFile(cleanPathname(requestUrl.pathname))
+        if (filePath) {
+          await serveFile(req, res, filePath)
+          return
+        }
         await servePortalRootAssetProxy(req, res, requestUrl)
         return
       }

@@ -1,0 +1,692 @@
+{
+  "base_url": "https://medtech.social/",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "page_count": 22,
+  "pages": [
+    {
+      "path": "/",
+      "title": "Baltimore MedTech",
+      "dom_content_loaded_ms": 1774.2,
+      "load_ms": 1774.8,
+      "ttfb_ms": 384.6,
+      "fcp_ms": 1792,
+      "lcp_ms": 1792,
+      "cls": 0,
+      "resource_count": 8,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 70.8,
+      "largest_images": [
+        {
+          "duration": 658.7999999970198,
+          "encodedBodySize": 48168,
+          "startTime": 404.1000000089407,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/calendar.html",
+      "title": "General Calendar | Baltimore MedTech",
+      "dom_content_loaded_ms": 6453.3,
+      "load_ms": 6453.7,
+      "ttfb_ms": 1002.5,
+      "fcp_ms": 2416,
+      "lcp_ms": 2416,
+      "cls": 0,
+      "resource_count": 8,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 71.8,
+      "largest_images": [
+        {
+          "duration": 3023.0999999940395,
+          "encodedBodySize": 48168,
+          "startTime": 1034.2000000029802,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/clickthrough.html",
+      "title": "Click-Through Link Graph | Baltimore MedTech",
+      "dom_content_loaded_ms": 3125.7,
+      "load_ms": 3130.2,
+      "ttfb_ms": 272.7,
+      "fcp_ms": 3168,
+      "lcp_ms": 3156,
+      "cls": 0,
+      "resource_count": 9,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 127.2,
+      "largest_images": [
+        {
+          "duration": 177.6000000089407,
+          "encodedBodySize": 48168,
+          "startTime": 2770.7000000029802,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        },
+        {
+          "duration": 991.7000000029802,
+          "encodedBodySize": 48168,
+          "startTime": 3133.4000000059605,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets.html",
+      "title": "MedTech Meta Index & Data Workbook | Baltimore MedTech",
+      "dom_content_loaded_ms": 774.8,
+      "load_ms": 1272.4,
+      "ttfb_ms": 565,
+      "fcp_ms": 960,
+      "lcp_ms": 960,
+      "cls": 0,
+      "resource_count": 7,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 78.0,
+      "largest_images": [
+        {
+          "duration": 657.7999999970198,
+          "encodedBodySize": 48168,
+          "startTime": 588.1000000089407,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/map.html",
+      "title": "Medical System Map | Baltimore MedTech",
+      "dom_content_loaded_ms": 719.6,
+      "load_ms": 0,
+      "ttfb_ms": 521.5,
+      "fcp_ms": 772,
+      "lcp_ms": 772,
+      "cls": 0,
+      "resource_count": 4,
+      "image_count": 0,
+      "image_transfer_kb": 0.0,
+      "total_transfer_kb": 18.5,
+      "largest_images": []
+    },
+    {
+      "path": "/need-availability-distortions.html",
+      "title": "Need\u2013Availability Distortions | Baltimore MedTech",
+      "dom_content_loaded_ms": 4184.4,
+      "load_ms": 4189.7,
+      "ttfb_ms": 1548.5,
+      "fcp_ms": 4312,
+      "lcp_ms": 4312,
+      "cls": 0,
+      "resource_count": 16,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 94.9,
+      "largest_images": [
+        {
+          "duration": 2298.9000000059605,
+          "encodedBodySize": 48168,
+          "startTime": 1843.9000000059605,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/start.html",
+      "title": "Start Here | Baltimore MedTech",
+      "dom_content_loaded_ms": 1586.7,
+      "load_ms": 2344.9,
+      "ttfb_ms": 927.7,
+      "fcp_ms": 1656,
+      "lcp_ms": 1656,
+      "cls": 0,
+      "resource_count": 4,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 65.0,
+      "largest_images": [
+        {
+          "duration": 1403.5,
+          "encodedBodySize": 48168,
+          "startTime": 938.7000000029802,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/taxonomy.html",
+      "title": "Medical Science & Coding Atlas | Baltimore MedTech",
+      "dom_content_loaded_ms": 1632,
+      "load_ms": 1731.5,
+      "ttfb_ms": 520.5,
+      "fcp_ms": 1760,
+      "lcp_ms": 1960,
+      "cls": 0,
+      "resource_count": 15,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 112.6,
+      "largest_images": [
+        {
+          "duration": 908.1000000089407,
+          "encodedBodySize": 48168,
+          "startTime": 822.5,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/allied-care-teams.html",
+      "title": "Allied care teams data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 1232.2,
+      "load_ms": 1724.4,
+      "ttfb_ms": 574.7,
+      "fcp_ms": 1332,
+      "lcp_ms": 1332,
+      "cls": 0,
+      "resource_count": 11,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 131.0,
+      "largest_images": [
+        {
+          "duration": 1125.0999999940395,
+          "encodedBodySize": 48168,
+          "startTime": 582.7000000029802,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        },
+        {
+          "duration": 144.59999999403954,
+          "encodedBodySize": 48168,
+          "startTime": 1728.2000000029802,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/bls-oews-baltimore.html",
+      "title": "Dataset Sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 946.1,
+      "load_ms": 0,
+      "ttfb_ms": 606.4,
+      "fcp_ms": 1044,
+      "lcp_ms": 1044,
+      "cls": 0,
+      "resource_count": 5,
+      "image_count": 0,
+      "image_transfer_kb": 0.0,
+      "total_transfer_kb": 27.0,
+      "largest_images": []
+    },
+    {
+      "path": "/datasets/clinical-code-systems.html",
+      "title": "Code systems data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 1874.4,
+      "load_ms": 2877.9,
+      "ttfb_ms": 307.8,
+      "fcp_ms": 1956,
+      "lcp_ms": 1956,
+      "cls": 0,
+      "resource_count": 8,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 85.0,
+      "largest_images": [
+        {
+          "duration": 1474.699999988079,
+          "encodedBodySize": 48168,
+          "startTime": 1396.9000000059605,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/clinical-semantic-systems.html",
+      "title": "Semantic systems data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 2054.5,
+      "load_ms": 2861.8,
+      "ttfb_ms": 1106.9,
+      "fcp_ms": 2172,
+      "lcp_ms": 2172,
+      "cls": 0.1363,
+      "resource_count": 7,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 81.0,
+      "largest_images": [
+        {
+          "duration": 1738.2999999970198,
+          "encodedBodySize": 48168,
+          "startTime": 1118.9000000059605,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/cms-doctors-clinicians.html",
+      "title": "CMS clinicians data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 543.1,
+      "load_ms": 1417.8,
+      "ttfb_ms": 326.2,
+      "fcp_ms": 664,
+      "lcp_ms": 664,
+      "cls": 0,
+      "resource_count": 7,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 81.0,
+      "largest_images": [
+        {
+          "duration": 1061.5,
+          "encodedBodySize": 48168,
+          "startTime": 354.09999999403954,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/cms-provider-services.html",
+      "title": "CMS services data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 427.3,
+      "load_ms": 0,
+      "ttfb_ms": 235.3,
+      "fcp_ms": 484,
+      "lcp_ms": 484,
+      "cls": 0,
+      "resource_count": 9,
+      "image_count": 0,
+      "image_transfer_kb": 0.0,
+      "total_transfer_kb": 43.7,
+      "largest_images": []
+    },
+    {
+      "path": "/datasets/hrsa-ahrf.html",
+      "title": "HRSA AHRF data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 1897.7,
+      "load_ms": 2535.4,
+      "ttfb_ms": 325.9,
+      "fcp_ms": 1984,
+      "lcp_ms": 1984,
+      "cls": 0,
+      "resource_count": 11,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 83.2,
+      "largest_images": [
+        {
+          "duration": 2061,
+          "encodedBodySize": 48168,
+          "startTime": 469.79999999701977,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/maryland-medicaid-provider-finder.html",
+      "title": "MD Provider Finder data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 1874.1,
+      "load_ms": 2587.9,
+      "ttfb_ms": 729.9,
+      "fcp_ms": 1488,
+      "lcp_ms": 1488,
+      "cls": 0.1155,
+      "resource_count": 11,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 83.3,
+      "largest_images": [
+        {
+          "duration": 1827.2999999970198,
+          "encodedBodySize": 48168,
+          "startTime": 754.3000000119209,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/maryland-medicaid-pvs.html",
+      "title": "MD Medicaid PVS data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 1732.3,
+      "load_ms": 2525.5,
+      "ttfb_ms": 235,
+      "fcp_ms": 1800,
+      "lcp_ms": 1800,
+      "cls": 0.1471,
+      "resource_count": 8,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 81.4,
+      "largest_images": [
+        {
+          "duration": 2261.4000000059605,
+          "encodedBodySize": 48168,
+          "startTime": 260.79999999701977,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/medical-science-field-atlas.html",
+      "title": "Field Atlas data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 3840.8,
+      "load_ms": 3841.4,
+      "ttfb_ms": 622.9,
+      "fcp_ms": 3752,
+      "lcp_ms": 3752,
+      "cls": 0,
+      "resource_count": 8,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 81.3,
+      "largest_images": [
+        {
+          "duration": 2905.5,
+          "encodedBodySize": 48168,
+          "startTime": 929.5,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/medtech-meta-index.html",
+      "title": "Meta Index data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 3230.2,
+      "load_ms": 3532.9,
+      "ttfb_ms": 1758.9,
+      "fcp_ms": 2152,
+      "lcp_ms": 2152,
+      "cls": 0.0543,
+      "resource_count": 11,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 88.4,
+      "largest_images": [
+        {
+          "duration": 1636,
+          "encodedBodySize": 48168,
+          "startTime": 1892,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/need-availability-distortions.html",
+      "title": "Need gaps data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 1191.5,
+      "load_ms": 1532.1,
+      "ttfb_ms": 517.5,
+      "fcp_ms": 968,
+      "lcp_ms": 968,
+      "cls": 0,
+      "resource_count": 10,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 83.1,
+      "largest_images": [
+        {
+          "duration": 995.9000000059605,
+          "encodedBodySize": 48168,
+          "startTime": 535,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/nppes-registry.html",
+      "title": "NPPES data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 2025.8,
+      "load_ms": 3002.2,
+      "ttfb_ms": 1631.9,
+      "fcp_ms": 2072,
+      "lcp_ms": 2072,
+      "cls": 0.0014,
+      "resource_count": 11,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 83.0,
+      "largest_images": [
+        {
+          "duration": 1335.199999988079,
+          "encodedBodySize": 48168,
+          "startTime": 1663.800000011921,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/strategy-field-metrics.html",
+      "title": "Field metrics data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 1133.5,
+      "load_ms": 0,
+      "ttfb_ms": 188,
+      "fcp_ms": 1224,
+      "lcp_ms": 1224,
+      "cls": 0.1047,
+      "resource_count": 6,
+      "image_count": 0,
+      "image_transfer_kb": 0.0,
+      "total_transfer_kb": 33.8,
+      "largest_images": []
+    }
+  ],
+  "slowest_by_load": [
+    {
+      "path": "/calendar.html",
+      "title": "General Calendar | Baltimore MedTech",
+      "dom_content_loaded_ms": 6453.3,
+      "load_ms": 6453.7,
+      "ttfb_ms": 1002.5,
+      "fcp_ms": 2416,
+      "lcp_ms": 2416,
+      "cls": 0,
+      "resource_count": 8,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 71.8,
+      "largest_images": [
+        {
+          "duration": 3023.0999999940395,
+          "encodedBodySize": 48168,
+          "startTime": 1034.2000000029802,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/need-availability-distortions.html",
+      "title": "Need\u2013Availability Distortions | Baltimore MedTech",
+      "dom_content_loaded_ms": 4184.4,
+      "load_ms": 4189.7,
+      "ttfb_ms": 1548.5,
+      "fcp_ms": 4312,
+      "lcp_ms": 4312,
+      "cls": 0,
+      "resource_count": 16,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 94.9,
+      "largest_images": [
+        {
+          "duration": 2298.9000000059605,
+          "encodedBodySize": 48168,
+          "startTime": 1843.9000000059605,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/medical-science-field-atlas.html",
+      "title": "Field Atlas data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 3840.8,
+      "load_ms": 3841.4,
+      "ttfb_ms": 622.9,
+      "fcp_ms": 3752,
+      "lcp_ms": 3752,
+      "cls": 0,
+      "resource_count": 8,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 81.3,
+      "largest_images": [
+        {
+          "duration": 2905.5,
+          "encodedBodySize": 48168,
+          "startTime": 929.5,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/medtech-meta-index.html",
+      "title": "Meta Index data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 3230.2,
+      "load_ms": 3532.9,
+      "ttfb_ms": 1758.9,
+      "fcp_ms": 2152,
+      "lcp_ms": 2152,
+      "cls": 0.0543,
+      "resource_count": 11,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 88.4,
+      "largest_images": [
+        {
+          "duration": 1636,
+          "encodedBodySize": 48168,
+          "startTime": 1892,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/clickthrough.html",
+      "title": "Click-Through Link Graph | Baltimore MedTech",
+      "dom_content_loaded_ms": 3125.7,
+      "load_ms": 3130.2,
+      "ttfb_ms": 272.7,
+      "fcp_ms": 3168,
+      "lcp_ms": 3156,
+      "cls": 0,
+      "resource_count": 9,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 127.2,
+      "largest_images": [
+        {
+          "duration": 177.6000000089407,
+          "encodedBodySize": 48168,
+          "startTime": 2770.7000000029802,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        },
+        {
+          "duration": 991.7000000029802,
+          "encodedBodySize": 48168,
+          "startTime": 3133.4000000059605,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/nppes-registry.html",
+      "title": "NPPES data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 2025.8,
+      "load_ms": 3002.2,
+      "ttfb_ms": 1631.9,
+      "fcp_ms": 2072,
+      "lcp_ms": 2072,
+      "cls": 0.0014,
+      "resource_count": 11,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 83.0,
+      "largest_images": [
+        {
+          "duration": 1335.199999988079,
+          "encodedBodySize": 48168,
+          "startTime": 1663.800000011921,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/clinical-code-systems.html",
+      "title": "Code systems data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 1874.4,
+      "load_ms": 2877.9,
+      "ttfb_ms": 307.8,
+      "fcp_ms": 1956,
+      "lcp_ms": 1956,
+      "cls": 0,
+      "resource_count": 8,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 85.0,
+      "largest_images": [
+        {
+          "duration": 1474.699999988079,
+          "encodedBodySize": 48168,
+          "startTime": 1396.9000000059605,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    },
+    {
+      "path": "/datasets/clinical-semantic-systems.html",
+      "title": "Semantic systems data sheet | Baltimore MedTech",
+      "dom_content_loaded_ms": 2054.5,
+      "load_ms": 2861.8,
+      "ttfb_ms": 1106.9,
+      "fcp_ms": 2172,
+      "lcp_ms": 2172,
+      "cls": 0.1363,
+      "resource_count": 7,
+      "image_count": 1,
+      "image_transfer_kb": 47.3,
+      "total_transfer_kb": 81.0,
+      "largest_images": [
+        {
+          "duration": 1738.2999999970198,
+          "encodedBodySize": 48168,
+          "startTime": 1118.9000000059605,
+          "transferSize": 48468,
+          "url": "https://medtech.social/assets/baltimore-medtech-logo-square-Bivr4CPp.jpg"
+        }
+      ]
+    }
+  ],
+  "generated_at": "2026-09-23T01:08:37Z"
+}

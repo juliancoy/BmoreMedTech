@@ -67,6 +67,29 @@ function setupThemeControls() {
   };
 }
 
+function upgradeProgressiveImages() {
+  const images = [...document.querySelectorAll('img[data-full-src]')];
+  images.forEach((img) => {
+    if (img.dataset.progressiveBound === 'true') return;
+    img.dataset.progressiveBound = 'true';
+    const fullSrc = img.dataset.fullSrc;
+    if (!fullSrc) return;
+    const upgrade = () => {
+      if (img.currentSrc === fullSrc || img.src === fullSrc) return;
+      img.addEventListener('load', () => {
+        img.removeAttribute('data-full-src');
+        img.classList.add('is-loaded');
+      }, { once: true });
+      img.src = fullSrc;
+    };
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(upgrade, { timeout: 900 });
+    } else {
+      window.setTimeout(upgrade, 150);
+    }
+  });
+}
+
 function organizeNavigation() {
   const header = document.querySelector('.site-header')
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
@@ -297,6 +320,8 @@ async function setupAuthNavigation() {
 }
 
 setupThemeControls();
+upgradeProgressiveImages();
+window.addEventListener('bmoremedtech:progressive-images', upgradeProgressiveImages);
 organizeNavigation();
 setupPrimaryNavigation();
 setupAuthNavigation();

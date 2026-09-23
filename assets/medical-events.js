@@ -7,21 +7,25 @@ const eventAttachmentImagesBySlug = {
   [MEDTECH_IN_HUT_EVENT_SLUG]: [
     {
       src: '/assets/images/events/tech-in-the-hut-cocktails.jpg',
+      placeholderSrc: '/assets/images/events/tech-in-the-hut-cocktails-lqip.webp',
       alt: 'Tech in the Hut launch party cocktail menu for the MedTech in the Hut event.',
       label: 'Launch party cocktail menu',
     },
     {
       src: '/assets/images/events/nola-starters-classics-menu.jpg',
+      placeholderSrc: '/assets/images/events/nola-starters-classics-menu-lqip.webp',
       alt: 'NOLA Seafood and Spirits starters, salads, and classics menu.',
       label: 'NOLA starters and classics',
     },
     {
       src: '/assets/images/events/nola-main-menu.jpg',
+      placeholderSrc: '/assets/images/events/nola-main-menu-lqip.webp',
       alt: 'NOLA Seafood and Spirits mains, po boys, sides, and dessert menu.',
       label: 'NOLA mains and sides',
     },
     {
       src: '/assets/images/events/nola-fat-tuesday-menu.jpg',
+      placeholderSrc: '/assets/images/events/nola-fat-tuesday-menu-lqip.webp',
       alt: 'NOLA Fat Tuesday cocktails and food specials menu.',
       label: 'Fat Tuesday specials',
     },
@@ -48,6 +52,7 @@ export function eventAttachmentImages(event) {
     const media = event.media
       .map((item) => ({
         src: typeof item?.url === 'string' ? item.url.trim() : '',
+        placeholderSrc: typeof item?.placeholder_url === 'string' ? item.placeholder_url.trim() : '',
         alt: typeof item?.alt === 'string' ? item.alt.trim() : '',
         label: typeof item?.label === 'string' ? item.label.trim() : '',
       }))

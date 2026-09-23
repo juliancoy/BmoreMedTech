@@ -409,6 +409,17 @@ nav a[aria-current="page"] {
   object-position: center;
 }
 
+.progressive-image {
+  filter: blur(14px) saturate(0.86);
+  transform: scale(1.012);
+  transition: filter 220ms ease, transform 220ms ease;
+}
+
+.progressive-image.is-loaded {
+  filter: none;
+  transform: none;
+}
+
 .hero-copy {
   position: relative;
   z-index: 1;

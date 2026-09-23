@@ -40,6 +40,13 @@ function formatHeroEventDate(date) {
   })
 }
 
+function progressiveImageMarkup(image, attrs = '') {
+  const placeholder = image.placeholderSrc || image.src
+  const fullAttrs = placeholder === image.src ? '' : ` data-full-src="${escapeHtml(image.src)}"`
+  const className = placeholder === image.src ? '' : ' class="progressive-image"'
+  return `<img${className} src="${escapeHtml(placeholder)}"${fullAttrs} alt="${escapeHtml(image.alt)}" ${attrs} />`
+}
+
 async function showNextMedTechEvent() {
   if (!nextEventEl && !eventMediaSection) return
   try {
@@ -60,11 +67,12 @@ async function showNextMedTechEvent() {
       if (images.length) {
         eventMediaGrid.innerHTML = images.map((image) => `
           <a class="event-media-card" href="${escapeHtml(image.src)}" target="_blank" rel="noopener noreferrer">
-            <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}" loading="lazy" decoding="async" />
+            ${progressiveImageMarkup(image, 'loading="lazy" decoding="async"')}
             <span>${escapeHtml(image.label)}</span>
           </a>
         `).join('')
         eventMediaSection.hidden = false
+        window.dispatchEvent(new Event('bmoremedtech:progressive-images'))
       }
     }
     if (!next || !nextEventEl) return
@@ -86,6 +94,7 @@ async function showNextMedTechEvent() {
       </a>
     `
     nextEventEl.hidden = false
+    window.dispatchEvent(new Event('bmoremedtech:progressive-images'))
     nextEventEl.querySelector('img')?.addEventListener('error', (event) => {
       event.currentTarget.remove()
     }, { once: true })

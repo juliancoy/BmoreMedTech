@@ -607,6 +607,24 @@ async function copyShareUrl(preferCompressed) {
   }
 }
 
+function waitForMapLibre() {
+  if (window.maplibregl?.Map) return Promise.resolve()
+  return new Promise((resolve, reject) => {
+    const started = performance.now()
+    const timer = window.setInterval(() => {
+      if (window.maplibregl?.Map) {
+        window.clearInterval(timer)
+        resolve()
+        return
+      }
+      if (performance.now() - started > 8000) {
+        window.clearInterval(timer)
+        reject(new Error('MapLibre failed to load'))
+      }
+    }, 25)
+  })
+}
+
 const initialUiState = await readUiStateFromUrl()
 const state = {
   regionKey: initialUiState.region,
@@ -657,6 +675,8 @@ const initialRegionCenter = state.regionKey === 'state'
   ? [selectedStateView[0], selectedStateView[1]]
   : REGIONS[state.regionKey].center
 const initialRegionZoom = state.regionKey === 'state' ? selectedStateView[2] : REGIONS[state.regionKey].zoom
+
+await waitForMapLibre()
 
 const map = new maplibregl.Map({
   container: mapEl,

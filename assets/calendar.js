@@ -41,6 +41,13 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;')
 }
 
+function progressiveImageMarkup(image, attrs = '') {
+  const placeholder = image.placeholderSrc || image.src
+  const fullAttrs = placeholder === image.src ? '' : ` data-full-src="${escapeHtml(image.src)}"`
+  const className = placeholder === image.src ? '' : ' class="progressive-image"'
+  return `<img${className} src="${escapeHtml(placeholder)}"${fullAttrs} alt="${escapeHtml(image.alt)}" ${attrs} />`
+}
+
 function safeUrl(value) {
   try {
     const url = new URL(String(value || ''), window.location.href)
@@ -188,7 +195,7 @@ function renderList() {
           <div class="event-attachment-gallery" aria-label="Event menu images">
             ${attachmentImages.map((image) => `
               <a href="${escapeHtml(image.src)}" target="_blank" rel="noopener noreferrer">
-                <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}" loading="lazy" decoding="async" />
+                ${progressiveImageMarkup(image, 'loading="lazy" decoding="async"')}
                 <span>${escapeHtml(image.label)}</span>
               </a>
             `).join('')}
@@ -204,6 +211,7 @@ function renderList() {
     }, { once: true })
     listEl.appendChild(article)
   }
+  window.dispatchEvent(new Event('bmoremedtech:progressive-images'))
 }
 
 async function loadEvents() {

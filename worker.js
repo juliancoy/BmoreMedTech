@@ -11,6 +11,7 @@ const ALLOWED_CORS_ORIGINS = new Set([
 ])
 
 const DEFAULT_ORG_API_ORIGIN = 'https://org-codecollective.jcloiacon.workers.dev'
+const DEFAULT_CHAT_API_ORIGIN = 'https://chat-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PIDP_API_ORIGIN = 'https://pidp-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PORTAL_SITE_ORIGIN = 'https://codecollective.us'
 const MEDTECH_BRAND = {
@@ -398,7 +399,7 @@ export default {
     }
 
     if (url.pathname === '/api/chat' || url.pathname.startsWith('/api/chat/')) {
-      const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url, { stripPrefix: '/api/chat' })
+      const response = await proxyResponse(request, env.CHAT_API_ORIGIN || DEFAULT_CHAT_API_ORIGIN, url, { stripPrefix: '/api/chat' })
       return applyApiHeaders(request, response)
     }
 

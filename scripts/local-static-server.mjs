@@ -10,6 +10,7 @@ const port = Number.parseInt(process.env.CONTAINER_PORT || '8080', 10)
 const certFile = process.env.TLS_CERT_FILE || '/certs/localhost.crt'
 const keyFile = process.env.TLS_KEY_FILE || '/certs/localhost.key'
 const orgApiOrigin = process.env.ORG_API_ORIGIN || 'https://org-codecollective.jcloiacon.workers.dev'
+const chatApiOrigin = process.env.CHAT_API_ORIGIN || 'https://chat-codecollective.jcloiacon.workers.dev'
 const pidpApiOrigin = process.env.PIDP_PROXY_ORIGIN || process.env.PIDP_API_ORIGIN || 'https://pidp-codecollective.jcloiacon.workers.dev'
 const portalSiteOrigin = process.env.PORTAL_SITE_ORIGIN || 'https://codecollective.us'
 const allowedCorsOrigins = new Set([
@@ -375,7 +376,7 @@ const server = https.createServer(
         return
       }
       if (requestUrl.pathname === '/api/chat' || requestUrl.pathname.startsWith('/api/chat/')) {
-        await serveProxy(req, res, requestUrl, orgApiOrigin, '/api/chat')
+        await serveProxy(req, res, requestUrl, chatApiOrigin, '/api/chat')
         return
       }
       if (requestUrl.pathname === '/pidp' || requestUrl.pathname.startsWith('/pidp/')) {

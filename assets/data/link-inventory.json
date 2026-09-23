@@ -3532,12 +3532,11 @@
       "source": "medtech:index.html",
       "sourcePath": "index.html",
       "sourceRepo": "medtech",
-      "href": "/datasets.html",
+      "href": "/chat?start=group&org=baltimore-medtech",
       "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "datasets.html",
-      "fragment": ""
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/chat"
     },
     {
       "source": "medtech:index.html",
@@ -4712,10 +4711,9 @@
       "sourceRepo": "orgportal",
       "href": "/chat",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "chat.html",
-      "fragment": ""
+      "target": "/chat"
     },
     {
       "source": "orgportal:src/ui/router/createAppRouter.tsx",
@@ -4887,10 +4885,9 @@
       "sourceRepo": "orgportal",
       "href": "/chat",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "chat.html",
-      "fragment": ""
+      "target": "/chat"
     },
     {
       "source": "orgportal:src/ui/shell/Header.tsx",
@@ -5094,10 +5091,9 @@
       "sourceRepo": "orgportal",
       "href": "/chat",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "chat.html",
-      "fragment": ""
+      "target": "/chat"
     },
     {
       "source": "orgportal:src/ui/shell/TimebankHeader.tsx",
@@ -5138,10 +5134,9 @@
       "sourceRepo": "orgportal",
       "href": "/chat",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "chat.html",
-      "fragment": ""
+      "target": "/chat"
     },
     {
       "source": "orgportal:src/ui/views/chat/OrgChatPage.tsx",
@@ -5149,10 +5144,9 @@
       "sourceRepo": "orgportal",
       "href": "/chat",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "chat.html",
-      "fragment": ""
+      "target": "/chat"
     },
     {
       "source": "orgportal:src/ui/views/ContactSettingsPage.tsx",
@@ -5204,10 +5198,9 @@
       "sourceRepo": "orgportal",
       "href": "/chat",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "chat.html",
-      "fragment": ""
+      "target": "/chat"
     },
     {
       "source": "orgportal:src/ui/views/DevToolsPage.tsx",
@@ -5686,10 +5679,9 @@
       "sourceRepo": "orgportal",
       "href": "/chat",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "chat.html",
-      "fragment": ""
+      "target": "/chat"
     },
     {
       "source": "orgportal:src/ui/views/users/UserCalendarPage.tsx",

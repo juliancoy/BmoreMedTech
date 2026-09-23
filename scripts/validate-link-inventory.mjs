@@ -46,6 +46,7 @@ const knownExternalOrigins = new Set([
 ])
 const knownPortalRoutes = new Set([
   '/branding',
+  '/chat',
   '/org-events',
   '/resources',
 ])

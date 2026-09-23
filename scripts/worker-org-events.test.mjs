@@ -51,6 +51,7 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   const env = {
     ASSETS: assets,
     ORG_API_ORIGIN: 'https://org.example',
+    CHAT_API_ORIGIN: 'https://chat.example',
     PIDP_PROXY_ORIGIN: 'https://pidp.example',
     PORTAL_SITE_ORIGIN: 'https://portal.example',
   }
@@ -196,7 +197,7 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     headers: { authorization: 'Bearer test-token' },
   }), env)
   assert.equal(chatList.status, 200)
-  assert.equal(seen.at(-1).url, 'https://org.example/api/network/chat/conversations')
+  assert.equal(seen.at(-1).url, 'https://chat.example/api/network/chat/conversations')
   assert.equal(seen.at(-1).headers.get('authorization'), 'Bearer test-token')
 
   const mcp = await worker.fetch(new Request('https://medtech.social/.well-known/oauth-protected-resource/api/org/mcp'), env)

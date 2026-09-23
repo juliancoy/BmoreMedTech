@@ -13,6 +13,14 @@ const ALLOWED_CORS_ORIGINS = new Set([
 const DEFAULT_ORG_API_ORIGIN = 'https://org-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PIDP_API_ORIGIN = 'https://pidp-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PORTAL_SITE_ORIGIN = 'https://codecollective.us'
+const MEDTECH_BRAND = {
+  name: 'Baltimore MedTech',
+  tagline: 'Health × Medicine × Biotech',
+  description: 'Find your next conversation, connection, or local event across health, medicine, and biotech.',
+  imagePath: '/images/baltimore-medtech-logo-square-v2.jpg',
+  manifestPath: '/medtech.webmanifest',
+  themeColor: '#061a26',
+}
 
 function allowedCorsOrigin(request) {
   const origin = request.headers.get('origin')
@@ -79,6 +87,91 @@ function prefixProxyLocation(location, prefix) {
   return `${prefix}${location}`
 }
 
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[char])
+}
+
+function medTechPortalPageTitle(pathname) {
+  if (pathname === '/branding') return `Brand Guide | ${MEDTECH_BRAND.name}`
+  if (pathname === '/org-events' || pathname.startsWith('/org-events/')) return `MedTech Events | ${MEDTECH_BRAND.name}`
+  if (pathname === '/resources' || pathname.startsWith('/resources/')) return `Resources | ${MEDTECH_BRAND.name}`
+  if (pathname === '/search') return `Search | ${MEDTECH_BRAND.name}`
+  if (pathname === '/users/login') return `Login | ${MEDTECH_BRAND.name}`
+  if (pathname === '/users/register') return `Register | ${MEDTECH_BRAND.name}`
+  return `${MEDTECH_BRAND.name} Portal`
+}
+
+function medTechPortalMetadata(url) {
+  const image = new URL(MEDTECH_BRAND.imagePath, url.origin).toString()
+  const canonical = new URL(url.pathname + url.search, url.origin).toString()
+  const title = medTechPortalPageTitle(url.pathname)
+  return {
+    title,
+    description: MEDTECH_BRAND.description,
+    canonical,
+    image,
+    imageAlt: `${MEDTECH_BRAND.name} logo`,
+    siteName: MEDTECH_BRAND.name,
+  }
+}
+
+async function applyMedTechPortalMetadata(request, response, url) {
+  if (!response.ok || request.method === 'HEAD') return response
+  const contentType = response.headers.get('content-type') || ''
+  if (!contentType.includes('text/html')) return response
+
+  const metadata = medTechPortalMetadata(url)
+  let html = await response.text()
+  const tags = [
+    `<title>${escapeHtml(metadata.title)}</title>`,
+    `<link rel="canonical" href="${escapeHtml(metadata.canonical)}" />`,
+    `<link rel="icon" type="image/jpeg" href="${escapeHtml(MEDTECH_BRAND.imagePath)}" />`,
+    `<link rel="apple-touch-icon" href="${escapeHtml(MEDTECH_BRAND.imagePath)}" />`,
+    `<link rel="manifest" href="${escapeHtml(MEDTECH_BRAND.manifestPath)}" />`,
+    `<meta name="theme-color" content="${escapeHtml(MEDTECH_BRAND.themeColor)}" />`,
+    `<meta name="description" content="${escapeHtml(metadata.description)}" />`,
+    `<meta name="robots" content="index,follow,max-image-preview:large" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:locale" content="en_US" />`,
+    `<meta property="og:site_name" content="${escapeHtml(metadata.siteName)}" />`,
+    `<meta property="og:title" content="${escapeHtml(metadata.title)}" />`,
+    `<meta property="og:description" content="${escapeHtml(metadata.description)}" />`,
+    `<meta property="og:url" content="${escapeHtml(metadata.canonical)}" />`,
+    `<meta property="og:image" content="${escapeHtml(metadata.image)}" />`,
+    `<meta property="og:image:secure_url" content="${escapeHtml(metadata.image)}" />`,
+    `<meta property="og:image:type" content="image/jpeg" />`,
+    `<meta property="og:image:alt" content="${escapeHtml(metadata.imageAlt)}" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`,
+    `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`,
+    `<meta name="twitter:image" content="${escapeHtml(metadata.image)}" />`,
+    `<meta name="twitter:image:alt" content="${escapeHtml(metadata.imageAlt)}" />`,
+  ]
+  html = html
+    .replace(/<title>[\s\S]*?<\/title>/i, '')
+    .replace(/<link\s+rel=["'](?:canonical|icon|apple-touch-icon|manifest)["'][^>]*>/gi, '')
+    .replace(/<meta\s+name=["'](?:description|robots|theme-color|twitter:[^"']+)["'][^>]*>/gi, '')
+    .replace(/<meta\s+property=["']og:[^"']+["'][^>]*>/gi, '')
+  html = html.replace('</head>', `${tags.join('\n    ')}\n  </head>`)
+
+  const headers = new Headers(response.headers)
+  headers.set('content-type', 'text/html; charset=utf-8')
+  headers.set('cache-control', 'no-store')
+  headers.set('referrer-policy', 'no-referrer')
+  headers.delete('content-length')
+  return new Response(html, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
 function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewriteCookieDomain = false, forwardedPrefix = '' } = {}) {
   const targetUrl = new URL(url)
   const targetOrigin = new URL(trimTrailingSlash(targetOriginValue))
@@ -134,6 +227,7 @@ function portalRootNavigationProxyResponse(request, env, url) {
   const targetUrl = new URL(url)
   targetUrl.pathname = '/__portal_root/'
   return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
+    .then((response) => applyMedTechPortalMetadata(request, response, url))
 }
 
 function applyApiHeaders(request, response) {

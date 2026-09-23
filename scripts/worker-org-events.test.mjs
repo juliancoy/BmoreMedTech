@@ -28,8 +28,9 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     seen.push({ url: request.url, method: request.method, headers: request.headers })
     if (request.url === 'https://portal.example/__portal_root/') {
       const headers = new Headers()
+      headers.set('content-type', 'text/html')
       headers.append('set-cookie', 'portal_session=fixture; Domain=codecollective.us; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax')
-      return new Response('ok', { headers })
+      return new Response('<!doctype html><html><head><title>Code Collective Portal</title><link rel="icon" type="image/png" href="/codecollective_logo.png" /><meta property="og:title" content="Code Collective Portal" /></head><body><div id="root"></div></body></html>', { headers })
     }
     if (request.url === 'https://pidp.example/auth/session/login') {
       const headers = new Headers()
@@ -93,6 +94,11 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
   const tenantBranding = await worker.fetch(new Request('https://medtech.social/branding'), env)
   assert.equal(tenantBranding.status, 200)
   assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
+  const tenantBrandingHtml = await tenantBranding.text()
+  assert.match(tenantBrandingHtml, /<title>Brand Guide \| Baltimore MedTech<\/title>/)
+  assert.match(tenantBrandingHtml, /property="og:title" content="Brand Guide \| Baltimore MedTech"/)
+  assert.match(tenantBrandingHtml, /property="og:site_name" content="Baltimore MedTech"/)
+  assert.doesNotMatch(tenantBrandingHtml, /Code Collective Portal|codecollective_logo\.png/)
 
   const oldTenantBranding = await worker.fetch(new Request('https://medtech.social/branding.html?from=old'), env)
   assert.equal(oldTenantBranding.status, 301)

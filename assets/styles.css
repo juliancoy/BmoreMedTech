@@ -202,15 +202,39 @@ nav a[aria-current="page"] {
 @media (min-width: 721px) and (max-width: 1050px) {
   .nav-enhanced .site-header,
   .nav-enhanced .site-header-inner {
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-wrap: nowrap;
+    gap: clamp(10px, 1.4vw, 18px);
+  }
+
+  .nav-enhanced .site-header .brand {
+    min-width: 0;
+  }
+
+  .nav-enhanced .site-header .brand-copy small {
+    display: none;
   }
 
   .nav-enhanced .site-header nav {
-    width: 100%;
+    flex: 1 1 auto;
     min-width: 0;
     justify-content: flex-end;
-    gap: 4px;
+    gap: 3px;
+  }
+
+  .nav-enhanced .site-header .nav-group > summary,
+  .nav-enhanced .site-header nav > a {
+    min-height: 40px;
+    padding-inline: 9px;
+    font-size: 0.86rem;
+  }
+
+  .nav-enhanced .site-header .theme-control {
+    padding: 2px;
+  }
+
+  .nav-enhanced .site-header .theme-option {
+    width: 31px;
+    height: 31px;
   }
 }
 
@@ -277,8 +301,11 @@ nav a[aria-current="page"] {
 .account-menu-items p { font-size: 14px; margin: 8px; }
 
 @media (min-width: 721px) and (max-width: 1050px) {
-  .nav-enhanced .site-header nav { order: 3; }
-  .account-controls { margin-left: auto; }
+  .account-controls { margin-left: 0; }
+  .account-controls .account-login {
+    min-height: 40px;
+    padding-inline: 16px;
+  }
 }
 
 @media (max-width: 720px) {

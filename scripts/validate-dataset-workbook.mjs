@@ -47,12 +47,12 @@ const [
   text('scripts/build-medical-science-field-atlas.mjs'),
 ])
 
-assert(registry.meta?.as_of === '2026-09-03', 'Dataset registry must declare the review date')
+assert(registry.meta?.as_of === '2026-09-24', 'Dataset registry must declare the review date')
 assert(registry.meta?.description?.includes('MedTech Meta Index'), 'Registry must identify the Meta Index as its governing source')
 assert(registry.meta?.live_definition?.includes('queries the publisher'), 'Registry must define live behavior')
 assert(registry.meta?.privacy_note?.includes('does not retrieve patient-level records'), 'Registry must include a privacy boundary')
 assert(registryManifest.parts[0] === '/dataset-registry-meta.json', 'The Meta Index must be the first workbook registry part')
-assert(Array.isArray(registry.datasets) && registry.datasets.length === 14, 'Expected fourteen dataset sheets')
+assert(Array.isArray(registry.datasets) && registry.datasets.length === 15, 'Expected fifteen dataset sheets')
 
 const expected = [
   ['medtech-meta-index', 'repository-snapshot', 'local_meta_index'],
@@ -63,6 +63,7 @@ const expected = [
   ['hrsa-ahrf', 'live-release', 'hrsa_ahrf_releases'],
   ['maryland-medicaid-pvs', 'live-lookup', 'maryland_medicaid_pvs'],
   ['maryland-medicaid-provider-finder', 'live-lookup', 'maryland_medicaid_provider_finder'],
+  ['service-delivery-source-catalog', 'repository-snapshot', 'local_service_source_catalog'],
   ['medical-science-field-atlas', 'repository-snapshot', 'local_medical_science_field_atlas'],
   ['clinical-code-systems', 'repository-snapshot', 'local_systems'],
   ['clinical-semantic-systems', 'repository-snapshot', 'local_systems'],
@@ -113,17 +114,17 @@ assert(!(await exists('assets/data/medtech-index.json')), 'The legacy medtech-in
 const live = registry.datasets.filter((dataset) => dataset.mode.startsWith('live-'))
 const snapshots = registry.datasets.filter((dataset) => dataset.mode === 'repository-snapshot')
 assert(live.length === 7, 'Expected seven live source sheets')
-assert(snapshots.length === 7, 'Expected the Meta Index plus six versioned dataset sheets')
+assert(snapshots.length === 8, 'Expected the Meta Index plus seven versioned dataset sheets')
 assert(registry.datasets[0].id === 'medtech-meta-index', 'The Meta Index must be the first workbook source')
-assert(registry.datasets[8].id === 'medical-science-field-atlas', 'The renamed Field Atlas must replace the former medical-taxonomy source')
+assert(registry.datasets[9].id === 'medical-science-field-atlas', 'The renamed Field Atlas must replace the former medical-taxonomy source')
 
-assert(metaIndex.meta?.as_of === '2026-09-03', 'Meta Index must declare a review date')
+assert(metaIndex.meta?.as_of === '2026-09-24', 'Meta Index must declare a review date')
 assert(metaIndex.meta?.ranking_rule?.includes('proximity to measurable patient access'), 'Meta Index ranking rule is required')
 assert(Object.keys(metaIndex.meta?.quality_tiers || {}).join(',') === 'A1,A2,B1,B2,C1', 'Meta Index quality tiers changed unexpectedly')
-assert(Array.isArray(metaIndex.sources) && metaIndex.sources.length === 13, 'Meta Index must consist of thirteen component sources')
+assert(Array.isArray(metaIndex.sources) && metaIndex.sources.length === 14, 'Meta Index must consist of fourteen component sources')
 assert(!metaIndex.sources.some((source) => source.source_id === 'medtech-meta-index'), 'Meta Index must not recursively index itself')
-assert(metaIndex.sources.map((source) => source.decision_rank).join(',') === '1,2,3,4,5,6,7,8,9,10,11,12,13', 'Meta Index decision ranks must be contiguous')
-assert(new Set(metaIndex.sources.map((source) => source.source_id)).size === 13, 'Meta Index component ids must be unique')
+assert(metaIndex.sources.map((source) => source.decision_rank).join(',') === '1,2,3,4,5,6,7,8,9,10,11,12,13,14', 'Meta Index decision ranks must be contiguous')
+assert(new Set(metaIndex.sources.map((source) => source.source_id)).size === 14, 'Meta Index component ids must be unique')
 for (const source of metaIndex.sources) {
   assert(ids.has(source.source_id), `Meta Index references an unregistered source: ${source.source_id}`)
   for (const key of ['source_tier', 'source_tier_label', 'authority_class', 'evidence_type', 'unit_of_observation', 'data_layer', 'availability_layer', 'decision_role', 'quality_strength', 'principal_caveat', 'join_keys', 'dependencies']) {
@@ -131,6 +132,7 @@ for (const source of metaIndex.sources) {
   }
 }
 assert(metaIndex.sources[0].source_id === 'cms-provider-services', 'Realized service output must lead the Meta Index decision order')
+assert(metaIndex.sources[1].source_id === 'service-delivery-source-catalog', 'Service-delivery source discovery must directly follow realized service output')
 assert(metaIndex.sources.some((source) => source.source_id === 'medical-science-field-atlas'), 'Meta Index must include the renamed Field Atlas')
 assert(metaIndex.sources.filter((source) => source.source_tier.startsWith('A')).length === 7, 'Expected seven authoritative primary components')
 
@@ -185,18 +187,22 @@ async function requestDataset(id, pageSize = 500) {
 
 const registryResponse = await handleDatasetApi(new Request('https://workbook.test/api/datasets'), env)
 const registryPayload = await registryResponse.json()
-assert(registryResponse.ok && registryPayload.datasets.length === 14, 'Dataset registry API failed')
+assert(registryResponse.ok && registryPayload.datasets.length === 15, 'Dataset registry API failed')
 
 const metaSheet = await requestDataset('medtech-meta-index')
+const serviceCatalog = await requestDataset('service-delivery-source-catalog')
 const taxonomy = await requestDataset('medical-science-field-atlas')
 const codes = await requestDataset('clinical-code-systems')
 const semantics = await requestDataset('clinical-semantic-systems')
 const strategy = await requestDataset('strategy-field-metrics')
 const distortions = await requestDataset('need-availability-distortions')
 const allied = await requestDataset('allied-care-teams')
-assert(metaSheet.total === 13, `Meta Index should contain 13 component sources, found ${metaSheet.total}`)
+assert(metaSheet.total === 14, `Meta Index should contain 14 component sources, found ${metaSheet.total}`)
 assert(metaSheet.rows[0]?.source_id === 'cms-provider-services', 'Meta Index API must preserve service-output-first ordering')
 assert(metaSheet.columns.includes('source_tier') && metaSheet.columns.includes('unit_of_observation') && metaSheet.columns.includes('principal_caveat'), 'Meta Index is missing governing source fields')
+assert(serviceCatalog.total === 6, `Service Delivery Source Catalog should contain six source candidates, found ${serviceCatalog.total}`)
+assert(serviceCatalog.rows.some((row) => row.source_id === 'cms-inpatient-hospitals-provider-service'), 'Service catalog must include inpatient hospital provider-service data')
+assert(serviceCatalog.rows.some((row) => row.source_id === 'cms-pos-clinical-laboratories'), 'Service catalog must include clinical laboratory service-capability data')
 assert(taxonomy.total === 223, `Medical Science Field Atlas should contain 223 fields, found ${taxonomy.total}`)
 assert(codes.total >= 8, `Clinical code-system sheet is unexpectedly small: ${codes.total}`)
 assert(semantics.total === 8, `Semantic-system sheet should contain 8 systems, found ${semantics.total}`)

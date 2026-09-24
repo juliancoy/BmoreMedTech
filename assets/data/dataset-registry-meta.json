@@ -11,7 +11,7 @@
       "page": "/datasets/medtech-meta-index.html",
       "source_url": "/medtech-meta-index.json",
       "api_url": "/api/datasets/medtech-meta-index",
-      "coverage": "Thirteen component sources across provider identity, labor, service output, payer access, scientific fields, standards, and derived analysis",
+      "coverage": "Fourteen component sources across provider identity, labor, service output, service-delivery source discovery, payer access, scientific fields, standards, and derived analysis",
       "refresh": "On registry or source-assessment update",
       "geography": "National, Maryland, Baltimore, and conceptual layers",
       "default_page_size": 100,

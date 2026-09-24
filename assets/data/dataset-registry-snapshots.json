@@ -1,6 +1,53 @@
 {
   "datasets": [
     {
+      "id": "service-delivery-source-catalog",
+      "title": "Service Delivery Source Catalog",
+      "short_title": "Service sources",
+      "publisher": "Baltimore MedTech from official CMS source pages",
+      "category": "Curated service-output source catalog",
+      "mode": "repository-snapshot",
+      "adapter": "local_service_source_catalog",
+      "asset": "/service-delivery-source-catalog.json",
+      "page": "/datasets/service-delivery-source-catalog.html",
+      "source_url": "/service-delivery-source-catalog.json",
+      "coverage": "Six authoritative CMS service-delivery and facility-capability sources reviewed 2026-09-24",
+      "refresh": "On source-assessment update",
+      "geography": "National; Maryland applicability varies by source",
+      "default_page_size": 100,
+      "max_page_size": 200,
+      "cache_seconds": 300,
+      "description": "Source-selection sheet for high-quality service-provided evidence beyond the current live provider-service dataset, including inpatient, outpatient, Part D, DMEPOS, laboratory, and cross-setting CMS service-output products.",
+      "filters": [
+        {
+          "name": "q",
+          "label": "Search service sources",
+          "type": "text",
+          "placeholder": "Outpatient, Part D, laboratory"
+        }
+      ],
+      "preferred_columns": [
+        "source_id",
+        "source_name",
+        "publisher",
+        "source_tier",
+        "service_domain",
+        "unit_of_observation",
+        "measurement_focus",
+        "join_keys",
+        "coverage",
+        "refresh",
+        "why_it_matters",
+        "principal_caveat",
+        "source_url"
+      ],
+      "limitations": [
+        "This is a catalog of candidate service-delivery sources, not a merged utilization file.",
+        "Most rows are Medicare public-use files and do not represent all payers or all patients.",
+        "Each source still needs source-specific suppression, denominator, geography, and release-year handling before comparison."
+      ]
+    },
+    {
       "id": "medical-science-field-atlas",
       "title": "Medical Science Field Atlas",
       "short_title": "Field Atlas",

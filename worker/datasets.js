@@ -7,6 +7,7 @@ import {
   localDistortions,
   localMedicalScienceFieldAtlas,
   localMetaIndex,
+  localServiceSourceCatalog,
   localStrategyFields,
   localSystems,
 } from './dataset-snapshots.js'
@@ -23,6 +24,7 @@ const ADAPTERS = {
   maryland_medicaid_provider_finder: marylandMedicaidProviderFinder,
   local_meta_index: localMetaIndex,
   local_medical_science_field_atlas: localMedicalScienceFieldAtlas,
+  local_service_source_catalog: localServiceSourceCatalog,
   local_systems: localSystems,
   local_strategy_fields: localStrategyFields,
   local_distortions: localDistortions,

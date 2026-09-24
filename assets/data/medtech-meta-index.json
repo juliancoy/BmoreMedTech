@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "MedTech Meta Index",
-    "as_of": "2026-09-03",
-    "description": "A source-of-sources index for the authoritative public datasets, standards indexes, curated field atlas, and derived analytical datasets used by Baltimore MedTech.",
+    "as_of": "2026-09-24",
+    "description": "A source-of-sources index for authoritative public datasets, standards indexes, service-delivery source candidates, curated field atlas, and derived analytical datasets used by Baltimore MedTech.",
     "inclusion_rule": "A component must have a named publisher or steward, a stable source or workbook route, a documented unit or analytical role, and explicit limitations. Restricted patient-level datasets are described only when a public component is actually registered.",
     "ranking_rule": "Decision rank reflects proximity to measurable patient access and service delivery, not institutional prestige, scientific importance, dataset size, or moral value.",
     "quality_dimensions": [
@@ -47,6 +47,22 @@
     },
     {
       "decision_rank": 2,
+      "source_id": "service-delivery-source-catalog",
+      "source_tier": "B2",
+      "source_tier_label": "Curated official-source catalog",
+      "authority_class": "Baltimore MedTech catalog of official CMS service-output sources",
+      "evidence_type": "Service-delivery source assessment",
+      "unit_of_observation": "Authoritative source × service domain × unit of observation",
+      "data_layer": "Service-provided source discovery",
+      "availability_layer": "Service-output evidence expansion",
+      "decision_role": "Identifies additional high-quality CMS sources for inpatient, outpatient, prescription, DMEPOS, laboratory, and cross-setting services provided or ordered.",
+      "quality_strength": "Each catalog row preserves official steward, service domain, unit, join keys, refresh cadence, source URL, decision value, and caveat.",
+      "principal_caveat": "The catalog does not ingest every source row yet; each candidate still requires source-specific live adapter or ETL work before quantitative comparison.",
+      "join_keys": "Source ID; NPI; CCN; HCPCS; DRG; APC; geography; year depending on candidate source",
+      "dependencies": "Official CMS Data source pages and Baltimore MedTech source review"
+    },
+    {
+      "decision_rank": 3,
       "source_id": "cms-doctors-clinicians",
       "source_tier": "A1",
       "source_tier_label": "Authoritative operational data",
@@ -62,7 +78,7 @@
       "dependencies": "CMS enrollment and Care Compare systems"
     },
     {
-      "decision_rank": 3,
+      "decision_rank": 4,
       "source_id": "maryland-medicaid-provider-finder",
       "source_tier": "A1",
       "source_tier_label": "Authoritative operational data",
@@ -78,7 +94,7 @@
       "dependencies": "Maryland Medicaid and HealthChoice directory operations"
     },
     {
-      "decision_rank": 4,
+      "decision_rank": 5,
       "source_id": "maryland-medicaid-pvs",
       "source_tier": "A1",
       "source_tier_label": "Authoritative operational data",
@@ -94,7 +110,7 @@
       "dependencies": "Maryland Medicaid provider enrollment system"
     },
     {
-      "decision_rank": 5,
+      "decision_rank": 6,
       "source_id": "bls-oews-baltimore",
       "source_tier": "A2",
       "source_tier_label": "Authoritative statistical data",
@@ -110,7 +126,7 @@
       "dependencies": "BLS Occupational Employment and Wage Statistics"
     },
     {
-      "decision_rank": 6,
+      "decision_rank": 7,
       "source_id": "hrsa-ahrf",
       "source_tier": "A2",
       "source_tier_label": "Authoritative resource data",
@@ -126,7 +142,7 @@
       "dependencies": "HRSA AHRF and more than sixty contributing sources"
     },
     {
-      "decision_rank": 7,
+      "decision_rank": 8,
       "source_id": "nppes-registry",
       "source_tier": "A1",
       "source_tier_label": "Authoritative registry data",
@@ -142,7 +158,7 @@
       "dependencies": "National Plan and Provider Enumeration System"
     },
     {
-      "decision_rank": 8,
+      "decision_rank": 9,
       "source_id": "allied-care-teams",
       "source_tier": "B2",
       "source_tier_label": "Curated official-source extract",
@@ -158,7 +174,7 @@
       "dependencies": "BLS Occupational Outlook Handbook extracts"
     },
     {
-      "decision_rank": 9,
+      "decision_rank": 10,
       "source_id": "clinical-semantic-systems",
       "source_tier": "B1",
       "source_tier_label": "Curated steward index",
@@ -174,7 +190,7 @@
       "dependencies": "SNOMED CT; LOINC; RxNorm; FHIR; UMLS; DICOM; GA4GH VRS; OMOP CDM"
     },
     {
-      "decision_rank": 10,
+      "decision_rank": 11,
       "source_id": "clinical-code-systems",
       "source_tier": "B1",
       "source_tier_label": "Curated steward index",
@@ -190,7 +206,7 @@
       "dependencies": "WHO; CDC; CMS; AMA; ADA; Maryland Medicaid; institutional charge systems"
     },
     {
-      "decision_rank": 11,
+      "decision_rank": 12,
       "source_id": "medical-science-field-atlas",
       "source_tier": "B1",
       "source_tier_label": "Curated scientific field atlas",
@@ -206,7 +222,7 @@
       "dependencies": "MeSH; ACGME; OECD FORD; NIH RCDC; WHO-FIC; Baltimore MedTech curation"
     },
     {
-      "decision_rank": 12,
+      "decision_rank": 13,
       "source_id": "strategy-field-metrics",
       "source_tier": "C1",
       "source_tier_label": "Derived analytical dataset",
@@ -222,7 +238,7 @@
       "dependencies": "Public need, workforce, pipeline, and NIH budget sources"
     },
     {
-      "decision_rank": 13,
+      "decision_rank": 14,
       "source_id": "need-availability-distortions",
       "source_tier": "C1",
       "source_tier_label": "Derived analytical dataset",

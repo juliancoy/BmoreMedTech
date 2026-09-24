@@ -36,6 +36,7 @@
     "medtech:datasets/medtech-meta-index.html",
     "medtech:datasets/need-availability-distortions.html",
     "medtech:datasets/nppes-registry.html",
+    "medtech:datasets/service-delivery-source-catalog.html",
     "medtech:datasets/strategy-field-metrics.html",
     "medtech:index.html",
     "medtech:map.html",
@@ -114,7 +115,7 @@
     "pidp:serverless/src/profilePage.ts",
     "pidp:serverless/test/mcp-authorization.test.mjs"
   ],
-  "linkCount": 549,
+  "linkCount": 569,
   "links": [
     {
       "source": "medtech:calendar.html",
@@ -3257,6 +3258,215 @@
     {
       "source": "medtech:datasets/nppes-registry.html",
       "sourcePath": "datasets/nppes-registry.html",
+      "sourceRepo": "medtech",
+      "href": "https://medtech.social/users/register",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "orgportal",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/",
+      "textRole": "Baltimore MedTech home",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/org-events",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/org-events"
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder",
+      "targetRepo": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder",
+      "targetRepo": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder",
+      "targetRepo": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "#",
+      "textRole": "",
+      "kind": "runtime-placeholder",
+      "targetRepo": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "targetRepo": "medtech",
+      "target": "medtech:datasets/service-delivery-source-catalog.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "https://medtech.social/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "orgportal",
+      "origin": "https://medtech.social"
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
       "sourceRepo": "medtech",
       "href": "https://medtech.social/users/register",
       "textRole": "",

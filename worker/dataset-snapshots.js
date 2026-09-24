@@ -74,6 +74,31 @@ async function localMedicalScienceFieldAtlas(dataset, query, env, origin) {
   }
 }
 
+async function localServiceSourceCatalog(dataset, query, env, origin) {
+  const payload = await loadAssetJson(env, origin, dataset.asset || '/service-delivery-source-catalog.json')
+  const rows = (payload.sources || []).map((source) => ({
+    source_id: source.source_id,
+    source_name: source.source_name,
+    publisher: source.publisher,
+    source_tier: source.source_tier,
+    service_domain: source.service_domain,
+    unit_of_observation: source.unit_of_observation,
+    measurement_focus: source.measurement_focus,
+    join_keys: source.join_keys,
+    coverage: source.coverage,
+    refresh: source.refresh,
+    why_it_matters: source.why_it_matters,
+    principal_caveat: source.principal_caveat,
+    source_url: source.source_url,
+  }))
+  return {
+    ...paginateLocal(rows, query),
+    sourceUpdatedAt: payload.meta?.as_of || null,
+    upstream: { url: dataset.asset || '/service-delivery-source-catalog.json', status: 200 },
+    warnings: payload.meta?.limitations || [],
+  }
+}
+
 async function localSystems(dataset, query, env, origin) {
   const payload = await loadAssetJson(env, origin, dataset.asset)
   const systems = payload.systems || payload.records || []
@@ -185,6 +210,7 @@ async function localCareTeams(dataset, query, env, origin) {
 export {
   localMetaIndex,
   localMedicalScienceFieldAtlas,
+  localServiceSourceCatalog,
   localSystems,
   localStrategyFields,
   localDistortions,

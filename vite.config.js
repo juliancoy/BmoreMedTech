@@ -10,6 +10,7 @@ const datasetPages = [
   'hrsa-ahrf',
   'maryland-medicaid-pvs',
   'maryland-medicaid-provider-finder',
+  'service-delivery-source-catalog',
   'medical-science-field-atlas',
   'clinical-code-systems',
   'clinical-semantic-systems',

@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Baltimore MedTech live data workbook",
-    "as_of": "2026-09-03",
+    "as_of": "2026-09-24",
     "default_geography": "Maryland and Baltimore where supported",
     "description": "The MedTech Meta Index leads a workbook of live public medical-labor sources and explicit repository snapshots, with one spreadsheet-style page per component source.",
     "live_definition": "Live means the page queries the publisher or its release metadata through the MedTech Worker when opened. Repository snapshots remain versioned inputs and are never labeled live.",

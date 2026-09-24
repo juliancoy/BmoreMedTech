@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "title": "Service Delivery Source Catalog",
+    "as_of": "2026-09-24",
+    "description": "Curated high-authority sources for measuring services, products, discharges, prescriptions, facility service capabilities, and payment/utilization patterns beyond the current live MedTech workbook sheets.",
+    "inclusion_rule": "Include sources with an official steward, public documentation, explicit unit of observation, repeatable release cadence, and direct relevance to services provided or ordered.",
+    "limitations": [
+      "This catalog is a source-selection layer, not a merged utilization file.",
+      "Most rows are Medicare public-use files and therefore do not represent Medicare Advantage, Medicaid, commercial insurance, uninsured care, or full clinical demand.",
+      "Operational use requires source-specific suppression rules, denominator alignment, geography checks, service-code interpretation, and release-year reconciliation."
+    ]
+  },
+  "sources": [
+    {
+      "source_id": "cms-provider-summary-type-service",
+      "source_name": "CMS Provider Summary by Type of Service",
+      "publisher": "Centers for Medicare & Medicaid Services",
+      "source_tier": "A1",
+      "service_domain": "Cross-setting Medicare service-output family",
+      "unit_of_observation": "Dataset family spanning provider, geography, service, facility, product, prescription, and payment summaries",
+      "measurement_focus": "Use, payments, procedures, services, prescription drugs, inpatient hospitals, outpatient hospitals, long-term care hospitals, inpatient rehabilitation facilities, skilled nursing facilities, home health agencies, hospices, physicians, suppliers, and Part D prescribers.",
+      "join_keys": "NPI; CCN; HCPCS; DRG; APC; geography; drug name; provider type depending on component dataset",
+      "coverage": "Original Medicare fee-for-service and Part D public-use products; component years vary",
+      "refresh": "Component-specific, typically annual",
+      "source_url": "https://data.cms.gov/provider-summary-by-type-of-service",
+      "why_it_matters": "It is the strongest public launch point for expanding from physician service rows into institutional, post-acute, DME, and prescription service output.",
+      "principal_caveat": "It is a family of datasets, not one normalized table; each component has its own payer scope, suppression rules, unit, and release cadence."
+    },
+    {
+      "source_id": "cms-inpatient-hospitals-provider-service",
+      "source_name": "CMS Medicare Inpatient Hospitals — by Provider and Service",
+      "publisher": "Centers for Medicare & Medicaid Services",
+      "source_tier": "A1",
+      "service_domain": "Inpatient hospital discharges",
+      "unit_of_observation": "IPPS hospital × MS-DRG service",
+      "measurement_focus": "Inpatient discharges, payments, and hospital charges by provider and Medicare Severity Diagnosis Related Group.",
+      "join_keys": "CCN; hospital geography; MS-DRG; year",
+      "coverage": "Original Medicare fee-for-service Part A IPPS hospitals; latest public-use year available from CMS",
+      "refresh": "Annual",
+      "source_url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-inpatient-hospitals/medicare-inpatient-hospitals-by-provider-and-service",
+      "why_it_matters": "Adds institutional service-line volume and payment signals that physician HCPCS rows cannot see.",
+      "principal_caveat": "Limited to IPPS Medicare fee-for-service discharges and suppresses low-volume cells; it is not an all-payer inpatient service census."
+    },
+    {
+      "source_id": "cms-outpatient-hospitals-provider-service",
+      "source_name": "CMS Medicare Outpatient Hospitals — by Provider and Service",
+      "publisher": "Centers for Medicare & Medicaid Services",
+      "source_tier": "A1",
+      "service_domain": "Outpatient hospital services",
+      "unit_of_observation": "OPPS hospital × ambulatory payment classification or HCPCS service",
+      "measurement_focus": "Outpatient service use, payments, submitted charges, and estimated hospital-specific charges by provider and service.",
+      "join_keys": "CCN; APC; HCPCS; hospital geography; year",
+      "coverage": "Original Medicare fee-for-service Part B OPPS hospitals; component years vary",
+      "refresh": "Annual",
+      "source_url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-outpatient-hospitals/medicare-outpatient-hospitals-by-provider-and-service",
+      "why_it_matters": "Adds hospital outpatient procedures and diagnostics to the service-output view, including services not visible as office-based clinician rows.",
+      "principal_caveat": "OPPS scope and payment-policy exclusions must be checked before Maryland or cross-state comparison."
+    },
+    {
+      "source_id": "cms-part-d-prescribers-provider-drug",
+      "source_name": "CMS Medicare Part D Prescribers — by Provider and Drug",
+      "publisher": "Centers for Medicare & Medicaid Services",
+      "source_tier": "A1",
+      "service_domain": "Prescription drug services",
+      "unit_of_observation": "Prescriber NPI × drug brand/generic",
+      "measurement_focus": "Prescription fills and drug costs for Medicare Part D beneficiaries by provider and drug.",
+      "join_keys": "NPI; drug brand name; drug generic name; geography; year",
+      "coverage": "Medicare Part D public-use data; latest public-use year available from CMS",
+      "refresh": "Annual",
+      "source_url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-part-d-prescribers/medicare-part-d-prescribers-by-provider-and-drug",
+      "why_it_matters": "Connects clinical service patterns to medication use and prescribing intensity, which are major delivered-service outputs for many fields.",
+      "principal_caveat": "Part D enrollment differs from fee-for-service Part B populations and the file does not represent all prescriptions or clinical appropriateness."
+    },
+    {
+      "source_id": "cms-dmepos-referring-provider-service",
+      "source_name": "CMS Medicare Durable Medical Equipment, Devices & Supplies — by Referring Provider and Service",
+      "publisher": "Centers for Medicare & Medicaid Services",
+      "source_tier": "A1",
+      "service_domain": "DMEPOS products and ordered services",
+      "unit_of_observation": "Referring provider NPI × HCPCS service × supplier rental indicator",
+      "measurement_focus": "DMEPOS usage, payments, and submitted charges for products and services ordered by clinicians.",
+      "join_keys": "Referring NPI; HCPCS; rental indicator; geography; year",
+      "coverage": "Original Medicare fee-for-service Part B DMEPOS non-institutional claim line items",
+      "refresh": "Annual",
+      "source_url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-durable-medical-equipment-devices-supplies/medicare-durable-medical-equipment-devices-supplies-by-referring-provider-and-service",
+      "why_it_matters": "Captures ordered medical equipment, devices, prosthetics, orthotics, and supplies that are often invisible in clinician visit counts.",
+      "principal_caveat": "Referring-provider rows are not the same as supplier capacity or patient access, and suppressed low-volume cells affect completeness."
+    },
+    {
+      "source_id": "cms-pos-clinical-laboratories",
+      "source_name": "CMS Provider of Services File — Clinical Laboratories",
+      "publisher": "Centers for Medicare & Medicaid Services",
+      "source_tier": "A1",
+      "service_domain": "Laboratory service capability",
+      "unit_of_observation": "Clinical laboratory certification record",
+      "measurement_focus": "Clinical laboratory demographics, certification characteristics, and types of testing services provided.",
+      "join_keys": "CMS Certification Number; CLIA-related provider attributes; address; certification status",
+      "coverage": "CMS Provider Certification process; quarterly public-use releases",
+      "refresh": "Quarterly",
+      "source_url": "https://data.cms.gov/provider-characteristics/hospitals-and-other-facilities/provider-of-services-file-clinical-laboratories",
+      "why_it_matters": "Adds a facility-capability lens for testing services, useful where service availability depends on certified lab infrastructure rather than only clinician headcount.",
+      "principal_caveat": "Certification and listed testing capabilities do not directly measure test volume, turnaround time, payer access, or appointment availability."
+    }
+  ]
+}

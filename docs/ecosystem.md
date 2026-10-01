@@ -77,3 +77,22 @@ animation loop runs after layout; redraw happens only on interaction/resize.
 The existing Docker/Selenium harness cannot start in the Work container (Docker
 and Selenium Python dependencies are absent). Deployment browser verification
 uses Work's browser instead; this is not a passing Selenium result.
+
+### Deployed verification — October 1, 2026
+
+Deployed implementation: `97af7bafed61854df73bc783f005c26b40341fa5`.
+The existing GitHub Actions deployment completed successfully. Work browser
+checks confirmed directory search/category filtering, cross-view deep links,
+organization search/selection, neighbor isolation, relationship toggles, graph
+zoom and selected-organization evidence-table filtering on the public site.
+The build ran all existing data/event validators plus eight ecosystem regressions.
+
+Work's cloud browser disables WebGL, so visual interaction was verified through
+the D3/SVG fallback; Three.js hardware rendering could not be verified there.
+The browser does not expose viewport resizing, so actual mobile rendering remains
+unverified. Responsive layouts are implemented at 1200px and 700px. Existing
+Selenium commands were attempted but could not start without their Docker and
+Selenium dependencies. These limitations are not passing test results.
+
+A screenshot of the deployed fallback is in
+`artifacts/ecosystem-network-preview.jpg`.

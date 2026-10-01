@@ -44,6 +44,13 @@ const knownExternalOrigins = new Set([
   'https://github.com',
   'https://medtech.social',
 ])
+// Only the generated ecosystem pages may link to URLs present in their sanitized input.
+const ecosystemData = JSON.parse(await readFile(new URL('../assets/data/ecosystem.json', import.meta.url), 'utf8'))
+const ecosystemLinks = new Set([
+  ...ecosystemData.organizations.flatMap(o => [o.website, ...o.publicEmails.map(email => `mailto:${email}`)]),
+  ...ecosystemData.relationships.map(r => r.sourceUrl),
+  ...ecosystemData.financing.map(f => f.sourceUrl),
+].filter(Boolean))
 const knownPortalRoutes = new Set([
   '/branding',
   '/chat',
@@ -95,6 +102,7 @@ function pageId(workspace, path) {
 
 function normalizePage(pathname) {
   if (pathname === '/') return 'index.html'
+  if (pathname === '/ecosystem') return 'ecosystem/index.html'
   const trimmed = pathname.replace(/^\/+/, '')
   if (!trimmed || trimmed.endsWith('/')) return `${trimmed}index.html`
   if (/\.[A-Za-z0-9]+$/.test(trimmed)) return trimmed
@@ -258,7 +266,7 @@ for (const [source, page] of sources) {
       item.kind = 'external-handoff'
       item.origin = url.origin
       item.targetRepo = classifyWorkspaceForUrl(url, sourceRepo)
-      if (strict && !knownExternalOrigins.has(url.origin)) {
+      if (strict && !knownExternalOrigins.has(url.origin) && !(page.path.startsWith('ecosystem/') && ecosystemLinks.has(href))) {
         failures.push(`${source}: unexpected external origin ${url.origin} in "${href}"`)
       }
       inventory.push(item)

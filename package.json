@@ -16,19 +16,24 @@
     "test:datasets": "node scripts/validate-dataset-workbook.mjs",
     "test:links": "node scripts/validate-link-inventory.mjs",
     "test:events": "node --test scripts/medical-event-images.test.mjs scripts/worker-org-events.test.mjs",
-    "test:data": "npm run test:field-atlas && npm run test:codes && npm run test:semantics && npm run test:strategy && npm run test:distortions && npm run test:datasets && npm run test:links && npm run test:events",
-    "build": "npm run build:field-atlas && npm run build:links && npm run test:data && vite build",
+    "test:data": "npm run test:field-atlas && npm run test:codes && npm run test:semantics && npm run test:strategy && npm run test:distortions && npm run test:datasets && npm run test:links && npm run test:events && npm run test:ecosystem",
+    "build": "npm run build:ecosystem && npm run build:field-atlas && npm run build:links && npm run test:data && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "deploy": "wrangler deploy",
     "deploy:dry-run": "wrangler deploy --dry-run",
     "test:selenium": "scripts/run-selenium-regression.sh",
-    "test:clickthrough": "python3 scripts/selenium-clickthrough-smoke.py"
+    "test:clickthrough": "python3 scripts/selenium-clickthrough-smoke.py",
+    "sync:ecosystem": "node scripts/sync-ecosystem.mjs",
+    "build:ecosystem": "node scripts/build-ecosystem.mjs",
+    "test:ecosystem": "node --test scripts/ecosystem.test.mjs"
   },
   "devDependencies": {
     "vite": "^7.2.4",
     "wrangler": "^4.128.0"
   },
   "dependencies": {
-    "lucide": "^1.47.0"
+    "d3-force": "^3.0.0",
+    "lucide": "^1.47.0",
+    "three": "^0.186.1"
   }
 }

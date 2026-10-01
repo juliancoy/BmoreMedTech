@@ -412,6 +412,16 @@ export default {
       return applyApiHeaders(request, response)
     }
 
+    // MedTech-owned static routes; never route these through the shared portal.
+    const ecosystemAssets = { '/ecosystem': '/ecosystem/index.html', '/ecosystem/': '/ecosystem/index.html', '/ecosystem/network': '/ecosystem/network.html', '/ecosystem/network/': '/ecosystem/network.html' }
+    if (ecosystemAssets[url.pathname]) {
+      if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } })
+      const assetUrl = new URL(request.url)
+      assetUrl.pathname = ecosystemAssets[url.pathname]
+      const response = await env.ASSETS.fetch(new Request(assetUrl, request))
+      return applyStaticHeaders(request, assetUrl.pathname, response)
+    }
+
     if (isPortalRoute(url.pathname)) {
       return portalRootNavigationProxyResponse(request, env, url)
     }

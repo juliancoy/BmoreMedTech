@@ -37,6 +37,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
+        ecosystem: 'ecosystem/index.html',
+        ecosystemNetwork: 'ecosystem/network.html',
         start: 'start.html',
         calendar: 'calendar.html',
         map: 'map.html',

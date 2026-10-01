@@ -52,7 +52,7 @@ test('ecosystem routes use static assets and preserve HEAD, query and 404 behavi
  for(const path of ['/ecosystem','/ecosystem/','/ecosystem/network','/ecosystem/network/']) for(const method of ['GET','HEAD']) {
   let seen
   const response=await worker.fetch(new Request(`https://medtech.social${path}?org=example`,{method}),{ASSETS:{fetch:async req=>{seen=req;return new Response(method==='HEAD'?null:'readable',{headers:{'content-type':'text/html'}})}}})
-  assert.equal(response.status,200);assert.equal(seen.method,method);assert.equal(new URL(seen.url).pathname,path.includes('network')?'/ecosystem/network.html':'/ecosystem/index.html');assert.equal(new URL(seen.url).search,'?org=example')
+  assert.equal(response.status,200);assert.equal(seen.method,method);assert.equal(new URL(seen.url).pathname,path.includes('network')?'/ecosystem/network':'/ecosystem/');assert.equal(new URL(seen.url).search,'?org=example')
  }
  const missing=await worker.fetch(new Request('https://medtech.social/ecosystem'),{ASSETS:{fetch:async()=>new Response('missing',{status:404})}});assert.equal(missing.status,404)
  const post=await worker.fetch(new Request('https://medtech.social/ecosystem',{method:'POST'}),{});assert.equal(post.status,405)

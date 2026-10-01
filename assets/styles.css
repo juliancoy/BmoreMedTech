@@ -3508,13 +3508,6 @@ h2 {
     gap: 42px;
   }
 
-  .social-links {
-    position: static;
-    justify-content: center;
-    padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
-    background: #04131c;
-  }
-
   .social-button {
     width: 48px;
     height: 42px;

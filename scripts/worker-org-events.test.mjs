@@ -211,3 +211,15 @@ test('MedTech Worker proxies the base-domain portal, org API, and PIdP paths', a
     'pidp_session=fixture; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax',
   ])
 })
+
+test('MedTech availability polls use the existing tenant portal mount', async (t) => {
+ t.mock.method(globalThis,'fetch',async request=>{
+  assert.equal(new URL(request.url).pathname,'/__portal_root/')
+  assert.equal(request.headers.get('x-forwarded-host'),'medtech.social')
+  return new Response('portal',{headers:{'content-type':'text/html'}})
+ })
+ for(const path of ['/availability','/availability/poll-123']){
+  const response=await worker.fetch(new Request(`https://medtech.social${path}`),{PORTAL_SITE_ORIGIN:'https://portal.example',ASSETS:{fetch:async()=>new Response('missing',{status:404})}})
+  assert.equal(response.status,200);assert.equal(await response.text(),'portal')
+ }
+})

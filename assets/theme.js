@@ -104,6 +104,7 @@ function organizeNavigation() {
     ['/start.html', 'Get involved'],
     ['/ecosystem', 'LifeTech ecosystem'],
     ['/ecosystem/network', 'Relationship network'],
+    ['/availability', 'Find a group meeting time'],
   ]
   const links = destinations.map(([path, label]) => {
     const matches = [...header.querySelectorAll('a[href]')]
@@ -136,7 +137,7 @@ function organizeNavigation() {
     groups.push(details)
     return details
   }
-  nav.prepend(group('Events', links.slice(0, 3)), group('Research', [...links.slice(3, 6), ...links.slice(7)]), links[6])
+  nav.prepend(group('Events', [...links.slice(0, 3), links[9]]), group('Research', [...links.slice(3, 6), ...links.slice(7, 9)]), links[6])
   document.addEventListener('click', (event) => {
     groups.forEach((group) => { if (!group.contains(event.target) || event.target.closest('a')) group.open = false })
   })

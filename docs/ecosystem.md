@@ -60,7 +60,7 @@ Capitalization is opt-in; aggregate/program scopes remain in the table.
 
 Search covers every organization, including labels hidden for readability.
 The directory and both evidence tables are pre-rendered without JavaScript.
-WebGL failure preserves search/details and the table. No continuous physics or
+WebGL failure falls back to an interactive SVG using the same D3 layout, while preserving search/details and the table. No continuous physics or
 animation loop runs after layout; redraw happens only on interaction/resize.
 
 ## Verification

@@ -7,8 +7,8 @@ function filter() {
   card.hidden = Boolean((q && !card.dataset.search.includes(q)) || (category.value && card.dataset.category !== category.value) || (type.value && card.dataset.type !== type.value))
   if (!card.hidden) count++
  })
- document.querySelectorAll('.eco-category').forEach(section => { section.hidden = !section.querySelector('.eco-card:not([hidden])') })
- document.querySelector('#eco-count').textContent = `${count} organizations`
+ document.querySelectorAll('.eco-category').forEach(section => { const visible=section.querySelectorAll('.eco-card:not([hidden])').length; section.hidden = !visible; section.querySelector('header>span:last-child').textContent=`${visible} ${visible===1?'organization':'organizations'}` })
+ document.querySelector('#eco-count').textContent = `${count} ${count===1?'organization':'organizations'}`
  document.querySelector('#eco-empty').hidden = count > 0
 }
 search.addEventListener('input', filter)

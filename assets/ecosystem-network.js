@@ -9,7 +9,7 @@ const selectedCategories = () => new Set([...document.querySelectorAll('[name=no
 const selectedRelationships = () => new Set([...document.querySelectorAll('[name=relationship]:checked')].map(c=>c.value))
 const host = $('#network-canvas'), labels = $('#network-labels'), status = $('#network-status')
 let data, selected = null, scene, camera, renderer, controls, group, nodes=[], edges=[], meshes=[], labelItems=[], frame=0
-let webgl = false
+let webgl = false, svg, svgView = { x: -400, y: -400, w: 800, h: 800 }
 const radius = n => 5 + (n.proximity ?? 35) / 12
 function applyTable() {
  const scope = $('#table-scope').value
@@ -47,15 +47,16 @@ function rebuild() {
   visible=visible.filter(n=>neighbors.has(n.id)); visibleIds=new Set(visible.map(n=>n.id)); edges=edges.filter(e=>visibleIds.has(e.source)&&visibleIds.has(e.target))
  }
  nodes=visible.map(n=>({...n})); edges=edges.map(e=>({...e}))
- status.textContent=`${nodes.length} organizations · ${edges.length} links${webgl ? '' : ' · Table view (WebGL unavailable)'}`
- if(!webgl) return
- clearGraph()
+ status.textContent=`${nodes.length} organizations · ${edges.length} links${webgl ? '' : ' · SVG fallback'}`
+ if(webgl) clearGraph()
+ else { labels.replaceChildren(); labelItems=[]; svg.replaceChildren() }
  const classKeys=Object.keys(colors), clusters=classKeys.length, spread=230
  const center=n=>{const i=classKeys.indexOf(n.category),a=i/clusters*Math.PI*2;return {x:Math.cos(a)*spread,y:Math.sin(a)*spread}}
  const sim=forceSimulation(nodes).force('link',forceLink(edges).id(n=>n.id).distance(110).strength(.12))
   .force('charge',forceManyBody().strength(-220)).force('collision',forceCollide(n=>radius(n)+20).iterations(3))
   .force('x',forceX(n=>center(n).x).strength(.15)).force('y',forceY(n=>center(n).y).strength(.15)).stop()
  for(let i=0;i<250;i++) sim.tick()
+ if(!webgl) { renderSvg(); fit(); requestRender(); return }
  for(const n of nodes) {
   const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius(n),16,12),new THREE.MeshBasicMaterial({color:n.id===selected?0xe56d3c:colors[n.category]}))
   mesh.position.set(n.x,n.y,0);mesh.userData.node=n;group.add(mesh);meshes.push(mesh)
@@ -80,7 +81,12 @@ function rebuild() {
  fit(); requestRender()
 }
 function fit() {
- if(!webgl) return
+ if(!webgl) {
+  const xs=nodes.map(n=>n.x),ys=nodes.map(n=>n.y),aspect=host.clientWidth/host.clientHeight
+  const width=nodes.length?Math.max(...xs)-Math.min(...xs)+120:400,height=nodes.length?Math.max(...ys)-Math.min(...ys)+120:400
+  const h=Math.max(height,width/aspect),w=h*aspect,cx=nodes.length?(Math.max(...xs)+Math.min(...xs))/2:0,cy=nodes.length?(Math.max(...ys)+Math.min(...ys))/2:0
+  svgView={x:cx-w/2,y:cy-h/2,w,h}; requestRender(); return
+ }
  const box=new THREE.Box3().setFromObject(group),center=new THREE.Vector3(),size=new THREE.Vector3()
  if(nodes.length) {box.getCenter(center);box.getSize(size)}
  const aspect=host.clientWidth/host.clientHeight
@@ -89,12 +95,12 @@ function fit() {
  camera.position.set(center.x,center.y,1000);controls.target.copy(center);camera.updateProjectionMatrix();controls.update();requestRender()
 }
 function render() {
- frame=0; if(!webgl)return
- renderer.render(scene,camera)
+ frame=0; if(webgl) renderer.render(scene,camera)
+ else svg?.setAttribute('viewBox',`${svgView.x} ${svgView.y} ${svgView.w} ${svgView.h}`)
  const positions=[]
  const priority=[...labelItems].sort((a,b)=>(b.n.id===selected)-(a.n.id===selected)||(b.n.proximity??0)-(a.n.proximity??0))
  for(const item of priority) {
-  const p=new THREE.Vector3(item.n.x,item.n.y,0).project(camera),x=(p.x*.5+.5)*host.clientWidth,y=(-p.y*.5+.5)*host.clientHeight
+  const p=webgl?new THREE.Vector3(item.n.x,item.n.y,0).project(camera):new THREE.Vector3((item.n.x-svgView.x)/svgView.w*2-1,1-(item.n.y-svgView.y)/svgView.h*2,0),x=(p.x*.5+.5)*host.clientWidth,y=(-p.y*.5+.5)*host.clientHeight
   const width=Math.min(155,item.n.name.length*5.5+10)
   const overlapping=positions.some(r=>Math.abs(x-r.x)<(width+r.width)/2+8&&Math.abs(y-r.y)<28)
   item.button.hidden=p.z>1||Math.abs(p.x)>1||Math.abs(p.y)>1||(overlapping&&item.n.id!==selected)
@@ -102,6 +108,47 @@ function render() {
  }
 }
 function requestRender(){if(!frame)frame=requestAnimationFrame(render)}
+function svgElement(tag,attrs={}) {
+ const el=document.createElementNS('http://www.w3.org/2000/svg',tag)
+ for(const [key,value] of Object.entries(attrs))el.setAttribute(key,String(value))
+ return el
+}
+function zoomSvg(factor) {
+ const nextWidth=svgView.w/factor
+ if(nextWidth<80||nextWidth>4000)return
+ const cx=svgView.x+svgView.w/2,cy=svgView.y+svgView.h/2
+ svgView.w/=factor;svgView.h/=factor;svgView.x=cx-svgView.w/2;svgView.y=cy-svgView.h/2;requestRender()
+}
+function initSvg() {
+ svg=svgElement('svg',{'aria-label':'D3 organization network (SVG fallback)',role:'img'})
+ svg.style.cssText='width:100%;height:100%;display:block;touch-action:none;cursor:grab'
+ host.prepend(svg)
+ let drag=null
+ svg.addEventListener('pointerdown',event=>{if(event.target.tagName==='circle')return;drag={x:event.clientX,y:event.clientY,vx:svgView.x,vy:svgView.y};svg.setPointerCapture(event.pointerId)})
+ svg.addEventListener('pointermove',event=>{if(!drag)return;svgView.x=drag.vx-(event.clientX-drag.x)/host.clientWidth*svgView.w;svgView.y=drag.vy-(event.clientY-drag.y)/host.clientHeight*svgView.h;requestRender()})
+ svg.addEventListener('pointerup',()=>{drag=null});svg.addEventListener('pointercancel',()=>{drag=null})
+ svg.addEventListener('wheel',event=>{event.preventDefault();zoomSvg(event.deltaY<0?1.1:1/1.1)},{passive:false})
+ new ResizeObserver(fit).observe(host)
+}
+function renderSvg() {
+ const defs=svgElement('defs'), marker=svgElement('marker',{id:'eco-arrow',viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:5,markerHeight:5,orient:'auto-start-reverse'})
+ marker.append(svgElement('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:'context-stroke'}));defs.append(marker);svg.append(defs)
+ const parallel=new Map()
+ for(const edge of edges) {
+  const a=edge.source,b=edge.target,dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,ux=dx/d,uy=dy/d
+  const pair=`${a.id}-${b.id}`,idx=parallel.get(pair)||0;parallel.set(pair,idx+1)
+  const sx=a.x+ux*(radius(a)+2),sy=a.y+uy*(radius(a)+2),tx=b.x-ux*(radius(b)+3),ty=b.y-uy*(radius(b)+3)
+  const width=edge.kind==='transfer'&&edge.amount?1+Math.max(0,Math.log10(edge.amount)-4)*.7:1.4
+  const line=svgElement('path',{d:`M${sx},${sy} Q${(sx+tx)/2-uy*(15+idx*18)},${(sy+ty)/2+ux*(15+idx*18)} ${tx},${ty}`,fill:'none',stroke:`#${relationshipColors[edge.relationship].toString(16).padStart(6,'0')}`,'stroke-width':width,'stroke-opacity':.6,'marker-end':'url(#eco-arrow)'})
+  if(edge.relationship!=='funding')line.setAttribute('stroke-dasharray',edge.relationship==='affiliation'?'8 5':'3 5')
+  const title=svgElement('title');title.textContent=`${edge.sourceLabel} → ${edge.targetLabel}: ${edge.type} ${edge.amountLabel||''}`;line.append(title);svg.append(line)
+ }
+ for(const n of nodes) {
+  const circle=svgElement('circle',{cx:n.x,cy:n.y,r:radius(n),fill:`#${(n.id===selected?0xe56d3c:colors[n.category]).toString(16).padStart(6,'0')}`})
+  const title=svgElement('title');title.textContent=`${n.name} · ${n.proximity??'Unscored'}`;circle.append(title);circle.addEventListener('click',()=>select(n.id));svg.append(circle)
+  const button=document.createElement('button');button.type='button';button.textContent=n.name;button.title=n.name;button.setAttribute('aria-pressed',String(n.id===selected));button.addEventListener('click',()=>select(n.id));labels.append(button);labelItems.push({button,n})
+ }
+}
 function initWebgl() {
  try {
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(host.clientWidth,host.clientHeight);host.prepend(renderer.domElement)
@@ -117,7 +164,7 @@ function initWebgl() {
   renderer.domElement.addEventListener('pointermove',ev=>{const n=hit(ev),tip=$('#network-tooltip');tip.hidden=!n;if(n)tip.textContent=`${n.name} · ${n.proximity==null?'Not scored':`${n.proximity}/100 proximity`}`;renderer.domElement.style.cursor=n?'pointer':'grab'})
   renderer.domElement.addEventListener('pointerleave',()=>{$('#network-tooltip').hidden=true})
   renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();webgl=false;labels.replaceChildren();status.textContent='Graphics unavailable. Use search, details and the relationship table below.'})
- } catch { host.hidden=true;webgl=false }
+ } catch { webgl=false; initSvg() }
 }
 async function start(){
  try {
@@ -127,7 +174,7 @@ async function start(){
   document.querySelectorAll('[name=node-category],[name=relationship],#include-context,#neighbors').forEach(el=>el.addEventListener('change',rebuild))
   $('#table-scope').addEventListener('change',applyTable)
   $('#network-fit').addEventListener('click',fit)
-  for(const [id,factor] of [['#zoom-in',1.25],['#zoom-out',.8]]) $(id).addEventListener('click',()=>{if(!webgl)return;camera.zoom=Math.max(.35,Math.min(6,camera.zoom*factor));camera.updateProjectionMatrix();requestRender()})
+  for(const [id,factor] of [['#zoom-in',1.25],['#zoom-out',.8]]) $(id).addEventListener('click',()=>{if(!webgl){zoomSvg(factor);return}camera.zoom=Math.max(.35,Math.min(6,camera.zoom*factor));camera.updateProjectionMatrix();requestRender()})
   $('#network-reset').addEventListener('click',()=>{selected=null;document.querySelectorAll('[name=node-category],[name=relationship]').forEach(c=>c.checked=true);$('#include-context').checked=false;$('#neighbors').checked=false;$('#neighbors').disabled=true;$('#network-search').value='';$('#table-scope').value='';$('#network-detail').innerHTML='<h2>Select an organization</h2><p>Search or select a graph label to explore its evidence.</p>';history.replaceState(null,'',location.pathname);search();applyTable();rebuild()})
   const initial=new URL(location.href).searchParams.get('org');if(initial&&data.organizations.some(n=>n.id===initial)){select(initial)}else rebuild()
  }catch(error){status.textContent='Interactive data unavailable. The full relationship table and directory remain readable.';host.hidden=true;console.error(error)}

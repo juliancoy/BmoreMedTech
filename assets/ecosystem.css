@@ -85,3 +85,23 @@
 @media (max-width:1200px) { .eco-network-shell { grid-template-columns:210px minmax(0,1fr) }.eco-detail { grid-column:1/-1; border-left:0; border-top:1px solid var(--line); max-height:440px }.eco-cards { grid-template-columns:repeat(2,minmax(0,1fr)) } }
 @media (max-width:700px) { .eco-page { padding:24px 18px 40px }.eco-hero { grid-template-columns:1fr; gap:20px; padding-top:10px }.eco-stats { grid-template-columns:repeat(3,1fr); border-left:0; border-top:1px solid var(--line); padding:24px 0 0; gap:14px }.eco-stats strong {font-size:30px}.eco-stats span {font-size:11px}.eco-cards {grid-template-columns:1fr}.eco-controls label {width:100%}.eco-category>header {flex-wrap:wrap}.eco-category>header h2 {font-size:20px}.eco-network-heading {display:block}.eco-network-shell {grid-template-columns:1fr}.eco-network-controls {border-right:0;border-bottom:1px solid var(--line)}.eco-network-controls fieldset {display:flex;flex-wrap:wrap;gap:12px}.eco-network-controls fieldset label {min-height:30px}.eco-results {max-height:120px}#network-canvas {height:460px;flex:auto}.eco-detail {max-height:520px}.eco-tabs a {font-size:12px;padding:10px 12px}.eco-graph-top {flex-wrap:wrap}.eco-table :is(td,th) {padding:12px}.eco-footer {padding:24px 18px;gap:16px} }
 @media(prefers-reduced-motion:reduce) { .eco-page * { scroll-behavior:auto!important } }
+
+.eco-proximity { margin:32px 0; padding:24px; border:1px solid var(--line); border-radius:10px; background:var(--paper) }
+.eco-proximity h2 { margin:0; font-size:28px }
+.eco-proximity>p { color:var(--muted); font-size:13px; max-width:850px }
+.eco-bar-scroll { max-height:540px; overflow:auto; scrollbar-gutter:stable }
+.eco-bars { list-style:none; padding:0; margin:0 }
+.eco-bar-row { display:grid; grid-template-columns:minmax(150px,32%) 1fr 76px; align-items:center; gap:16px; padding:12px 6px; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); min-height:64px }
+.eco-bar-row:hover,.eco-bar-row:focus-visible { background:var(--surface-subtle) }
+.eco-bar-name { font-size:13px; font-weight:650; overflow-wrap:anywhere }
+.eco-bar-name small { display:block; color:var(--muted); font-size:10px; font-weight:400; margin-top:5px }
+.eco-bar-track { height:24px; background:var(--surface-subtle); border-inline:1px solid var(--line); position:relative }
+.eco-bar-track::before { content:""; position:absolute; left:50%; height:100%; border-left:1px solid var(--line) }
+.eco-bar-fill { position:relative; display:block; height:100%; background:var(--node-color); border-radius:0 3px 3px 0 }
+.eco-bar-row strong { font-size:12px; text-align:right; font-variant-numeric:tabular-nums }
+.eco-bar-missing { font-size:11px; color:var(--muted) }
+.eco-bar-axis { display:flex; justify-content:space-between; margin:20px 108px 8px calc(32% + 12px); font-size:11px; color:var(--muted) }
+.eco-card { scroll-margin-top:100px }
+.eco-card:target { outline:2px solid var(--teal); outline-offset:3px }
+.eco-bars li[hidden] { display:none }
+@media(max-width:700px) { .eco-proximity { padding:18px 12px }.eco-bar-row { grid-template-columns:minmax(0,1fr) 65px; gap:8px; padding:14px 4px }.eco-bar-name { grid-column:1/-1 }.eco-bar-axis { margin-left:4px; margin-right:81px }.eco-bar-track { height:20px } }

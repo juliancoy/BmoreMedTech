@@ -62,3 +62,17 @@ test('generated pages contain useful content without scripts',async()=>{
  assert.match(directory,/Amplify MedTech/);assert.match(directory,/LifeTech proximity/);assert.match(network,/<table/);assert.match(network,/Stephen &amp; Renee Bisciotti Foundation/)
  for(const html of [directory,network])assert.doesNotMatch(html,/docs\.google\.com|oauth_token|private@example/)
 })
+
+test('proximity chart ranks scores and distinguishes zero from missing with accessible detail links', async()=>{
+ const { proximityChart } = await import('../lib/ecosystem-view.js')
+ const html = proximityChart([
+  {id:'missing',name:'Unknown',category:'general',proximity:null},
+  {id:'zero',name:'Zero',category:'general',proximity:0},
+  {id:'high',name:'High <score>',category:'ecosystem',proximity:95}
+ ])
+ assert.ok(html.indexOf('data-org="high"') < html.indexOf('data-org="zero"'))
+ assert.ok(html.indexOf('data-org="zero"') < html.indexOf('data-org="missing"'))
+ assert.match(html,/href="#high"/); assert.match(html,/High &lt;score&gt;/)
+ assert.match(html,/width:0%/); assert.match(html,/>0\/100</)
+ assert.match(html,/eco-bar-missing">Not scored/)
+})

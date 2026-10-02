@@ -195,11 +195,11 @@ def assert_theme_control(driver: webdriver.Remote, viewport: str, screenshot_dir
         const dark = {
           mode: document.documentElement.dataset.themeMode,
           theme: document.documentElement.dataset.theme,
-          stored: localStorage.getItem(document.querySelector('.brand-copy strong').textContent.trim() === 'LifeTech' ? 'lifetech.theme' : 'bmore-medtech.theme'),
+          stored: localStorage.getItem(arguments[0]),
           controls: snapshot()
         };
         return {innerWidth: window.innerWidth, dark};
-        """
+        """, SITE["themeKey"]
     )
     dark_screenshot = screenshot_dir / f"{viewport}-theme-dark.png"
     driver.save_screenshot(str(dark_screenshot))
@@ -210,10 +210,10 @@ def assert_theme_control(driver: webdriver.Remote, viewport: str, screenshot_dir
         control.click();
         return {
           mode: document.documentElement.dataset.themeMode,
-          stored: localStorage.getItem(document.querySelector('.brand-copy strong').textContent.trim() === 'LifeTech' ? 'lifetech.theme' : 'bmore-medtech.theme'),
+          stored: localStorage.getItem(arguments[0]),
           pressed: control.getAttribute('aria-pressed')
         };
-        """
+        """, SITE["themeKey"]
     )
     controls = metrics["dark"]["controls"]
     if [control["mode"] for control in controls] != ["system", "light", "dark"]:

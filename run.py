@@ -597,7 +597,7 @@ def parse_args() -> argparse.Namespace:
     add_common_options(status_parser)
     status_parser.set_defaults(func=status)
 
-    return normalize_args(parser.parse_args())
+    return normalize_args(parser.parse_args(sys.argv[1:] or ["start"]))
 
 
 def main() -> int:

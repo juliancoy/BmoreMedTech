@@ -68,7 +68,8 @@ async function cmsProviderServices(dataset, query) {
   const searchField = allowedSearchFields.has(query.params.get('search_field')) ? query.params.get('search_field') : 'HCPCS_Desc'
   addCmsFilter(upstream, 'search', searchField, query.params.get('q'), 'CONTAINS')
 
-  const response = await fetchUpstream(upstream)
+  // The filtered CMS service endpoint can take longer than the other feeds.
+  const response = await fetchUpstream(upstream, { timeout: 40000 })
   const payload = await response.json()
   const rows = extractRows(payload)
   const sortedRows = filterAndSortRows(rows, new URLSearchParams({

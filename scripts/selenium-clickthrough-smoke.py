@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 from urllib.parse import urljoin
 
 from selenium import webdriver
@@ -14,7 +15,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
     options = Options()
-    options.add_argument("--headless=new")
+    if os.environ.get("SELENIUM_HEADLESS", "true").lower() != "false":
+        options.add_argument("--headless=new")
     options.add_argument(f"--window-size={width},{height}")
     options.add_argument("--ignore-certificate-errors")
     options.add_argument("--no-sandbox")
@@ -130,8 +132,8 @@ def simulate_login(driver: webdriver.Remote, base_url: str) -> None:
     driver.get(urljoin(base_url, "/users/login"))
     settle(driver)
     WebDriverWait(driver, 45).until(lambda d: "Welcome to LifeTech" in visible_text(d))
-    if "portalProfile=baltimore-medtech" not in driver.current_url:
-        raise AssertionError(f"Login did not pick the LifeTech tenant profile: {driver.current_url}")
+    if driver.title != "LifeTech Portal • User login":
+        raise AssertionError(f"Login did not pick the LifeTech tenant: {driver.title}")
     assert_no_broken_images(driver, "login")
 
     form_count = driver.execute_script("return document.querySelectorAll('form').length")
@@ -143,10 +145,11 @@ def simulate_login(driver: webdriver.Remote, base_url: str) -> None:
         const form = Array.from(document.querySelectorAll('form'))
           .find((candidate) => candidate.querySelector('input[type="password"]'));
         if (!form) return { ok: false, reason: 'missing password form' };
+        const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
         for (const input of form.querySelectorAll('input')) {
           const key = `${input.name} ${input.id} ${input.placeholder} ${input.getAttribute('aria-label') || ''}`.toLowerCase();
-          if (input.type === 'email' || key.includes('email')) input.value = 'selenium.invalid@example.com';
-          if (input.type === 'password' || key.includes('password')) input.value = 'not-a-real-password-123';
+          if (input.type === 'email' || key.includes('email')) setValue.call(input, 'selenium.invalid@example.com');
+          if (input.type === 'password' || key.includes('password')) setValue.call(input, 'not-a-real-password-123');
           input.dispatchEvent(new Event('input', { bubbles: true }));
           input.dispatchEvent(new Event('change', { bubbles: true }));
         }
@@ -159,11 +162,10 @@ def simulate_login(driver: webdriver.Remote, base_url: str) -> None:
     if not submitted["ok"]:
         raise AssertionError(f"Login form could not be submitted: {submitted}")
 
-    WebDriverWait(driver, 15).until(
-        lambda d: "Login" in visible_text(d)
-        or "invalid" in visible_text(d).lower()
-        or "incorrect" in visible_text(d).lower()
-        or "failed" in visible_text(d).lower()
+    WebDriverWait(driver, 30).until(
+        lambda d: d.find_elements(By.ID, 'user-login-error')
+        and d.find_element(By.ID, 'user-login-error').is_displayed()
+        and d.find_element(By.ID, 'user-login-error').text.strip()
     )
     if "Page not found" in visible_text(driver):
         raise AssertionError("Fake login routed to Page not found")

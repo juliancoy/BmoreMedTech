@@ -23,7 +23,8 @@ PORTAL_URL = "https://lifetech.fyi/users/login"
 
 def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
     options = Options()
-    options.add_argument("--headless=new")
+    if os.environ.get("SELENIUM_HEADLESS", "true").lower() != "false":
+        options.add_argument("--headless=new")
     options.add_argument(f"--window-size={width},{height}")
     options.add_argument("--use-angle=swiftshader")
     options.add_argument("--use-gl=angle")

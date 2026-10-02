@@ -12,6 +12,14 @@ npm run build
 npm run dev
 ```
 
+For the Docker local stack, `python run.py` defaults to `start`. The full stack
+requires the sibling PIdP checkout's `pidp_editme.py` configuration. To run only
+the MedTech site and Selenium harness:
+
+```sh
+python run.py start --medtech-only
+```
+
 ## Link Inventory
 
 The repository intentionally does not generate an exhaustive click-through

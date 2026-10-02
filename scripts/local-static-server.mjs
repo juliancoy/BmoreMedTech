@@ -233,7 +233,8 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
       targetUrl.pathname = requestUrl.pathname.slice(stripPrefix.length) || '/'
     }
     const proxiedRequest = webRequest(req, targetUrl)
-    proxiedRequest.headers.set('x-forwarded-host', req.headers.host || '')
+    // Local hosts use the existing registered MedTech tenant through the portal's tenant lookup.
+    proxiedRequest.headers.set('x-forwarded-host', requestUrl.pathname === '/api/org/api/portal/tenant' ? 'medtech.social' : req.headers.host || '')
     proxiedRequest.headers.set('x-forwarded-proto', requestUrl.protocol.replace(':', ''))
     if (stripPrefix) proxiedRequest.headers.set('x-forwarded-prefix', stripPrefix)
     const response = await fetch(targetUrl, {

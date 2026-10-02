@@ -10,7 +10,7 @@ const workspaces = [
     root,
     strict: true,
     extensions: new Set(['.html']),
-    ignoredDirs: new Set(['.git', '.local', '.wrangler', 'dist', 'node_modules', '__pycache__']),
+    ignoredDirs: new Set(['.git', '.local', '.wrangler', 'dist', 'dist-lifetech', 'node_modules', '__pycache__']),
   },
   {
     id: 'orgportal',
@@ -18,7 +18,7 @@ const workspaces = [
     root: new URL('../../OrgPortal/web/', import.meta.url),
     strict: false,
     extensions: new Set(['.html', '.tsx', '.ts', '.jsx', '.js']),
-    ignoredDirs: new Set(['.git', '.vite-local-check-cache', '.vite-playwright-cache', 'dist', 'node_modules', 'playwright-report', 'coverage']),
+    ignoredDirs: new Set(['.git', '.vite-local-check-cache', '.vite-playwright-cache', 'dist', 'dist-lifetech', 'node_modules', 'playwright-report', 'coverage']),
     ignoredPathParts: ['public/specialty/baltimore-medtech'],
   },
   {
@@ -27,7 +27,7 @@ const workspaces = [
     root: new URL('../../pidp/', import.meta.url),
     strict: false,
     extensions: new Set(['.html', '.tsx', '.ts', '.jsx', '.js', '.py', '.mjs']),
-    ignoredDirs: new Set(['.git', '.stable-backups', 'dist', 'node_modules', '__pycache__', '.pytest_cache']),
+    ignoredDirs: new Set(['.git', '.stable-backups', 'dist', 'dist-lifetech', 'node_modules', '__pycache__', '.pytest_cache']),
     ignoredPathParts: ['frontend/stable'],
   },
 ]

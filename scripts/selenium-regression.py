@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Selenium regression checks for the LifeTech public site."""
+"""Selenium regression checks for the configured public site."""
 
 from __future__ import annotations
 
@@ -18,7 +18,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-
+SITE = json.loads((pathlib.Path(__file__).resolve().parents[1] / 'sites.json').read_text())[os.environ.get('SITE_BRAND', 'medtech')]
+BRAND_NAME = SITE['name']
 
 def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
     options = Options()
@@ -194,7 +195,7 @@ def assert_theme_control(driver: webdriver.Remote, viewport: str, screenshot_dir
         const dark = {
           mode: document.documentElement.dataset.themeMode,
           theme: document.documentElement.dataset.theme,
-          stored: localStorage.getItem('lifetech.theme'),
+          stored: localStorage.getItem(document.querySelector('.brand-copy strong').textContent.trim() === 'LifeTech' ? 'lifetech.theme' : 'bmore-medtech.theme'),
           controls: snapshot()
         };
         return {innerWidth: window.innerWidth, dark};
@@ -209,7 +210,7 @@ def assert_theme_control(driver: webdriver.Remote, viewport: str, screenshot_dir
         control.click();
         return {
           mode: document.documentElement.dataset.themeMode,
-          stored: localStorage.getItem('lifetech.theme'),
+          stored: localStorage.getItem(document.querySelector('.brand-copy strong').textContent.trim() === 'LifeTech' ? 'lifetech.theme' : 'bmore-medtech.theme'),
           pressed: control.getAttribute('aria-pressed')
         };
         """
@@ -246,7 +247,7 @@ def assert_primary_navigation(driver: webdriver.Remote) -> None:
         assert account.find_element(By.LINK_TEXT, 'My profile').is_displayed()
         if compact:
             assert not toggle.is_displayed()
-            assert account.find_element(By.LINK_TEXT, 'LifeTech meetups').is_displayed()
+            assert account.find_element(By.LINK_TEXT, f'{BRAND_NAME} meetups').is_displayed()
         menu.send_keys(Keys.ESCAPE)
         if compact:
             return
@@ -265,7 +266,7 @@ def assert_primary_navigation(driver: webdriver.Remote) -> None:
     summaries[0].click()
     events = nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')
     assert [item.text for item in events] == [
-        'LifeTech meetups', 'Community calendar', 'Event map', 'Find a group meeting time'
+        f'{BRAND_NAME} meetups', 'Community calendar', 'Event map', 'Find a group meeting time'
     ]
     assert [urlparse(item.get_attribute('href')).path for item in events] == [
         '/org-events', '/calendar.html', '/map.html', '/availability'
@@ -273,7 +274,7 @@ def assert_primary_navigation(driver: webdriver.Remote) -> None:
     summaries[1].click()
     WebDriverWait(driver, 5).until(lambda d: len(nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')) == 1)
     assert [item.text for item in nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')] == [
-        'Medical atlas', 'Datasets', 'Brand guide', 'LifeTech ecosystem', 'Relationship network'
+        'Medical atlas', 'Datasets', 'Brand guide', f'{BRAND_NAME} ecosystem', 'Relationship network'
     ]
     summaries[1].send_keys(Keys.ESCAPE)
     assert not nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')
@@ -336,14 +337,14 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         """
     )
 
-    if metrics["title"] != "LifeTech":
+    if metrics["title"] != BRAND_NAME:
         raise AssertionError(f"{viewport} home: unexpected title {metrics['title']!r}")
-    if "LifeTech" not in metrics["bodyText"]:
+    if BRAND_NAME not in metrics["bodyText"]:
         raise AssertionError(f"{viewport} home: missing LifeTech body text")
     portal_url = f"{base_url.rstrip('/')}/users/login"
     if metrics["headerLoginHref"] != portal_url or portal_url not in metrics["loginHrefs"]:
         raise AssertionError(f"{viewport} home: login links did not target the LifeTech portal profile: {metrics}")
-    if "lifetech-hero" not in metrics["heroImageSrc"]:
+    if SITE["hero"].split("/")[-1] not in metrics["heroImageSrc"]:
         raise AssertionError(f"{viewport} home: hero background should use the LifeTech editorial image: {metrics}")
     if abs(metrics["heroTop"] - metrics["headerBottom"]) > 2:
         raise AssertionError(f"{viewport} home: hero must start below the rendered navigation: {metrics}")
@@ -351,7 +352,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: editorial hero needs a contrast overlay: {metrics}")
     if not metrics["innerHeight"] * 0.75 <= metrics["heroHeight"] <= metrics["innerHeight"] * 1.75:
         raise AssertionError(f"{viewport} home: hero no longer forms a focused opening chapter: {metrics}")
-    if "Next LifeTech event" in metrics["bodyText"] and "6:00 PM" not in metrics["bodyText"]:
+    if f"Next {BRAND_NAME} event" in metrics["bodyText"] and "6:00 PM" not in metrics["bodyText"]:
         raise AssertionError(f"{viewport} home: next-event card must render in Baltimore time: {metrics}")
     if metrics["mainSectionCount"] != 1:
         raise AssertionError(f"{viewport} home: content below the hero should live on About Us")
@@ -411,7 +412,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         revealEnabled: document.documentElement.classList.contains('reveal-enabled')
       };
     """)
-    if about["title"] != "About Us" or about["pathways"] != ["General Calendar", "Medical map", "LifeTech index"] or about["glossary"] != ["Health", "Medicine", "Biotech"]:
+    if about["title"] != "About Us" or about["pathways"] != ["General Calendar", "Medical map", f"{BRAND_NAME} index"] or about["glossary"] != ["Health", "Medicine", "Biotech"]:
         raise AssertionError(f"{viewport} about: moved content is incomplete: {about}")
     if about["actionTop"] < about["headingBottom"] - 2 or not about["revealEnabled"]:
         raise AssertionError(f"{viewport} about: content overlaps or reveal is unavailable: {about}")
@@ -485,7 +486,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
     )
     metrics["themeCheck"] = assert_theme_control(driver, viewport, screenshot_dir)
 
-    if metrics["title"] != "General Calendar | LifeTech":
+    if metrics["title"] != f"General Calendar | {BRAND_NAME}":
         raise AssertionError(f"{viewport} calendar: unexpected title {metrics['title']!r}")
     if metrics["pageSections"][1] != "event-list-section":
         raise AssertionError(f"{viewport} calendar: upcoming list is no longer the first content section: {metrics}")
@@ -544,7 +545,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         """
     )
 
-    if metrics["title"] != "Medical System Map | LifeTech":
+    if metrics["title"] != f"Medical System Map | {BRAND_NAME}":
         raise AssertionError(f"{viewport} map: unexpected title {metrics['title']!r}")
     if metrics["regionValue"] != "baltimore-city":
         raise AssertionError(f"{viewport} map: default region changed: {metrics}")
@@ -876,7 +877,7 @@ def assert_taxonomy(driver: webdriver.Remote, base_url: str, viewport: str, scre
         };
         """
     )
-    if metrics["title"] != "Medical Science & Coding Atlas | LifeTech":
+    if metrics["title"] != f"Medical Science & Coding Atlas | {BRAND_NAME}":
         raise AssertionError(f"{viewport} taxonomy: unexpected title: {metrics}")
     if int(metrics["totalText"].replace(",", "")) < 200 or metrics["databaseOptions"] != 6:
         raise AssertionError(f"{viewport} taxonomy: index or framework selector is incomplete: {metrics}")
@@ -1069,7 +1070,7 @@ def run(args: argparse.Namespace) -> int:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run LifeTech Selenium regressions.")
+    parser = argparse.ArgumentParser(description="Run site Selenium regressions.")
     parser.add_argument("--selenium-url", default=os.environ.get("SELENIUM_URL", "http://127.0.0.1:4444/wd/hub"))
     parser.add_argument(
         "--base-url",

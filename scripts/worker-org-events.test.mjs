@@ -49,6 +49,7 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
         : new Response('not found', { status: 404 }),
   }
   const env = {
+    SITE_BRAND: 'lifetech',
     ASSETS: assets,
     ORG_API_ORIGIN: 'https://org.example',
     CHAT_API_ORIGIN: 'https://chat.example',

@@ -86,3 +86,19 @@ See the [OrgPortal account boundary](../OrgPortal/README.md#account-and-service-
 and [PIdP account boundary](../pidp/README.md#account-boundaries).
 
 See [event administration and draft migration](docs/events-platform.md).
+
+### Separate MedTech and LifeTech sites
+
+The two sites share presentation code here, but use separate static builds and
+Cloudflare Workers. OrgPortal still owns each organization's branding, membership,
+and permissions; PIdP owns authentication. No accounts or memberships are copied
+between organizations by this build.
+
+`sites.json` configures each site's name, canonical origin, original imagery, and
+local theme preference key. The default `npm run build` produces MedTech in `dist`;
+`npm run build:lifetech` produces LifeTech in `dist-lifetech`. Build both after shared
+changes. Deploy MedTech with `npm run deploy`, and LifeTech with
+`npm run deploy:lifetech`. The domain assignments live in `wrangler.jsonc`.
+
+A separate LifeTech repository is unnecessary unless the sites need independent
+code ownership or release workflows. Their deployments are already separate.

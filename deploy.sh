@@ -11,7 +11,8 @@ usage() {
   cat <<'EOF'
 Usage: ./deploy.sh [options]
 
-Deploys LifeTech at lifetech.fyi.
+Deploys Baltimore MedTech at medtech.social.
+LifeTech: npm run build:lifetech && npm run deploy:lifetech
 
 This repository does not deploy OrgPortal or CodeCollective. Shared portal
 changes must be deployed from the CodeCollective repository.
@@ -53,9 +54,9 @@ fi
 echo "[deploy][medtech] installing dependencies"
 npm ci
 
-echo "[deploy][medtech] building and deploying lifetech.fyi"
+echo "[deploy][medtech] building and deploying medtech.social"
 npm run build
-npx wrangler deploy "${MEDTECH_ARGS[@]}"
+npx wrangler deploy --env="" "${MEDTECH_ARGS[@]}"
 
 if [[ "$DRY_RUN" -eq 1 ]]; then
   echo "[deploy] complete (dry-run)"

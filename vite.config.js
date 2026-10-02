@@ -1,5 +1,10 @@
 import { defineConfig } from 'vite'
 import { cpSync, existsSync } from 'node:fs'
+import { siteBrand, renderSiteBrand } from './lib/site-brand.js'
+
+const brandId = process.env.SITE_BRAND || 'medtech'
+const brand = siteBrand(brandId)
+const outputDirectory = brandId === 'medtech' ? 'dist' : 'dist-lifetech'
 
 const datasetPages = [
   'medtech-meta-index',
@@ -26,14 +31,24 @@ const datasetInputs = Object.fromEntries(
 export default defineConfig({
   publicDir: 'assets/data',
   plugins: [{
+    name: 'site-brand',
+    enforce: 'pre',
+    transformIndexHtml: { order: 'pre', handler: html => renderSiteBrand(html, brand) },
+    transform(code, id) {
+      if (!id.includes('/node_modules/') && /\.[cm]?js(?:\?|$)/.test(id)) {
+        return renderSiteBrand(code, brand)
+      }
+    },
+  }, {
     name: 'copy-medtech-static-images',
     closeBundle() {
       if (existsSync('assets/images')) {
-        cpSync('assets/images', 'dist/assets/images', { recursive: true })
+        cpSync('assets/images', `${outputDirectory}/assets/images`, { recursive: true })
       }
     },
   }],
   build: {
+    outDir: outputDirectory,
     rollupOptions: {
       input: {
         main: 'index.html',

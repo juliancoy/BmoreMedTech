@@ -1,4 +1,5 @@
 import { handleDatasetApi } from './worker/datasets.js'
+import { siteBrand } from './lib/site-brand.js'
 
 const ALLOWED_CORS_ORIGINS = new Set([
   'https://baltimore-medtech.jcloiacon.workers.dev',
@@ -15,13 +16,7 @@ const DEFAULT_ORG_API_ORIGIN = 'https://org-codecollective.jcloiacon.workers.dev
 const DEFAULT_CHAT_API_ORIGIN = 'https://chat-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PIDP_API_ORIGIN = 'https://pidp-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PORTAL_SITE_ORIGIN = 'https://codecollective.us'
-const LIFETECH_BRAND = {
-  name: 'LifeTech',
-  tagline: 'Health × Medicine × Biotech',
-  description: 'Find your next conversation, connection, or local event across health, medicine, and biotech.',
-  imagePath: '/assets/images/lifetech-logo.png',
-  themeColor: '#061a26',
-}
+
 
 function allowedCorsOrigin(request) {
   const origin = request.headers.get('origin')
@@ -98,43 +93,44 @@ function escapeHtml(value) {
   })[char])
 }
 
-function lifeTechPortalPageTitle(pathname) {
-  if (pathname === '/branding') return `Brand Guide | ${LIFETECH_BRAND.name}`
-  if (pathname === '/org-events' || pathname.startsWith('/org-events/')) return `LifeTech Events | ${LIFETECH_BRAND.name}`
-  if (pathname === '/resources' || pathname.startsWith('/resources/')) return `Resources | ${LIFETECH_BRAND.name}`
-  if (pathname === '/search') return `Search | ${LIFETECH_BRAND.name}`
-  if (pathname === '/users/login') return `Login | ${LIFETECH_BRAND.name}`
-  if (pathname === '/users/register') return `Register | ${LIFETECH_BRAND.name}`
-  return `${LIFETECH_BRAND.name} Portal`
+function tenantPortalPageTitle(pathname, brand) {
+  if (pathname === '/branding') return `Brand Guide | ${brand.name}`
+  if (pathname === '/org-events' || pathname.startsWith('/org-events/')) return `Events | ${brand.name}`
+  if (pathname === '/resources' || pathname.startsWith('/resources/')) return `Resources | ${brand.name}`
+  if (pathname === '/search') return `Search | ${brand.name}`
+  if (pathname === '/users/login') return `Login | ${brand.name}`
+  if (pathname === '/users/register') return `Register | ${brand.name}`
+  return `${brand.name} Portal`
 }
 
-function lifeTechPortalMetadata(url) {
-  const image = new URL(LIFETECH_BRAND.imagePath, url.origin).toString()
+function tenantPortalMetadata(url, brand) {
+  const image = new URL(brand.logo, url.origin).toString()
   const canonical = new URL(url.pathname + url.search, url.origin).toString()
-  const title = lifeTechPortalPageTitle(url.pathname)
+  const title = tenantPortalPageTitle(url.pathname, brand)
   return {
     title,
-    description: LIFETECH_BRAND.description,
+    description: 'Find your next conversation, connection, or local event across health, medicine, and biotech.',
     canonical,
     image,
-    imageAlt: `${LIFETECH_BRAND.name} logo`,
-    siteName: LIFETECH_BRAND.name,
+    imageAlt: `${brand.name} logo`,
+    siteName: brand.name,
   }
 }
 
-async function applyLifeTechPortalMetadata(request, response, url) {
+async function applyTenantPortalMetadata(request, response, url, env) {
+  const brand = siteBrand(env.SITE_BRAND)
   if (!response.ok || request.method === 'HEAD') return response
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('text/html')) return response
 
-  const metadata = lifeTechPortalMetadata(url)
+  const metadata = tenantPortalMetadata(url, brand)
   let html = await response.text()
   const tags = [
     `<title>${escapeHtml(metadata.title)}</title>`,
     `<link rel="canonical" href="${escapeHtml(metadata.canonical)}" />`,
-    `<link rel="icon" type="image/png" href="${escapeHtml(LIFETECH_BRAND.imagePath)}" />`,
-    `<link rel="apple-touch-icon" href="${escapeHtml(LIFETECH_BRAND.imagePath)}" />`,
-    `<meta name="theme-color" content="${escapeHtml(LIFETECH_BRAND.themeColor)}" />`,
+    `<link rel="icon" type="image/png" href="${escapeHtml(brand.logo)}" />`,
+    `<link rel="apple-touch-icon" href="${escapeHtml(brand.logo)}" />`,
+    `<meta name="theme-color" content="${escapeHtml('#061a26')}" />`,
     `<meta name="description" content="${escapeHtml(metadata.description)}" />`,
     `<meta name="robots" content="index,follow,max-image-preview:large" />`,
     `<meta property="og:type" content="website" />`,
@@ -227,7 +223,7 @@ function portalRootNavigationProxyResponse(request, env, url) {
   const targetUrl = new URL(url)
   targetUrl.pathname = '/__portal_root/'
   return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
-    .then((response) => applyLifeTechPortalMetadata(request, response, url))
+    .then((response) => applyTenantPortalMetadata(request, response, url, env))
 }
 
 function applyApiHeaders(request, response) {

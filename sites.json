@@ -1,0 +1,22 @@
+{
+  "medtech": {
+    "name": "Baltimore MedTech",
+    "origin": "https://medtech.social",
+    "logo": "/assets/images/baltimore-medtech-logo-square.jpg",
+    "hero": "/assets/images/baltimore-medtech-hero-v2.webp",
+    "social": "/assets/images/baltimore-medtech-social-preview.png",
+    "socialWidth": "1200",
+    "socialHeight": "630",
+    "themeKey": "bmore-medtech.theme"
+  },
+  "lifetech": {
+    "name": "LifeTech",
+    "origin": "https://lifetech.fyi",
+    "logo": "/assets/images/lifetech-logo.png",
+    "hero": "/assets/images/lifetech-hero.png",
+    "social": "/assets/images/lifetech-social-preview.png",
+    "socialWidth": "1733",
+    "socialHeight": "908",
+    "themeKey": "lifetech.theme"
+  }
+}

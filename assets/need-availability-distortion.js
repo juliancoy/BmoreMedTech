@@ -355,7 +355,7 @@ async function initialize() {
     renderMethod()
     status.hidden = true
 
-    window.__bmoreMedTechNeedAvailability = {
+    window.__bmoreLifeTechNeedAvailability = {
       ready: true,
       fields: state.result.records.length,
       leader: state.result.leader.id,
@@ -366,7 +366,7 @@ async function initialize() {
   } catch (error) {
     status.classList.add('is-error')
     status.textContent = error instanceof Error ? error.message : 'The need–availability distortion data could not be loaded.'
-    window.__bmoreMedTechNeedAvailability = { ready: false, error: status.textContent }
+    window.__bmoreLifeTechNeedAvailability = { ready: false, error: status.textContent }
   }
 }
 

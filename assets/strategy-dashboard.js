@@ -178,7 +178,7 @@ function renderDashboard() {
   renderGuidance()
   renderSources()
   document.getElementById('strategy-status').hidden = true
-  window.__bmoreMedTechStrategyDashboard = {
+  window.__bmoreLifeTechStrategyDashboard = {
     ready: true,
     fields: state.data.fields.length,
     charts: document.querySelectorAll('.strategy-dashboard .strategy-chart-svg').length,
@@ -192,14 +192,14 @@ async function initialize() {
   const status = document.getElementById('strategy-status')
   try {
     const responses = await Promise.all(DATA_URLS.map((url) => fetch(url)))
-    if (responses.some((response) => !response.ok)) throw new Error('The MedTech strategy metrics could not be loaded.')
+    if (responses.some((response) => !response.ok)) throw new Error('The LifeTech strategy metrics could not be loaded.')
     const [context, ...fields] = await Promise.all(responses.map((response) => response.json()))
     state.data = { ...context, fields }
     renderDashboard()
   } catch (error) {
-    status.textContent = error instanceof Error ? error.message : 'The MedTech strategy metrics could not be loaded.'
+    status.textContent = error instanceof Error ? error.message : 'The LifeTech strategy metrics could not be loaded.'
     status.classList.add('is-error')
-    window.__bmoreMedTechStrategyDashboard = { ready: false, error: status.textContent }
+    window.__bmoreLifeTechStrategyDashboard = { ready: false, error: status.textContent }
   }
 }
 

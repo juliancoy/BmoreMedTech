@@ -1,6 +1,6 @@
-# Baltimore MedTech
+# LifeTech
 
-MedTech's public site contains medical datasets, taxonomy and strategy views,
+LifeTech's public site contains medical datasets, taxonomy and strategy views,
 and medical event discovery. Organization services in the live deployment are
 provided by [OrgPortal](https://github.com/juliancoy/OrgPortal). The active
 local deployment checkout is `../OrgPortal`; this repository no
@@ -26,7 +26,7 @@ npm run build:links
 node scripts/validate-link-inventory.mjs --json
 ```
 
-The check verifies MedTech checked-in HTML links, same-page and cross-page
+The check verifies LifeTech checked-in HTML links, same-page and cross-page
 anchors, known external handoffs, and the small set of runtime-populated
 placeholder links. The generated visualization also includes bounded link
 surfaces from the sibling OrgPortal and PIdP checkouts. Run the site and open
@@ -38,8 +38,8 @@ portal deployment is handled through the CodeCollective deployment flow.
 
 ## Deployment
 
-Deploying this repository only publishes the Baltimore MedTech static
-site/Worker at `medtech.social`:
+Deploying this repository only publishes the LifeTech static
+site/Worker at `lifetech.fyi`:
 
 ```sh
 ./deploy.sh
@@ -55,8 +55,8 @@ repository so there is one OrgPortal production release path.
 | --- | --- |
 | Credentials, social sign-in, sessions, core identity profiles, account security, and OAuth consent/tokens | PIdP, consumed through shared portal interfaces |
 | Organizations, membership, domain permissions, member profiles, governance, chat, personal calendars, and event administration/provider integrations including gallery storage | OrgPortal |
-| Medical datasets and APIs, clinical taxonomy, workforce/strategy analysis, branding, and medical filtering/presentation of the public event feed | MedTech |
-| MedTech static build and local site/Selenium harness | MedTech |
+| Medical datasets and APIs, clinical taxonomy, workforce/strategy analysis, branding, and medical filtering/presentation of the public event feed | LifeTech |
+| LifeTech static build and local site/Selenium harness | LifeTech |
 
 Reuse the existing portal for shared capabilities. Implement shared behavior in
 OrgPortal/CodeCollective; do not copy its services or build another provider
@@ -66,7 +66,7 @@ OrgPortal owns branded sign-in entry points and application routing; reusable
 authentication and account-security behavior belongs in PIdP. Neither an OAuth
 grant nor a successful login creates organization membership or event-management
 permission. Preserve the existing portal account context, permission checks, and
-preview/apply workflow for image uploads. MedTech must not implement another
+preview/apply workflow for image uploads. LifeTech must not implement another
 login, token issuer, membership service, or event-media store.
 
 See the [OrgPortal account boundary](../OrgPortal/README.md#account-and-service-boundaries)

@@ -1,6 +1,6 @@
 import { createElement, Menu, MessageCircle, UserRound } from 'lucide';
 
-const THEME_STORAGE_KEY = 'bmore-medtech.theme';
+const THEME_STORAGE_KEY = 'lifetech.theme';
 const VALID_MODES = new Set(['system', 'light', 'dark']);
 
 function normalizeThemeMode(value) {
@@ -60,7 +60,7 @@ function setupThemeControls() {
     }
   });
 
-  window.__bmoreMedTechTheme = {
+  window.__bmoreLifeTechTheme = {
     storageKey: THEME_STORAGE_KEY,
     readThemeMode,
     applyThemeMode,
@@ -95,7 +95,7 @@ function organizeNavigation() {
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
   if (!nav) return
   const destinations = [
-    ['/org-events', 'MedTech meetups'],
+    ['/org-events', 'LifeTech meetups'],
     ['/calendar.html', 'Community calendar'],
     ['/map.html', 'Event map'],
     ['/taxonomy.html', 'Medical atlas'],
@@ -115,7 +115,8 @@ function organizeNavigation() {
     else link.href = path
     link.textContent = label
     link.removeAttribute('aria-current')
-    if (location.pathname === path || (path === '/datasets.html' && location.pathname.startsWith('/datasets/'))) {
+    const cleanPath = path.endsWith('.html') ? path.slice(0, -5) : path
+    if (location.pathname === path || location.pathname === cleanPath || (path === '/datasets.html' && location.pathname.startsWith('/datasets/'))) {
       link.setAttribute('aria-current', 'page')
     }
     return link

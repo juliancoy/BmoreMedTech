@@ -2,9 +2,13 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "baltimore-medtech",
   "main": "worker.js",
-  "compatibility_date": "2026-08-15",
+  "compatibility_date": "2026-10-01",
   "workers_dev": true,
   "routes": [
+    {
+      "pattern": "lifetech.fyi",
+      "custom_domain": true
+    },
     {
       "pattern": "medtech.social",
       "custom_domain": true

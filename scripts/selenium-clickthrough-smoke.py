@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused Selenium clickthrough checks for the public MedTech flow."""
+"""Focused Selenium clickthrough checks for the public LifeTech flow."""
 
 from __future__ import annotations
 
@@ -129,9 +129,9 @@ def click_current_login(driver: webdriver.Remote) -> None:
 def simulate_login(driver: webdriver.Remote, base_url: str) -> None:
     driver.get(urljoin(base_url, "/users/login"))
     settle(driver)
-    WebDriverWait(driver, 45).until(lambda d: "Welcome to Baltimore MedTech" in visible_text(d))
+    WebDriverWait(driver, 45).until(lambda d: "Welcome to LifeTech" in visible_text(d))
     if "portalProfile=baltimore-medtech" not in driver.current_url:
-        raise AssertionError(f"Login did not pick the MedTech tenant profile: {driver.current_url}")
+        raise AssertionError(f"Login did not pick the LifeTech tenant profile: {driver.current_url}")
     assert_no_broken_images(driver, "login")
 
     form_count = driver.execute_script("return document.querySelectorAll('form').length")
@@ -185,7 +185,7 @@ def run(base_url: str, selenium_url: str) -> None:
         driver.get(urljoin(base_url, "/"))
         settle(driver)
         click_current_login(driver)
-        WebDriverWait(driver, 45).until(lambda d: "Welcome to Baltimore MedTech" in visible_text(d))
+        WebDriverWait(driver, 45).until(lambda d: "Welcome to LifeTech" in visible_text(d))
         assert_no_broken_images(driver, "login clickthrough")
     finally:
         driver.quit()
@@ -199,7 +199,7 @@ def run(base_url: str, selenium_url: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-url", default="https://medtech.social")
+    parser.add_argument("--base-url", default="https://lifetech.fyi")
     parser.add_argument("--selenium-url", default="http://127.0.0.1:4445/wd/hub")
     args = parser.parse_args()
     run(args.base_url.rstrip("/") + "/", args.selenium_url)

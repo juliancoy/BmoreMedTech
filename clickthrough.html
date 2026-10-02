@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/jpeg" href="/assets/images/baltimore-medtech-logo-square.jpg" />
-    <link rel="apple-touch-icon" href="/assets/images/baltimore-medtech-logo-square.jpg" />
-    <title>Click-Through Link Graph | Baltimore MedTech</title>
+    <link rel="icon" type="image/png" href="/assets/images/lifetech-logo.png" />
+    <link rel="apple-touch-icon" href="/assets/images/lifetech-logo.png" />
+    <title>Click-Through Link Graph | LifeTech</title>
     <meta
       name="description"
-      content="A bounded visual inventory of checked-in Baltimore MedTech site links, page anchors, and external handoffs."
+      content="A bounded visual inventory of checked-in LifeTech site links, page anchors, and external handoffs."
     />
     <script>
       (() => {
-        const key = 'bmore-medtech.theme';
+        const key = 'lifetech.theme';
         const stored = (() => { try { return localStorage.getItem(key); } catch { return null; } })();
         const mode = stored === 'light' || stored === 'dark' ? stored : 'system';
         const resolved = mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : mode === 'dark' ? 'dark' : 'light';
@@ -30,16 +30,16 @@
 
     <header class="site-header">
       <div class="site-header-inner">
-        <a class="brand" href="/" aria-label="Baltimore MedTech home">
-          <img src="/assets/images/baltimore-medtech-logo-square.jpg" alt="" />
+        <a class="brand" href="/" aria-label="LifeTech home">
+          <img src="/assets/images/lifetech-logo.png" alt="" />
           <span class="brand-copy">
-            <strong>Baltimore MedTech</strong>
+            <strong>LifeTech</strong>
             <small>Health × Medicine × Biotech</small>
           </span>
         </a>
         <nav aria-label="Primary navigation">
           <a href="/calendar.html">General Calendar</a>
-          <a href="/org-events">MedTech Events</a>
+          <a href="/org-events">LifeTech Events</a>
           <a href="/start.html">Start Here</a>
           <a href="/map.html">Map</a>
           <a href="/taxonomy.html">Medical atlas</a>
@@ -56,7 +56,7 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"/></svg>
             </button>
           </div>
-          <a class="button nav-cta" href="https://medtech.social/users/login">Login</a>
+          <a class="button nav-cta" href="https://lifetech.fyi/users/login">Login</a>
         </nav>
       </div>
     </header>
@@ -111,7 +111,7 @@
             <label><input type="checkbox" value="runtime-placeholder" checked /> Runtime</label>
           </div>
           <div class="link-repo-toggles" role="group" aria-label="Linked systems">
-            <label><input type="checkbox" value="medtech" checked /> MedTech</label>
+            <label><input type="checkbox" value="medtech" checked /> LifeTech</label>
             <label><input type="checkbox" value="orgportal" checked /> OrgPortal</label>
             <label><input type="checkbox" value="pidp" checked /> PIdP</label>
             <label><input type="checkbox" value="external" checked /> External</label>

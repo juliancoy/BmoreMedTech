@@ -1,11 +1,11 @@
 # Events through OrgPortal
 
-MedTech already uses OrgPortal in the live deployment. OrgPortal is not vendored
+LifeTech already uses OrgPortal in the live deployment. OrgPortal is not vendored
 in this checkout; the active local deployment checkout is
 `../OrgPortal`.
 
 OrgPortal owns event providers, updates, collaborators, authorization, branding
-application, previews, and operation auditing. MedTech's former event CLI,
+application, previews, and operation auditing. LifeTech's former event CLI,
 provider registry, and external-provider adapter have been removed. Use the
 existing portal for event administration. Shared event changes belong in
 OrgPortal.
@@ -20,7 +20,7 @@ Use OrgPortal's shared browser-authorized uploader for local gallery images:
 
 ```sh
 node ../OrgPortal/org-worker/scripts/event-upload.mjs \
-  --resource https://medtech.social/api/org/mcp \
+  --resource https://lifetech.fyi/api/org/mcp \
   --organization org-baltimore-medtech \
   --event medtech-in-the-hut \
   --directory "$HOME/Downloads/NOLA_MENU"
@@ -31,7 +31,7 @@ each upload with OrgPortal's event permissions. No API key or copied session tok
 is needed. Credentials stay in memory for the task. See
 `../OrgPortal/docs/deployment/EVENT_UPLOADS.md` for client registration, release
 prerequisites and failure recovery. The feature must be released in PIdP and
-OrgPortal before this command works against production; deploying MedTech alone
+OrgPortal before this command works against production; deploying LifeTech alone
 does not enable it.
 
 ## Portal-owned events
@@ -41,16 +41,16 @@ scheduled for September 29, 2026, 6:00-8:30 p.m. America/New_York.
 
 For new portal-owned events, use OrgPortal's native MCP event tools:
 `preview_org_event_changes`, then `apply_org_event_changes` with the returned
-`previewId` and `confirm: true` after approval. Do not restore a MedTech-specific
+`previewId` and `confirm: true` after approval. Do not restore a LifeTech-specific
 provider client as a fallback.
 
-`applyBranding` uses the portal's approved MedTech branding configuration.
+`applyBranding` uses the portal's approved LifeTech branding configuration.
 OrgPortal accepts an already uploaded cover URL, not `coverFile`; upload and
 approve assets through the portal/provider administration workflow before
 setting shared branding configuration.
 
-## Public MedTech views
+## Public LifeTech views
 
 The calendar and map continue to consume the existing Code Collective public
 event feed. Medical relevance filtering, image presentation, and map rendering
-are MedTech presentation concerns; they do not store or administer events.
+are LifeTech presentation concerns; they do not store or administer events.

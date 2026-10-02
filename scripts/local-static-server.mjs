@@ -286,7 +286,7 @@ function isPortalRoute(pathname) {
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')
     || pathname === '/specialty' || pathname.startsWith('/specialty/')
-    || isMedTechTenantOrgRoute(pathname)
+    || isLifeTechTenantOrgRoute(pathname)
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
     || pathname === '/auth/callback'
@@ -299,7 +299,7 @@ function isPortalRoute(pathname) {
     || pathname === '/tools' || pathname.startsWith('/tools/')
 }
 
-function isMedTechTenantOrgRoute(pathname) {
+function isLifeTechTenantOrgRoute(pathname) {
   return pathname === '/orgs/login'
     || pathname.startsWith('/orgs/login/')
     || pathname === '/orgs/initiatives'
@@ -316,7 +316,7 @@ function isMasterPortalOrgRoute(pathname) {
   return pathname === '/orgs/register'
     || pathname.startsWith('/orgs/register/')
     || pathname === '/orgs'
-    || (pathname.startsWith('/orgs/') && !isMedTechTenantOrgRoute(pathname))
+    || (pathname.startsWith('/orgs/') && !isLifeTechTenantOrgRoute(pathname))
     || pathname === '/create'
     || pathname.startsWith('/create/')
 }

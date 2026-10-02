@@ -2,9 +2,9 @@
   "datasets": [
     {
       "id": "medtech-meta-index",
-      "title": "MedTech Meta Index",
+      "title": "LifeTech Meta Index",
       "short_title": "Meta Index",
-      "publisher": "Baltimore MedTech",
+      "publisher": "LifeTech",
       "category": "Source-of-sources index",
       "mode": "repository-snapshot",
       "adapter": "local_meta_index",
@@ -17,7 +17,7 @@
       "default_page_size": 100,
       "max_page_size": 200,
       "cache_seconds": 300,
-      "description": "The governing source index for the MedTech workbook. It assembles every component source with authority tier, evidence type, unit of observation, decision role, join keys, provenance, and principal caveat.",
+      "description": "The governing source index for the LifeTech workbook. It assembles every component source with authority tier, evidence type, unit of observation, decision role, join keys, provenance, and principal caveat.",
       "filters": [
         {
           "name": "q",

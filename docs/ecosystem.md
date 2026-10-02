@@ -1,6 +1,6 @@
 # LifeTech ecosystem
 
-MedTech owns `/ecosystem` and `/ecosystem/network`. They are Vite multi-page
+LifeTech owns `/ecosystem` and `/ecosystem/network`. They are Vite multi-page
 HTML assets, routed explicitly by the existing Worker. OrgPortal/PIdP and their
 APIs, roles, sessions and deployments are unchanged.
 

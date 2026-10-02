@@ -321,7 +321,7 @@ async function loadData(refresh = false) {
   state.requestController = new AbortController()
   elements.status.hidden = false
   elements.status.classList.remove('is-error')
-  elements.status.textContent = state.dataset.mode.startsWith('live-') ? 'Querying the publisher through the MedTech data gateway…' : 'Loading the versioned repository dataset…'
+  elements.status.textContent = state.dataset.mode.startsWith('live-') ? 'Querying the publisher through the LifeTech data gateway…' : 'Loading the versioned repository dataset…'
   elements.tableWrap.setAttribute('aria-busy', 'true')
   try {
     const response = await fetch(`/api/datasets/${datasetId}?${currentParams(refresh)}`, { signal: state.requestController.signal })
@@ -331,14 +331,14 @@ async function loadData(refresh = false) {
     syncLocation()
     elements.status.hidden = true
     elements.tableWrap.setAttribute('aria-busy', 'false')
-    window.__bmoreMedTechDatasetSheet = { ready: true, dataset: datasetId, rows: payload.rows.length, columns: payload.columns.length, live: payload.live }
+    window.__bmoreLifeTechDatasetSheet = { ready: true, dataset: datasetId, rows: payload.rows.length, columns: payload.columns.length, live: payload.live }
   } catch (error) {
     if (error.name === 'AbortError') return
     elements.status.hidden = false
     elements.status.classList.add('is-error')
     elements.status.textContent = error instanceof Error ? error.message : 'Dataset request failed.'
     elements.tableWrap.setAttribute('aria-busy', 'false')
-    window.__bmoreMedTechDatasetSheet = { ready: false, dataset: datasetId, error: elements.status.textContent }
+    window.__bmoreLifeTechDatasetSheet = { ready: false, dataset: datasetId, error: elements.status.textContent }
   }
 }
 
@@ -396,7 +396,7 @@ function renderDatasetIdentity() {
     elements.apiLink.href = state.dataset.api_url
     elements.apiLink.hidden = false
   } else elements.apiLink.hidden = true
-  document.title = `${state.dataset.short_title} data sheet | Baltimore MedTech`
+  document.title = `${state.dataset.short_title} data sheet | LifeTech`
 }
 
 function setupTabs() {

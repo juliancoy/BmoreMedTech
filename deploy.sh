@@ -11,7 +11,7 @@ usage() {
   cat <<'EOF'
 Usage: ./deploy.sh [options]
 
-Deploys Baltimore MedTech at medtech.social.
+Deploys LifeTech at lifetech.fyi.
 
 This repository does not deploy OrgPortal or CodeCollective. Shared portal
 changes must be deployed from the CodeCollective repository.
@@ -53,7 +53,7 @@ fi
 echo "[deploy][medtech] installing dependencies"
 npm ci
 
-echo "[deploy][medtech] building and deploying medtech.social"
+echo "[deploy][medtech] building and deploying lifetech.fyi"
 npm run build
 npx wrangler deploy "${MEDTECH_ARGS[@]}"
 

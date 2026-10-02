@@ -113,11 +113,11 @@ async function initialize() {
     elements.mode.addEventListener('change', render)
     render()
     elements.status.hidden = true
-    window.__bmoreMedTechDatasetCatalog = { ready: true, datasets: state.registry.datasets.length }
+    window.__bmoreLifeTechDatasetCatalog = { ready: true, datasets: state.registry.datasets.length }
   } catch (error) {
     elements.status.textContent = error instanceof Error ? error.message : 'Dataset registry could not be loaded.'
     elements.status.classList.add('is-error')
-    window.__bmoreMedTechDatasetCatalog = { ready: false, error: elements.status.textContent }
+    window.__bmoreLifeTechDatasetCatalog = { ready: false, error: elements.status.textContent }
   }
 }
 

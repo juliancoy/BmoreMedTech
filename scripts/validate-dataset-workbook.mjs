@@ -48,7 +48,7 @@ const [
 ])
 
 assert(registry.meta?.as_of === '2026-09-24', 'Dataset registry must declare the review date')
-assert(registry.meta?.description?.includes('MedTech Meta Index'), 'Registry must identify the Meta Index as its governing source')
+assert(registry.meta?.description?.includes('LifeTech Meta Index'), 'Registry must identify the Meta Index as its governing source')
 assert(registry.meta?.live_definition?.includes('queries the publisher'), 'Registry must define live behavior')
 assert(registry.meta?.privacy_note?.includes('does not retrieve patient-level records'), 'Registry must include a privacy boundary')
 assert(registryManifest.parts[0] === '/dataset-registry-meta.json', 'The Meta Index must be the first workbook registry part')
@@ -136,14 +136,14 @@ assert(metaIndex.sources[1].source_id === 'service-delivery-source-catalog', 'Se
 assert(metaIndex.sources.some((source) => source.source_id === 'medical-science-field-atlas'), 'Meta Index must include the renamed Field Atlas')
 assert(metaIndex.sources.filter((source) => source.source_tier.startsWith('A')).length === 7, 'Expected seven authoritative primary components')
 
-assert(taxonomyDatabases[0]?.name === 'Medical Science Field Atlas', 'The former MedTech Index must be renamed in the framework selector')
+assert(taxonomyDatabases[0]?.name === 'Medical Science Field Atlas', 'The former LifeTech Index must be renamed in the framework selector')
 assert(taxonomyDatabases[0]?.source_url === '/medical-science-field-atlas.json', 'Field Atlas framework must use the renamed public JSON route')
-assert(taxonomyDatabases.every((database) => !database.name.includes('MedTech Index') && !database.description.includes('MedTech Index')), 'Legacy title must not remain in user-facing framework metadata')
+assert(taxonomyDatabases.every((database) => !database.name.includes('LifeTech Index') && !database.description.includes('LifeTech Index')), 'Legacy title must not remain in user-facing framework metadata')
 assert(Array.isArray(publicFieldAtlas) && publicFieldAtlas.length === 223, `Public Field Atlas should contain 223 records, found ${publicFieldAtlas.length}`)
 assert(buildScript.includes("const atlasPath = 'assets/data/medical-science-field-atlas.json'"), 'Field Atlas build must publish the renamed asset')
 assert(pkg.scripts['build:field-atlas'] === 'node scripts/build-medical-science-field-atlas.mjs', 'Build must use the Field Atlas wrapper')
 
-assert(catalog.includes('Open the MedTech Meta Index'), 'Workbook catalog must prominently link the Meta Index')
+assert(catalog.includes('Open the LifeTech Meta Index'), 'Workbook catalog must prominently link the Meta Index')
 assert(catalog.includes('Medical Science Field Atlas'), 'Workbook catalog must expose the renamed Field Atlas')
 assert(catalog.includes('Meta Index first'), 'Workbook formula bar must place the Meta Index first')
 assert(catalogJs.includes("fetch('/api/datasets')"), 'Catalog must prefer the live registry endpoint')
@@ -225,4 +225,4 @@ const csv = await csvResponse.text()
 assert(csvResponse.ok && csv.startsWith('decision_rank,source_id,source_name'), 'Meta Index CSV export failed')
 assert(csvResponse.headers.get('content-disposition')?.includes('medtech-meta-index-page-1.csv'), 'Meta Index CSV filename must identify the source and page')
 
-console.log(`Validated MedTech Meta Index plus ${registry.datasets.length - 1} component sheets: ${live.length} live sources and ${snapshots.length - 1} versioned scientific or analytical datasets`)
+console.log(`Validated LifeTech Meta Index plus ${registry.datasets.length - 1} component sheets: ${live.length} live sources and ${snapshots.length - 1} versioned scientific or analytical datasets`)

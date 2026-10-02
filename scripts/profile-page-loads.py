@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Profile MedTech page-load timings with the running Selenium Chrome."""
+"""Profile LifeTech page-load timings with the running Selenium Chrome."""
 
 from __future__ import annotations
 

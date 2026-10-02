@@ -2,6 +2,7 @@ import { handleDatasetApi } from './worker/datasets.js'
 
 const ALLOWED_CORS_ORIGINS = new Set([
   'https://baltimore-medtech.jcloiacon.workers.dev',
+  'https://lifetech.fyi',
   'https://medtech.social',
   'https://baltimoremedtech.org',
   'https://www.baltimoremedtech.org',
@@ -14,12 +15,11 @@ const DEFAULT_ORG_API_ORIGIN = 'https://org-codecollective.jcloiacon.workers.dev
 const DEFAULT_CHAT_API_ORIGIN = 'https://chat-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PIDP_API_ORIGIN = 'https://pidp-codecollective.jcloiacon.workers.dev'
 const DEFAULT_PORTAL_SITE_ORIGIN = 'https://codecollective.us'
-const MEDTECH_BRAND = {
-  name: 'Baltimore MedTech',
+const LIFETECH_BRAND = {
+  name: 'LifeTech',
   tagline: 'Health × Medicine × Biotech',
   description: 'Find your next conversation, connection, or local event across health, medicine, and biotech.',
-  imagePath: '/images/baltimore-medtech-logo-square-v2.jpg',
-  manifestPath: '/medtech.webmanifest',
+  imagePath: '/assets/images/lifetech-logo.png',
   themeColor: '#061a26',
 }
 
@@ -98,44 +98,43 @@ function escapeHtml(value) {
   })[char])
 }
 
-function medTechPortalPageTitle(pathname) {
-  if (pathname === '/branding') return `Brand Guide | ${MEDTECH_BRAND.name}`
-  if (pathname === '/org-events' || pathname.startsWith('/org-events/')) return `MedTech Events | ${MEDTECH_BRAND.name}`
-  if (pathname === '/resources' || pathname.startsWith('/resources/')) return `Resources | ${MEDTECH_BRAND.name}`
-  if (pathname === '/search') return `Search | ${MEDTECH_BRAND.name}`
-  if (pathname === '/users/login') return `Login | ${MEDTECH_BRAND.name}`
-  if (pathname === '/users/register') return `Register | ${MEDTECH_BRAND.name}`
-  return `${MEDTECH_BRAND.name} Portal`
+function lifeTechPortalPageTitle(pathname) {
+  if (pathname === '/branding') return `Brand Guide | ${LIFETECH_BRAND.name}`
+  if (pathname === '/org-events' || pathname.startsWith('/org-events/')) return `LifeTech Events | ${LIFETECH_BRAND.name}`
+  if (pathname === '/resources' || pathname.startsWith('/resources/')) return `Resources | ${LIFETECH_BRAND.name}`
+  if (pathname === '/search') return `Search | ${LIFETECH_BRAND.name}`
+  if (pathname === '/users/login') return `Login | ${LIFETECH_BRAND.name}`
+  if (pathname === '/users/register') return `Register | ${LIFETECH_BRAND.name}`
+  return `${LIFETECH_BRAND.name} Portal`
 }
 
-function medTechPortalMetadata(url) {
-  const image = new URL(MEDTECH_BRAND.imagePath, url.origin).toString()
+function lifeTechPortalMetadata(url) {
+  const image = new URL(LIFETECH_BRAND.imagePath, url.origin).toString()
   const canonical = new URL(url.pathname + url.search, url.origin).toString()
-  const title = medTechPortalPageTitle(url.pathname)
+  const title = lifeTechPortalPageTitle(url.pathname)
   return {
     title,
-    description: MEDTECH_BRAND.description,
+    description: LIFETECH_BRAND.description,
     canonical,
     image,
-    imageAlt: `${MEDTECH_BRAND.name} logo`,
-    siteName: MEDTECH_BRAND.name,
+    imageAlt: `${LIFETECH_BRAND.name} logo`,
+    siteName: LIFETECH_BRAND.name,
   }
 }
 
-async function applyMedTechPortalMetadata(request, response, url) {
+async function applyLifeTechPortalMetadata(request, response, url) {
   if (!response.ok || request.method === 'HEAD') return response
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('text/html')) return response
 
-  const metadata = medTechPortalMetadata(url)
+  const metadata = lifeTechPortalMetadata(url)
   let html = await response.text()
   const tags = [
     `<title>${escapeHtml(metadata.title)}</title>`,
     `<link rel="canonical" href="${escapeHtml(metadata.canonical)}" />`,
-    `<link rel="icon" type="image/jpeg" href="${escapeHtml(MEDTECH_BRAND.imagePath)}" />`,
-    `<link rel="apple-touch-icon" href="${escapeHtml(MEDTECH_BRAND.imagePath)}" />`,
-    `<link rel="manifest" href="${escapeHtml(MEDTECH_BRAND.manifestPath)}" />`,
-    `<meta name="theme-color" content="${escapeHtml(MEDTECH_BRAND.themeColor)}" />`,
+    `<link rel="icon" type="image/png" href="${escapeHtml(LIFETECH_BRAND.imagePath)}" />`,
+    `<link rel="apple-touch-icon" href="${escapeHtml(LIFETECH_BRAND.imagePath)}" />`,
+    `<meta name="theme-color" content="${escapeHtml(LIFETECH_BRAND.themeColor)}" />`,
     `<meta name="description" content="${escapeHtml(metadata.description)}" />`,
     `<meta name="robots" content="index,follow,max-image-preview:large" />`,
     `<meta property="og:type" content="website" />`,
@@ -146,7 +145,7 @@ async function applyMedTechPortalMetadata(request, response, url) {
     `<meta property="og:url" content="${escapeHtml(metadata.canonical)}" />`,
     `<meta property="og:image" content="${escapeHtml(metadata.image)}" />`,
     `<meta property="og:image:secure_url" content="${escapeHtml(metadata.image)}" />`,
-    `<meta property="og:image:type" content="image/jpeg" />`,
+    `<meta property="og:image:type" content="image/png" />`,
     `<meta property="og:image:alt" content="${escapeHtml(metadata.imageAlt)}" />`,
     `<meta name="twitter:card" content="summary" />`,
     `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`,
@@ -228,7 +227,7 @@ function portalRootNavigationProxyResponse(request, env, url) {
   const targetUrl = new URL(url)
   targetUrl.pathname = '/__portal_root/'
   return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
-    .then((response) => applyMedTechPortalMetadata(request, response, url))
+    .then((response) => applyLifeTechPortalMetadata(request, response, url))
 }
 
 function applyApiHeaders(request, response) {
@@ -293,7 +292,7 @@ function isPortalRoute(pathname) {
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')
     || pathname === '/specialty' || pathname.startsWith('/specialty/')
-    || isMedTechTenantOrgRoute(pathname)
+    || isLifeTechTenantOrgRoute(pathname)
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
     || pathname === '/auth/callback'
@@ -306,7 +305,7 @@ function isPortalRoute(pathname) {
     || pathname === '/tools' || pathname.startsWith('/tools/')
 }
 
-function isMedTechTenantOrgRoute(pathname) {
+function isLifeTechTenantOrgRoute(pathname) {
   return pathname === '/orgs/login'
     || pathname.startsWith('/orgs/login/')
     || pathname === '/orgs/initiatives'
@@ -323,7 +322,7 @@ function isMasterPortalOrgRoute(pathname) {
   return pathname === '/orgs/register'
     || pathname.startsWith('/orgs/register/')
     || pathname === '/orgs'
-    || (pathname.startsWith('/orgs/') && !isMedTechTenantOrgRoute(pathname))
+    || (pathname.startsWith('/orgs/') && !isLifeTechTenantOrgRoute(pathname))
     || pathname === '/create'
     || pathname.startsWith('/create/')
 }
@@ -413,7 +412,7 @@ export default {
       return applyApiHeaders(request, response)
     }
 
-    // MedTech-owned static routes; never route these through the shared portal.
+    // LifeTech-owned static routes; never route these through the shared portal.
     const ecosystemAssets = { '/ecosystem': '/ecosystem/', '/ecosystem/': '/ecosystem/', '/ecosystem/network': '/ecosystem/network', '/ecosystem/network/': '/ecosystem/network' }
     if (ecosystemAssets[url.pathname]) {
       if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } })

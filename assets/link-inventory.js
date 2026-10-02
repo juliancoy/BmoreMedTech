@@ -29,7 +29,7 @@ const TARGET_X = 610
 const TOP = 74
 const ROW_GAP = 76
 const ROUTE_LANES = [
-  ['medtech', 'MedTech'],
+  ['medtech', 'LifeTech'],
   ['orgportal', 'OrgPortal'],
   ['pidp', 'PIdP'],
   ['external', 'External'],
@@ -83,7 +83,7 @@ function selectedRepos() {
 
 function repoLabel(repo) {
   return ({
-    medtech: 'MedTech',
+    medtech: 'LifeTech',
     orgportal: 'OrgPortal',
     pidp: 'PIdP',
     external: 'External',
@@ -559,7 +559,7 @@ async function initialize() {
     for (const input of elements.kindToggles) input.addEventListener('change', render)
     for (const input of elements.repoToggles) input.addEventListener('change', render)
     render()
-    window.__bmoreMedTechLinkInventory = {
+    window.__bmoreLifeTechLinkInventory = {
       ready: true,
       pages: state.inventory.pages.length,
       links: state.inventory.linkCount,
@@ -567,7 +567,7 @@ async function initialize() {
   } catch (error) {
     elements.status.textContent = error instanceof Error ? error.message : 'The link inventory could not be loaded.'
     elements.status.classList.add('is-error')
-    window.__bmoreMedTechLinkInventory = { ready: false, error: elements.status.textContent }
+    window.__bmoreLifeTechLinkInventory = { ready: false, error: elements.status.textContent }
   }
 }
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the Baltimore MedTech local test stack in Docker.
+"""Run the LifeTech local test stack in Docker.
 
 Containers read live source from bind mounts. The test command builds the site,
 serves the built dist directory through the local HTTPS server, starts Selenium,
@@ -432,7 +432,7 @@ def start_site(args: argparse.Namespace) -> None:
     docker_utils.run_container(
         config
     )
-    wait_for_http(f"https://127.0.0.1:{args.site_port}/", "Baltimore MedTech local site")
+    wait_for_http(f"https://127.0.0.1:{args.site_port}/", "LifeTech local site")
 
 
 def start_selenium(args: argparse.Namespace) -> None:
@@ -543,7 +543,7 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--selenium-image", default=os.getenv("SELENIUM_IMAGE", DEFAULT_SELENIUM_IMAGE))
     parser.add_argument("--pidp-image", default=os.getenv("PIDP_DEV_BASE_IMAGE", DEFAULT_PIDP_IMAGE))
     parser.add_argument("--portal-image", default=os.getenv("ORGPORTAL_DEV_BASE_IMAGE", DEFAULT_PORTAL_IMAGE))
-    parser.add_argument("--medtech-only", action="store_true", help="Start only the MedTech site and Selenium harness.")
+    parser.add_argument("--medtech-only", action="store_true", help="Start only the LifeTech site and Selenium harness.")
     parser.add_argument("--system-network", default=os.getenv("BMORE_MEDTECH_SYSTEM_NETWORK", DEFAULT_SYSTEM_NETWORK))
     parser.add_argument("--system-prefix", default=os.getenv("BMORE_MEDTECH_SYSTEM_PREFIX", DEFAULT_SYSTEM_PREFIX))
     parser.add_argument("--orgportal-dir", default=os.getenv("ORGPORTAL_DIR", str(root.parent / "OrgPortal")))

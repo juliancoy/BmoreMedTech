@@ -2,7 +2,7 @@
   "meta": {
     "title": "Service Delivery Source Catalog",
     "as_of": "2026-09-24",
-    "description": "Curated high-authority sources for measuring services, products, discharges, prescriptions, facility service capabilities, and payment/utilization patterns beyond the current live MedTech workbook sheets.",
+    "description": "Curated high-authority sources for measuring services, products, discharges, prescriptions, facility service capabilities, and payment/utilization patterns beyond the current live LifeTech workbook sheets.",
     "inclusion_rule": "Include sources with an official steward, public documentation, explicit unit of observation, repeatable release cadence, and direct relevance to services provided or ordered.",
     "limitations": [
       "This catalog is a source-selection layer, not a merged utilization file.",

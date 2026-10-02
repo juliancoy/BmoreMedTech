@@ -222,7 +222,7 @@ if (document.body.classList.contains('taxonomy-body')) {
   }
 
   function selectedRecordId() {
-    return window.__bmoreMedTechTaxonomyState?.selectedRecord
+    return window.__bmoreLifeTechTaxonomyState?.selectedRecord
       || document.querySelector('.taxonomy-node.is-selected')?.dataset.recordId
       || null
   }
@@ -290,7 +290,7 @@ if (document.body.classList.contains('taxonomy-body')) {
       renderGlobalFlow()
       renderSemanticSystems()
       observeInspector()
-      window.__bmoreMedTechSemanticFlow = {
+      window.__bmoreLifeTechSemanticFlow = {
         ready: true,
         stages: state.data.flow_stages.length,
         systems: state.data.systems.length,
@@ -298,7 +298,7 @@ if (document.body.classList.contains('taxonomy-body')) {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'The clinical semantic flow data could not be loaded.'
       elements.flow.replaceChildren(createElement('p', 'status is-error', message))
-      window.__bmoreMedTechSemanticFlow = { ready: false, error: message }
+      window.__bmoreLifeTechSemanticFlow = { ready: false, error: message }
     }
   }
 

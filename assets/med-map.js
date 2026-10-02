@@ -707,25 +707,25 @@ map.on('load', () => {
   })
 })
 
-window.__bmoreMedTechMap = map
-window.__bmoreMedTechQueryState = {
+window.__bmoreLifeTechMap = map
+window.__bmoreLifeTechQueryState = {
   supportsCompression: supportsCompressedQueryState(),
   current: () => currentUiState(),
   buildShareUrl,
   decodeCompressed: decompressUiStateFromQuery,
 }
-window.__bmoreMedTechFirstFeaturePoint = (layerId) => firstFeaturePoint(layerId)
-window.__showBmoreMedTechHoverTarget = (point) => {
+window.__bmoreLifeTechFirstFeaturePoint = (layerId) => firstFeaturePoint(layerId)
+window.__showBmoreLifeTechHoverTarget = (point) => {
   if (!point) return { arbitration: null, inspector: inspectorState() }
   const target = topMapHoverTarget(new maplibregl.Point(point.x, point.y))
   showHoverTarget(target)
-  return { arbitration: window.__bmoreMedTechHoverArbitration, inspector: inspectorState() }
+  return { arbitration: window.__bmoreLifeTechHoverArbitration, inspector: inspectorState() }
 }
-window.__pinBmoreMedTechHoverTarget = (point) => {
+window.__pinBmoreLifeTechHoverTarget = (point) => {
   if (!point) return { arbitration: null, inspector: inspectorState() }
   const target = topMapHoverTarget(new maplibregl.Point(point.x, point.y))
   pinHoverTarget(target)
-  return { arbitration: window.__bmoreMedTechHoverArbitration, inspector: inspectorState() }
+  return { arbitration: window.__bmoreLifeTechHoverArbitration, inspector: inspectorState() }
 }
 
 map.on('error', (event) => {
@@ -850,9 +850,9 @@ async function loadVisibleLayers() {
   await Promise.allSettled(tasks)
   if (loadToken !== state.loadToken) return
   setStatus(`Showing ${state.visible.size} selected layer${state.visible.size === 1 ? '' : 's'} in ${currentRegionLabel()}.`)
-  window.__bmoreMedTechLayerState = layerDiagnostics()
-  window.__bmoreMedTechLayerStack = [...state.layerOrder]
-  window.__bmoreMedTechMapReady = true
+  window.__bmoreLifeTechLayerState = layerDiagnostics()
+  window.__bmoreLifeTechLayerStack = [...state.layerOrder]
+  window.__bmoreLifeTechMapReady = true
 }
 
 async function loadLayer(layer, loadToken) {
@@ -1094,8 +1094,8 @@ function moveLayerInStack(layerId, action) {
   state.layerOrder = nextOrder
   renderControls()
   setStatus(`Moved ${LAYERS.find((layer) => layer.id === layerId)?.label || 'layer'} ${action}.`)
-  window.__bmoreMedTechLayerState = layerDiagnostics()
-  window.__bmoreMedTechLayerStack = [...state.layerOrder]
+  window.__bmoreLifeTechLayerState = layerDiagnostics()
+  window.__bmoreLifeTechLayerStack = [...state.layerOrder]
   persistUiState()
 }
 
@@ -1133,8 +1133,8 @@ function refreshLoadedLayerSizing() {
     addOrUpdateLayer(layer, geojson)
   }
   setStatus(`Marker size set to ${state.sizeMode === 'volume' ? 'capacity / activity volume' : 'uniform'}.`)
-  window.__bmoreMedTechLayerState = layerDiagnostics()
-  window.__bmoreMedTechLayerStack = [...state.layerOrder]
+  window.__bmoreLifeTechLayerState = layerDiagnostics()
+  window.__bmoreLifeTechLayerStack = [...state.layerOrder]
 }
 
 function pointRadiusExpression() {
@@ -1280,7 +1280,7 @@ function renderHoveredInspector(key, layerId, render) {
   inspectorEl.classList.remove('is-pinned')
   inspectorCloseButton.hidden = true
   inspectorPinnedLayerId = null
-  window.__bmoreMedTechInspectorState = inspectorState()
+  window.__bmoreLifeTechInspectorState = inspectorState()
 }
 
 function pinHoverTarget(target) {
@@ -1292,7 +1292,7 @@ function pinHoverTarget(target) {
   inspectorEl.dataset.inspectorState = 'pinned'
   inspectorEl.classList.add('is-pinned')
   inspectorCloseButton.hidden = false
-  window.__bmoreMedTechInspectorState = inspectorState()
+  window.__bmoreLifeTechInspectorState = inspectorState()
 }
 
 function clearInspectorHover() {
@@ -1316,7 +1316,7 @@ function renderIdleInspector() {
     <strong>Selected feature</strong>
     <p>Click an upcoming medical event, hospital, health program, healthy-housing site, or risk tract.</p>
   `
-  window.__bmoreMedTechInspectorState = inspectorState()
+  window.__bmoreLifeTechInspectorState = inspectorState()
 }
 
 function renderLayerPreview(layer) {
@@ -1339,7 +1339,7 @@ function renderLayerPreview(layer) {
     ${renderFactList(sourceRows)}
     <a href="${escapeHtml(layer.sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(layer.sourceName)}</a>
   `
-  window.__bmoreMedTechInspectorState = inspectorState()
+  window.__bmoreLifeTechInspectorState = inspectorState()
 }
 
 function topMapHoverTarget(point) {
@@ -1383,7 +1383,7 @@ function topMapHoverTarget(point) {
     })
   })
   candidates.sort((left, right) => right.z - left.z)
-  window.__bmoreMedTechHoverArbitration = {
+  window.__bmoreLifeTechHoverArbitration = {
     candidates: candidates.map(({ key, layerId, z }) => ({ key, layerId, z })),
     chosen: candidates.length ? { key: candidates[0].key, layerId: candidates[0].layerId, z: candidates[0].z } : null,
   }

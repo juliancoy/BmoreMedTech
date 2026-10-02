@@ -12,7 +12,7 @@ assert(fieldAtlas.length >= 200, `Expected a comprehensive field atlas, received
 assert(Array.isArray(databases) && databases.length === 6, 'Expected the Field Atlas plus five reference frameworks')
 assert(databases[0]?.name === 'Medical Science Field Atlas', 'The primary framework must use the new Field Atlas title')
 assert(databases[0]?.source_url === '/medical-science-field-atlas.json', 'The primary framework must publish the renamed JSON route')
-assert(databases.every((database) => !database.name.includes('MedTech Index') && !database.description.includes('MedTech Index')), 'Legacy MedTech Index wording must not remain in user-facing framework metadata')
+assert(databases.every((database) => !database.name.includes('LifeTech Index') && !database.description.includes('LifeTech Index')), 'Legacy LifeTech Index wording must not remain in user-facing framework metadata')
 
 const ids = new Set(fieldAtlas.map(({ id }) => id))
 assert(ids.size === fieldAtlas.length, 'Every Medical Science Field Atlas id must be unique')

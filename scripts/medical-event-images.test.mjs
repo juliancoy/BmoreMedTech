@@ -3,10 +3,10 @@ import assert from 'node:assert/strict'
 import {
   eventImageUrl,
   isMedicalEvent,
-  isMedTechOwnedEvent,
+  isLifeTechOwnedEvent,
   medtechEventUrl,
   mergeEventSources,
-  normalizeMedTechPortalEvent,
+  normalizeLifeTechPortalEvent,
 } from '../assets/medical-events.js'
 
 test('event pictures resolve against the published feed and retain organizer fallback', () => {
@@ -17,10 +17,10 @@ test('event pictures resolve against the published feed and retain organizer fal
   assert.equal(eventImageUrl({}), null)
 })
 
-test('portal-owned MedTech events normalize into the general calendar feed', () => {
+test('portal-owned LifeTech events normalize into the general calendar feed', () => {
   const portalEvent = {
     id: 'event-1',
-    title: 'MedTech Formational Event',
+    title: 'LifeTech Formational Event',
     slug: 'medtech-formational-event',
     description: 'Meet the community.',
     starts_at: '2026-09-29T22:00:00.000Z',
@@ -28,29 +28,29 @@ test('portal-owned MedTech events normalize into the general calendar feed', () 
     location: 'Checkerspot Brewing, 1421 Ridgely St, Baltimore, MD 21230',
     image_url: 'https://images.example/event.png',
     host_org_id: 'org-baltimore-medtech',
-    host_org_name: 'Baltimore MedTech',
+    host_org_name: 'LifeTech',
     tags: ['health'],
   }
-  const normalized = normalizeMedTechPortalEvent(portalEvent)
-  assert.equal(normalized.name, 'MedTech Formational Event')
+  const normalized = normalizeLifeTechPortalEvent(portalEvent)
+  assert.equal(normalized.name, 'LifeTech Formational Event')
   assert.equal(normalized.startDate, '2026-09-29T22:00:00.000Z')
-  assert.equal(normalized.url, 'https://medtech.social/events/medtech-formational-event')
+  assert.equal(normalized.url, 'https://lifetech.fyi/events/medtech-formational-event')
   assert.equal(normalized.location.name, 'Checkerspot Brewing, 1421 Ridgely St, Baltimore, MD 21230')
   assert.equal(normalized.medtechOwned, true)
-  assert.equal(isMedTechOwnedEvent(normalized), true)
+  assert.equal(isLifeTechOwnedEvent(normalized), true)
   assert.equal(isMedicalEvent(normalized), true)
 })
 
-test('event merging prefers MedTech-owned portal records and deduplicates by URL', () => {
-  const medtech = { name: 'MedTech Formational Event', startDate: '2026-09-29T22:00:00.000Z', url: 'https://medtech.social/events/medtech-formational-event', medtechOwned: true }
-  const duplicate = { name: 'MedTech Formational Event', startDate: '2026-09-29T22:00:00.000Z', url: 'https://medtech.social/events/medtech-formational-event' }
+test('event merging prefers LifeTech-owned portal records and deduplicates by URL', () => {
+  const medtech = { name: 'LifeTech Formational Event', startDate: '2026-09-29T22:00:00.000Z', url: 'https://lifetech.fyi/events/medtech-formational-event', medtechOwned: true }
+  const duplicate = { name: 'LifeTech Formational Event', startDate: '2026-09-29T22:00:00.000Z', url: 'https://lifetech.fyi/events/medtech-formational-event' }
   const regional = { name: 'Clinical AI meetup', startDate: '2026-09-30T22:00:00.000Z', url: 'https://events.example/clinical-ai' }
   assert.deepEqual(mergeEventSources([medtech], [duplicate, regional]), [medtech, regional])
 })
 
-test('MedTech event URLs stay on the MedTech base domain', () => {
+test('LifeTech event URLs stay on the LifeTech base domain', () => {
   assert.equal(
     medtechEventUrl({ public_url: 'https://codecollective.us/events/example-event' }),
-    'https://medtech.social/events/example-event',
+    'https://lifetech.fyi/events/example-event',
   )
 })

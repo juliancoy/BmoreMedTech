@@ -123,8 +123,8 @@ function syncUrl() {
 }
 
 function publishDiagnostics(overrides = {}) {
-  window.__bmoreMedTechTaxonomyState = {
-    ...(window.__bmoreMedTechTaxonomyState || {}),
+  window.__bmoreLifeTechTaxonomyState = {
+    ...(window.__bmoreLifeTechTaxonomyState || {}),
     selectedRecord: state.selectedRecord,
     codeSystems: state.codeData?.systems.length || 0,
     icdChapters: state.codeData?.icd10cm_chapters.length || 0,
@@ -645,11 +645,11 @@ async function initialize() {
       if (record) renderInspector(record)
     }
     publishDiagnostics({ initialized: true })
-    window.__bmoreMedTechTaxonomyReady = true
+    window.__bmoreLifeTechTaxonomyReady = true
   } catch (error) {
     elements.status.textContent = error instanceof Error ? error.message : 'The medical atlas data could not be loaded.'
     elements.status.classList.add('is-error')
-    window.__bmoreMedTechTaxonomyReady = false
+    window.__bmoreLifeTechTaxonomyReady = false
     publishDiagnostics({ initialized: false, error: elements.status.textContent })
   }
 }

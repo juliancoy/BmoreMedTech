@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Selenium regression checks for the Baltimore MedTech public site."""
+"""Selenium regression checks for the LifeTech public site."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-PORTAL_URL = "https://medtech.social/users/login"
+PORTAL_URL = "https://lifetech.fyi/users/login"
 
 
 def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
@@ -49,7 +49,12 @@ def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
                 try { return new URL(value, location.href).origin === location.origin; }
                 catch { return false; }
               };
-              Object.defineProperty(window, '__bmoreMedTechSmokeFailures', {
+              const expectedAnonymousResponse = (response) => {
+                try {
+                  return response.status === 401 && new URL(response.url).pathname === '/pidp/auth/session-token';
+                } catch { return false; }
+              };
+              Object.defineProperty(window, '__bmoreLifeTechSmokeFailures', {
                 configurable: false,
                 get: () => failures.slice()
               });
@@ -76,7 +81,7 @@ def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
               window.fetch = async (...args) => {
                 try {
                   const response = await nativeFetch(...args);
-                  if (sameOrigin(response.url) && !response.ok) {
+                  if (sameOrigin(response.url) && !response.ok && !expectedAnonymousResponse(response)) {
                     record('fetch', {url: response.url, status: response.status, statusText: response.statusText});
                   }
                   return response;
@@ -123,7 +128,7 @@ def body_excerpt(driver: webdriver.Remote) -> str:
 
 
 def browser_failures(driver: webdriver.Remote) -> list[dict]:
-    return driver.execute_script("return window.__bmoreMedTechSmokeFailures || []") or []
+    return driver.execute_script("return window.__bmoreLifeTechSmokeFailures || []") or []
 
 
 def assert_no_browser_failures(driver: webdriver.Remote, label: str) -> dict:
@@ -189,7 +194,7 @@ def assert_theme_control(driver: webdriver.Remote, viewport: str, screenshot_dir
         const dark = {
           mode: document.documentElement.dataset.themeMode,
           theme: document.documentElement.dataset.theme,
-          stored: localStorage.getItem('bmore-medtech.theme'),
+          stored: localStorage.getItem('lifetech.theme'),
           controls: snapshot()
         };
         return {innerWidth: window.innerWidth, dark};
@@ -204,7 +209,7 @@ def assert_theme_control(driver: webdriver.Remote, viewport: str, screenshot_dir
         control.click();
         return {
           mode: document.documentElement.dataset.themeMode,
-          stored: localStorage.getItem('bmore-medtech.theme'),
+          stored: localStorage.getItem('lifetech.theme'),
           pressed: control.getAttribute('aria-pressed')
         };
         """
@@ -241,7 +246,7 @@ def assert_primary_navigation(driver: webdriver.Remote) -> None:
         assert account.find_element(By.LINK_TEXT, 'My profile').is_displayed()
         if compact:
             assert not toggle.is_displayed()
-            assert account.find_element(By.LINK_TEXT, 'MedTech meetups').is_displayed()
+            assert account.find_element(By.LINK_TEXT, 'LifeTech meetups').is_displayed()
         menu.send_keys(Keys.ESCAPE)
         if compact:
             return
@@ -251,17 +256,25 @@ def assert_primary_navigation(driver: webdriver.Remote) -> None:
     mobile = toggle.is_displayed()
     if mobile:
         toggle.click()
+        WebDriverWait(driver, 5).until(
+            lambda d: [item.text for item in nav.find_elements(By.CSS_SELECTOR, '.nav-group > summary')]
+            == ['Events', 'Research']
+        )
     summaries = nav.find_elements(By.CSS_SELECTOR, '.nav-group > summary')
     assert [item.text for item in summaries] == ['Events', 'Research']
     summaries[0].click()
     events = nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')
-    assert [item.text for item in events] == ['MedTech meetups', 'Community calendar', 'Event map']
+    assert [item.text for item in events] == [
+        'LifeTech meetups', 'Community calendar', 'Event map', 'Find a group meeting time'
+    ]
     assert [urlparse(item.get_attribute('href')).path for item in events] == [
-        '/org-events', '/calendar.html', '/map.html'
+        '/org-events', '/calendar.html', '/map.html', '/availability'
     ]
     summaries[1].click()
     WebDriverWait(driver, 5).until(lambda d: len(nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')) == 1)
-    assert [item.text for item in nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')] == ['Medical atlas', 'Datasets']
+    assert [item.text for item in nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')] == [
+        'Medical atlas', 'Datasets', 'Brand guide', 'LifeTech ecosystem', 'Relationship network'
+    ]
     summaries[1].send_keys(Keys.ESCAPE)
     assert not nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')
     assert driver.switch_to.active_element == summaries[1]
@@ -296,8 +309,8 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         return {
           title: document.title,
           bodyText,
-          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href === 'https://medtech.social/users/login'),
-          headerLoginHref: document.querySelector('header nav a.button')?.href || '',
+          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href === 'https://lifetech.fyi/users/login'),
+          headerLoginHref: document.querySelector('header .account-controls a.button')?.href || '',
           heroLeft: hero.left,
           heroRight: hero.right,
           heroWidth: hero.width,
@@ -336,21 +349,21 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         """
     )
 
-    if metrics["title"] != "Baltimore MedTech":
+    if metrics["title"] != "LifeTech":
         raise AssertionError(f"{viewport} home: unexpected title {metrics['title']!r}")
-    if "Baltimore MedTech" not in metrics["bodyText"]:
-        raise AssertionError(f"{viewport} home: missing Baltimore MedTech body text")
+    if "LifeTech" not in metrics["bodyText"]:
+        raise AssertionError(f"{viewport} home: missing LifeTech body text")
     if metrics["headerLoginHref"] != PORTAL_URL or PORTAL_URL not in metrics["loginHrefs"]:
-        raise AssertionError(f"{viewport} home: login links did not target the MedTech portal profile: {metrics}")
-    if "baltimore-medtech-hero-v2" not in metrics["heroImageSrc"]:
-        raise AssertionError(f"{viewport} home: hero background should use the optimized local editorial image: {metrics}")
+        raise AssertionError(f"{viewport} home: login links did not target the LifeTech portal profile: {metrics}")
+    if "lifetech-hero" not in metrics["heroImageSrc"]:
+        raise AssertionError(f"{viewport} home: hero background should use the LifeTech editorial image: {metrics}")
     if abs(metrics["heroTop"] - metrics["headerBottom"]) > 2:
         raise AssertionError(f"{viewport} home: hero must start below the rendered navigation: {metrics}")
     if metrics["heroOverlay"] in {"none", ""}:
         raise AssertionError(f"{viewport} home: editorial hero needs a contrast overlay: {metrics}")
     if not metrics["innerHeight"] * 0.75 <= metrics["heroHeight"] <= metrics["innerHeight"] * 1.75:
         raise AssertionError(f"{viewport} home: hero no longer forms a focused opening chapter: {metrics}")
-    if "Next Baltimore MedTech event" in metrics["bodyText"] and "6:00 PM" not in metrics["bodyText"]:
+    if "Next LifeTech event" in metrics["bodyText"] and "6:00 PM" not in metrics["bodyText"]:
         raise AssertionError(f"{viewport} home: next-event card must render in Baltimore time: {metrics}")
     if metrics["actionCount"] != 4 or metrics["actionTop"] > metrics["heroBottom"] or metrics["actionBottom"] <= metrics["heroBottom"]:
         raise AssertionError(f"{viewport} home: action strip must bridge the hero and next section: {metrics}")
@@ -358,7 +371,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: pathways must follow the action strip: {metrics}")
     if metrics["heroTitle"] != "Better care starts with a better-connected city.":
         raise AssertionError(f"{viewport} home: editorial promise is missing: {metrics}")
-    if metrics["pathwayCount"] != 3 or metrics["pathwayTitles"] != ["General Calendar", "Medical map", "MedTech index"]:
+    if metrics["pathwayCount"] != 3 or metrics["pathwayTitles"] != ["General Calendar", "Medical map", "LifeTech index"]:
         raise AssertionError(f"{viewport} home: community pathways are incomplete: {metrics}")
     if metrics["glossaryEntryCount"] != 3 or metrics["glossaryTitles"] != ["Health", "Medicine", "Biotech"]:
         raise AssertionError(f"{viewport} home: regional glossary fields are incomplete: {metrics}")
@@ -473,7 +486,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
     )
     metrics["themeCheck"] = assert_theme_control(driver, viewport, screenshot_dir)
 
-    if metrics["title"] != "General Calendar | Baltimore MedTech":
+    if metrics["title"] != "General Calendar | LifeTech":
         raise AssertionError(f"{viewport} calendar: unexpected title {metrics['title']!r}")
     if metrics["pageSections"][1] != "event-list-section":
         raise AssertionError(f"{viewport} calendar: upcoming list is no longer the first content section: {metrics}")
@@ -488,7 +501,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
 def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
     driver.get(f"{base_url.rstrip('/')}/map")
     settle(driver)
-    WebDriverWait(driver, 45).until(lambda d: d.execute_script("return window.__bmoreMedTechMapReady === true"))
+    WebDriverWait(driver, 45).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
     assert_no_horizontal_overflow(driver, f"{viewport} map")
 
     screenshot = screenshot_dir / f"{viewport}-map.png"
@@ -501,7 +514,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         const inspector = document.getElementById('map-inspector');
         const inspectorBox = inspector.getBoundingClientRect();
         const canvas = document.querySelector('#medical-map canvas.maplibregl-canvas');
-        const state = window.__bmoreMedTechLayerState || {};
+        const state = window.__bmoreLifeTechLayerState || {};
         return {
           title: document.title,
           regionValue: document.getElementById('region-select')?.value,
@@ -509,7 +522,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
           sizeModeValue: document.getElementById('size-mode-select')?.value,
           layerRows: document.querySelectorAll('.map-layer-row').length,
           layerOrderTopToBottom: Array.from(document.querySelectorAll('.map-layer-row')).map((row) => row.dataset.layerRow),
-          layerStack: window.__bmoreMedTechLayerStack || [],
+          layerStack: window.__bmoreLifeTechLayerStack || [],
           mapWidth: mapBox.width,
           mapHeight: mapBox.height,
           stageRight: stageBox.right,
@@ -519,7 +532,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
           inspectorWidth: inspectorBox.width,
           inspectorState: inspector.dataset.inspectorState,
           inspectorCloseHidden: document.getElementById('close-map-inspector')?.hidden,
-          compactSupported: window.__bmoreMedTechQueryState?.supportsCompression,
+          compactSupported: window.__bmoreLifeTechQueryState?.supportsCompression,
           compactDisabled: document.getElementById('compress-query-state')?.disabled,
           shareExpanded: document.getElementById('open-map-share')?.getAttribute('aria-expanded'),
           shareHidden: document.getElementById('map-share-sheet')?.hidden,
@@ -532,7 +545,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         """
     )
 
-    if metrics["title"] != "Medical System Map | Baltimore MedTech":
+    if metrics["title"] != "Medical System Map | LifeTech":
         raise AssertionError(f"{viewport} map: unexpected title {metrics['title']!r}")
     if metrics["regionValue"] != "baltimore-city":
         raise AssertionError(f"{viewport} map: default region changed: {metrics}")
@@ -576,8 +589,8 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
 
     event_metrics = driver.execute_script(
         """
-        const point = window.__bmoreMedTechFirstFeaturePoint('medical-events');
-        const result = window.__showBmoreMedTechHoverTarget(point);
+        const point = window.__bmoreLifeTechFirstFeaturePoint('medical-events');
+        const result = window.__showBmoreLifeTechHoverTarget(point);
         return {
           point,
           result,
@@ -602,8 +615,8 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
 
     hover_metrics = driver.execute_script(
         """
-        const point = window.__bmoreMedTechFirstFeaturePoint('us-hospitals');
-        const result = window.__showBmoreMedTechHoverTarget(point);
+        const point = window.__bmoreLifeTechFirstFeaturePoint('us-hospitals');
+        const result = window.__showBmoreLifeTechHoverTarget(point);
         const inspector = document.getElementById('map-inspector');
         return {
           point,
@@ -627,8 +640,8 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
 
     pin_metrics = driver.execute_script(
         """
-        const point = window.__bmoreMedTechFirstFeaturePoint('us-hospitals');
-        const result = window.__pinBmoreMedTechHoverTarget(point);
+        const point = window.__bmoreLifeTechFirstFeaturePoint('us-hospitals');
+        const result = window.__pinBmoreLifeTechHoverTarget(point);
         const inspector = document.getElementById('map-inspector');
         const box = inspector.getBoundingClientRect();
         const close = document.getElementById('close-map-inspector');
@@ -672,8 +685,8 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         return {
           before,
           after,
-          stack: window.__bmoreMedTechLayerStack || [],
-          diagnostics: window.__bmoreMedTechLayerState || {}
+          stack: window.__bmoreLifeTechLayerStack || [],
+          diagnostics: window.__bmoreLifeTechLayerState || {}
         };
         """
     )
@@ -688,7 +701,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         select.dispatchEvent(new Event('change', {bubbles: true}));
         return {
           sizeModeValue: select.value,
-          diagnostics: window.__bmoreMedTechLayerState || {}
+          diagnostics: window.__bmoreLifeTechLayerState || {}
         };
         """
     )
@@ -713,7 +726,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         )
         WebDriverWait(driver, 45).until(
             lambda d: d.execute_script(
-                "return window.__bmoreMedTechLayerState?.['us-hospitals']?.count > 0 && window.__bmoreMedTechLayerState?.['md-hospitals']?.applies === false"
+                "return window.__bmoreLifeTechLayerState?.['us-hospitals']?.count > 0 && window.__bmoreLifeTechLayerState?.['md-hospitals']?.applies === false"
             )
         )
         state_metrics = driver.execute_script(
@@ -722,7 +735,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
               regionValue: document.getElementById('region-select').value,
               stateValue: document.getElementById('state-select').value,
               stateFieldHidden: document.getElementById('state-field').hidden,
-              diagnostics: window.__bmoreMedTechLayerState
+              diagnostics: window.__bmoreLifeTechLayerState
             };
             """
         )
@@ -748,8 +761,8 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
             """
             const done = arguments[arguments.length - 1];
             Promise.all([
-              window.__bmoreMedTechQueryState.buildShareUrl({preferCompressed: true}),
-              window.__bmoreMedTechQueryState.buildShareUrl({preferCompressed: false})
+              window.__bmoreLifeTechQueryState.buildShareUrl({preferCompressed: true}),
+              window.__bmoreLifeTechQueryState.buildShareUrl({preferCompressed: false})
             ]).then(([compact, readable]) => done({compact, readable})).catch((error) => done({error: String(error)}));
             """
         )
@@ -799,7 +812,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         compressed_current_url = driver.current_url
         driver.get(compressed_current_url)
         settle(driver)
-        WebDriverWait(driver, 45).until(lambda d: d.execute_script("return window.__bmoreMedTechMapReady === true"))
+        WebDriverWait(driver, 45).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
         roundtrip = driver.execute_script(
             """
             const sheet = document.getElementById('map-share-sheet');
@@ -813,7 +826,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
               shareExpanded: document.getElementById('open-map-share').getAttribute('aria-expanded'),
               shareHidden: sheet.hidden,
               shareDisplay: getComputedStyle(sheet).display,
-              queryState: window.__bmoreMedTechQueryState.current()
+              queryState: window.__bmoreLifeTechQueryState.current()
             };
             """
         )
@@ -842,7 +855,7 @@ def assert_taxonomy(driver: webdriver.Remote, base_url: str, viewport: str, scre
     driver.get(f"{base_url.rstrip('/')}/taxonomy")
     settle(driver)
     WebDriverWait(driver, 30).until(
-        lambda d: d.execute_script("return window.__bmoreMedTechTaxonomyReady === true")
+        lambda d: d.execute_script("return window.__bmoreLifeTechTaxonomyReady === true")
     )
     assert_no_horizontal_overflow(driver, f"{viewport} taxonomy")
 
@@ -850,7 +863,7 @@ def assert_taxonomy(driver: webdriver.Remote, base_url: str, viewport: str, scre
     driver.save_screenshot(str(screenshot))
     metrics = driver.execute_script(
         """
-        const state = window.__bmoreMedTechTaxonomyState || {};
+        const state = window.__bmoreLifeTechTaxonomyState || {};
         return {
           title: document.title,
           totalText: document.getElementById('taxonomy-total')?.textContent || '',
@@ -864,12 +877,12 @@ def assert_taxonomy(driver: webdriver.Remote, base_url: str, viewport: str, scre
         };
         """
     )
-    if metrics["title"] != "Medical Science & Coding Atlas | Baltimore MedTech":
+    if metrics["title"] != "Medical Science & Coding Atlas | LifeTech":
         raise AssertionError(f"{viewport} taxonomy: unexpected title: {metrics}")
     if int(metrics["totalText"].replace(",", "")) < 200 or metrics["databaseOptions"] != 6:
         raise AssertionError(f"{viewport} taxonomy: index or framework selector is incomplete: {metrics}")
     if metrics["databaseValue"] != "medtech_index" or metrics["clusters"] < 9 or metrics["nodes"] < 200:
-        raise AssertionError(f"{viewport} taxonomy: default MedTech Index did not render: {metrics}")
+        raise AssertionError(f"{viewport} taxonomy: default LifeTech Index did not render: {metrics}")
     if not metrics["sourceHref"].endswith("/medical-science-field-atlas.json") or metrics["navbarCurrent"] != "Medical atlas":
         raise AssertionError(f"{viewport} taxonomy: download or navbar link is incorrect: {metrics}")
 
@@ -878,18 +891,18 @@ def assert_taxonomy(driver: webdriver.Remote, base_url: str, viewport: str, scre
         const database = document.getElementById('taxonomy-database');
         database.value = 'acgme';
         database.dispatchEvent(new Event('change', {bubbles: true}));
-        const acgme = {...window.__bmoreMedTechTaxonomyState};
+        const acgme = {...window.__bmoreLifeTechTaxonomyState};
         const search = document.getElementById('taxonomy-search');
         search.value = 'genomics';
         search.dispatchEvent(new Event('input', {bubbles: true}));
-        const searched = {...window.__bmoreMedTechTaxonomyState};
+        const searched = {...window.__bmoreLifeTechTaxonomyState};
         const firstNode = document.querySelector('.taxonomy-node');
         firstNode?.click();
         return {
           acgme,
           searched,
           selectedText: document.getElementById('taxonomy-inspector-title')?.textContent || '',
-          selectedId: window.__bmoreMedTechTaxonomyState?.selectedRecord || null,
+          selectedId: window.__bmoreLifeTechTaxonomyState?.selectedRecord || null,
           sourceHref: document.getElementById('taxonomy-source-link')?.href || ''
         };
         """
@@ -921,9 +934,9 @@ def assert_datasets(driver: webdriver.Remote, base_url: str, viewport: str, scre
         driver.get(f"{base_url}/datasets/{dataset_id}.html")
         settle(driver)
         WebDriverWait(driver, 45).until(
-            lambda d: d.execute_script("return window.__bmoreMedTechDatasetSheet !== undefined")
+            lambda d: d.execute_script("return window.__bmoreLifeTechDatasetSheet !== undefined")
         )
-        state = driver.execute_script("return window.__bmoreMedTechDatasetSheet")
+        state = driver.execute_script("return window.__bmoreLifeTechDatasetSheet")
         if not state.get("ready"):
             raise AssertionError(f"{viewport} datasets: {dataset_id} did not load: {state}")
         if state.get("dataset") != dataset_id or state.get("live") is not expected_live:
@@ -1057,7 +1070,7 @@ def run(args: argparse.Namespace) -> int:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run Baltimore MedTech Selenium regressions.")
+    parser = argparse.ArgumentParser(description="Run LifeTech Selenium regressions.")
     parser.add_argument("--selenium-url", default=os.environ.get("SELENIUM_URL", "http://127.0.0.1:4444/wd/hub"))
     parser.add_argument(
         "--base-url",

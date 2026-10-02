@@ -6,7 +6,7 @@ const root = new URL('../', import.meta.url)
 const workspaces = [
   {
     id: 'medtech',
-    label: 'MedTech',
+    label: 'LifeTech',
     root,
     strict: true,
     extensions: new Set(['.html']),
@@ -42,7 +42,7 @@ const allowedPlaceholderIds = new Set([
 const knownExternalOrigins = new Set([
   'https://chat.whatsapp.com',
   'https://github.com',
-  'https://medtech.social',
+  'https://lifetech.fyi',
 ])
 // Only the generated ecosystem pages may link to URLs present in their sanitized input.
 const ecosystemData = JSON.parse(await readFile(new URL('../assets/data/ecosystem.json', import.meta.url), 'utf8'))
@@ -195,7 +195,7 @@ function classifyWorkspaceForUrl(url, sourceRepo = 'medtech') {
     if (sourceRepo !== 'medtech') return sourceRepo
     return 'medtech'
   }
-  if (url.hostname === 'medtech.social') {
+  if (url.hostname === 'lifetech.fyi') {
     if (url.pathname.startsWith('/pidp') || url.pathname.startsWith('/oauth') || url.pathname.startsWith('/auth/') || url.pathname.startsWith('/session/')) return 'pidp'
     if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/medtech-events') || url.pathname.startsWith('/create') || url.pathname.startsWith('/branding') || url.pathname.startsWith('/resources')) return 'orgportal'
     return 'medtech'
@@ -302,7 +302,7 @@ inventory.sort((a, b) => `${a.source} ${a.href}`.localeCompare(`${b.source} ${b.
 const output = {
   schema_version: 2,
   scope: 'bounded-static-and-source-link-literals',
-  note: 'Bounded static/source link inventory across MedTech, OrgPortal, and PIdP. This is not an exhaustive dynamic click-through hierarchy.',
+  note: 'Bounded static/source link inventory across LifeTech, OrgPortal, and PIdP. This is not an exhaustive dynamic click-through hierarchy.',
   repositories: workspaces.map(({ id, label, strict }) => ({ id, label, strict })),
   pages: [...sources.keys()].sort(),
   linkCount: inventory.length,

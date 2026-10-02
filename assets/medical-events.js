@@ -8,7 +8,7 @@ const eventAttachmentImagesBySlug = {
     {
       src: '/assets/images/events/tech-in-the-hut-cocktails.jpg',
       placeholderSrc: '/assets/images/events/tech-in-the-hut-cocktails-lqip.webp',
-      alt: 'Tech in the Hut launch party cocktail menu for the MedTech in the Hut event.',
+      alt: 'Tech in the Hut launch party cocktail menu for the LifeTech in the Hut event.',
       label: 'Launch party cocktail menu',
     },
     {
@@ -34,15 +34,15 @@ const eventAttachmentImagesBySlug = {
 
 export function medtechEventUrl(event) {
   const slug = typeof event.slug === 'string' ? event.slug.trim() : typeof event.portalSlug === 'string' ? event.portalSlug.trim() : ''
-  if (slug) return `https://medtech.social/events/${encodeURIComponent(slug)}`
+  if (slug) return `https://lifetech.fyi/events/${encodeURIComponent(slug)}`
   if (typeof event.public_url === 'string' && event.public_url.trim()) {
     try {
       const url = new URL(event.public_url)
       if (url.pathname.startsWith('/events/')) {
-        return `https://medtech.social${url.pathname}${url.search}${url.hash}`
+        return `https://lifetech.fyi${url.pathname}${url.search}${url.hash}`
       }
       if (['https:', 'http:'].includes(url.protocol)) return url.href
-    } catch { /* Fall back to the MedTech events page. */ }
+    } catch { /* Fall back to the LifeTech events page. */ }
   }
   return MEDTECH_EVENTS_URL
 }
@@ -108,18 +108,18 @@ function eventBlob(event) {
   ].map(searchableText).join(' ')
 }
 
-export function isMedTechOwnedEvent(event) {
+export function isLifeTechOwnedEvent(event) {
   if (event?.medtechOwned === true) return true
   const tags = Array.isArray(event?.tags) ? event.tags.map((tag) => String(tag).toLowerCase()) : []
   const blob = eventBlob(event).toLowerCase()
   return tags.includes('medtech')
     || event?.host_org_id === 'org-baltimore-medtech'
     || /(^|\b)baltimore medtech(\b|$)/i.test(blob)
-    || /medtech\.social\/events\//.test(String(event?.url || event?.public_url || ''))
+    || /(?:lifetech\.fyi|medtech\.social)\/events\//.test(String(event?.url || event?.public_url || ''))
 }
 
 export function isMedicalEvent(event) {
-  if (isMedTechOwnedEvent(event)) return true
+  if (isLifeTechOwnedEvent(event)) return true
   const tags = Array.isArray(event.tags) ? event.tags.map((tag) => String(tag).toLowerCase()) : []
   const blob = eventBlob(event)
   const normalizedBlob = blob.toLowerCase()
@@ -132,11 +132,11 @@ export function isMedicalEvent(event) {
   return false
 }
 
-export function normalizeMedTechPortalEvent(event) {
+export function normalizeLifeTechPortalEvent(event) {
   const location = typeof event.location === 'string' ? event.location.trim() : ''
-  const organizationName = event.organization_name || event.host_org_name || 'Baltimore MedTech'
+  const organizationName = event.organization_name || event.host_org_name || 'LifeTech'
   return {
-    name: event.title || event.name || 'Baltimore MedTech event',
+    name: event.title || event.name || 'LifeTech event',
     description: event.description || '',
     startDate: event.starts_at || event.startDate || '',
     endTime: event.ends_at || event.endTime || '',

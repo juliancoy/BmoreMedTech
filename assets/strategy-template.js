@@ -1,12 +1,12 @@
 export const strategyDashboardMarkup = `
   <header class="strategy-dashboard-heading">
     <div>
-      <p class="eyebrow">MedTech decision board</p>
+      <p class="eyebrow">LifeTech decision board</p>
       <h2 id="strategy-dashboard-title">Measure labor, need, capital, and leverage.</h2>
     </div>
     <div class="strategy-dashboard-intro">
       <p>
-        These signals help Baltimore MedTech choose where convening, applications, labor development, and implementation
+        These signals help LifeTech choose where convening, applications, labor development, and implementation
         work can create the most value. They are decision inputs—not a ranking of human need.
       </p>
       <span id="strategy-as-of" class="strategy-as-of"></span>
@@ -72,7 +72,7 @@ export const strategyDashboardMarkup = `
   </div>
 
   <section class="strategy-guidance" aria-labelledby="strategy-guidance-title">
-    <header><p class="eyebrow">Decision guidance</p><h3 id="strategy-guidance-title">What Baltimore MedTech should do with these signals.</h3></header>
+    <header><p class="eyebrow">Decision guidance</p><h3 id="strategy-guidance-title">What LifeTech should do with these signals.</h3></header>
     <div id="strategy-guidance-grid" class="strategy-guidance-grid"></div>
   </section>
 

@@ -2,7 +2,7 @@
   {
     "id": "medtech_index",
     "name": "Medical Science Field Atlas",
-    "steward": "Baltimore MedTech",
+    "steward": "LifeTech",
     "scope": "A modern polyhierarchy of medical science fields and subdisciplines",
     "description": "The complete local field atlas. It treats anatomy, disease, method, biological scale, population, care setting, and translational stage as intersecting coordinates rather than forcing every field into one tree.",
     "source_url": "/medical-science-field-atlas.json",

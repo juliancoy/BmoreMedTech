@@ -4,7 +4,7 @@ import {
   eventAttachmentImages,
   eventImageUrl,
   medtechEventUrl,
-  normalizeMedTechPortalEvent,
+  normalizeLifeTechPortalEvent,
   parseEventDate,
 } from './medical-events.js'
 
@@ -47,20 +47,20 @@ function progressiveImageMarkup(image, attrs = '') {
   return `<img${className} src="${escapeHtml(placeholder)}"${fullAttrs} alt="${escapeHtml(image.alt)}" ${attrs} />`
 }
 
-async function showNextMedTechEvent() {
+async function showNextLifeTechEvent() {
   if (!nextEventEl && !eventMediaSection) return
   try {
     const response = await fetch(MEDTECH_ORG_EVENTS_SOURCE_URL, { cache: 'no-store' })
-    if (!response.ok) throw new Error(`MedTech events returned ${response.status}`)
+    if (!response.ok) throw new Error(`LifeTech events returned ${response.status}`)
     const events = await response.json()
     const now = new Date()
     const next = (Array.isArray(events) ? events : [])
-      .map(normalizeMedTechPortalEvent)
+      .map(normalizeLifeTechPortalEvent)
       .map((event) => ({ event, date: parseEventDate(event) }))
       .filter((item) => item.date && item.date >= now)
       .sort((a, b) => a.date.getTime() - b.date.getTime())[0]
     const medtechInHut = (Array.isArray(events) ? events : [])
-      .map(normalizeMedTechPortalEvent)
+      .map(normalizeLifeTechPortalEvent)
       .find((event) => event.slug === MEDTECH_IN_HUT_EVENT_SLUG || event.portalSlug === MEDTECH_IN_HUT_EVENT_SLUG)
     if (medtechInHut && eventMediaSection && eventMediaGrid) {
       const images = eventAttachmentImages(medtechInHut)
@@ -86,7 +86,7 @@ async function showNextMedTechEvent() {
       <a class="hero-event-card${imageUrl ? ' has-image' : ''}" href="${escapeHtml(medtechEventUrl(next.event))}" aria-label="Open ${escapeHtml(eventName)}">
         ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="" loading="eager" decoding="async" />` : ''}
         <span class="hero-event-copy">
-          <span class="hero-event-label">Next Baltimore MedTech event</span>
+          <span class="hero-event-label">Next LifeTech event</span>
           <span class="hero-event-title">${escapeHtml(eventName)}</span>
           <span class="hero-event-meta">${escapeHtml(formatHeroEventDate(next.date))}${location ? ` | ${escapeHtml(cleanText(location))}` : ''}</span>
         </span>
@@ -99,7 +99,7 @@ async function showNextMedTechEvent() {
       event.currentTarget.remove()
     }, { once: true })
   } catch (error) {
-    console.warn('Next Baltimore MedTech event could not be loaded for the hero.', error)
+    console.warn('Next LifeTech event could not be loaded for the hero.', error)
   }
 }
 
@@ -125,4 +125,4 @@ if (revealItems.length && 'IntersectionObserver' in window) {
   })
 }
 
-showNextMedTechEvent()
+showNextLifeTechEvent()

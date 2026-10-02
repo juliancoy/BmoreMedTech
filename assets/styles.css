@@ -3699,3 +3699,7 @@ h2 {
     min-height: 38px;
   }
 }
+
+.about-body .action-strip {
+  margin-top: 0;
+}

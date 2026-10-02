@@ -20,6 +20,7 @@
     }
   ],
   "pages": [
+    "medtech:about.html",
     "medtech:calendar.html",
     "medtech:clickthrough.html",
     "medtech:datasets.html",
@@ -89,7 +90,6 @@
     "orgportal:src/ui/views/orgs/OrgInitiativeBallotPage.tsx",
     "orgportal:src/ui/views/orgs/OrgInitiativeEditorPage.tsx",
     "orgportal:src/ui/views/orgs/OrgInitiativesPage.tsx",
-    "orgportal:src/ui/views/orgs/OrgLoginPage.tsx",
     "orgportal:src/ui/views/orgs/OrgProfilePage.tsx",
     "orgportal:src/ui/views/orgs/OrgRegisterPage.tsx",
     "orgportal:src/ui/views/public/EventRegistration.tsx",
@@ -106,20 +106,373 @@
     "orgportal:src/ui/views/users/UserDashboardPage.tsx",
     "orgportal:src/ui/views/users/UserLoginPage.tsx",
     "orgportal:src/ui/views/users/UserProfilePage.tsx",
-    "orgportal:src/ui/views/users/UserSettingsPage.tsx",
-    "pidp:frontend/templates/base.html",
-    "pidp:frontend/templates/dashboard.html",
-    "pidp:frontend/templates/home.html",
-    "pidp:frontend/templates/profile.html",
-    "pidp:frontend/templates/site_detail.html",
-    "pidp:frontend/templates/sites.html",
-    "pidp:migrate_encrypt_identity_data.py",
-    "pidp:serverless/src/index.ts",
-    "pidp:serverless/src/profilePage.ts",
-    "pidp:serverless/test/mcp-authorization.test.mjs"
+    "orgportal:src/ui/views/users/UserSettingsPage.tsx"
   ],
-  "linkCount": 966,
+  "linkCount": 972,
   "links": [
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/",
+      "textRole": "LifeTech home",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/about.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "about.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/about.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "about.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/about.html#regional-glossary",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "about.html",
+      "fragment": "regional-glossary"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/calendar.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "calendar.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/chat?start=group&org=baltimore-medtech",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/chat"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/datasets.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "datasets.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/ecosystem",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "ecosystem/index.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/ecosystem",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "ecosystem/index.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/ecosystem/network",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "ecosystem/network.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/map.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "map.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/need-availability-distortions.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "need-availability-distortions.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/org-events",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/org-events"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/org-events",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/org-events"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/org-events",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/org-events"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/org-events",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/org-events"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/people",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/people"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/search?q=lifetech&scope=people",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/search"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/start.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "start.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/taxonomy.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "taxonomy.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "#main-content",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "targetRepo": "medtech",
+      "target": "medtech:about.html",
+      "fragment": "main-content"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V",
+      "textRole": "Join LifeTech on WhatsApp",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://chat.whatsapp.com"
+    },
+    {
+      "source": "medtech:about.html",
+      "sourcePath": "about.html",
+      "sourceRepo": "medtech",
+      "href": "https://github.com/juliancoy/BmoreLifeTech",
+      "textRole": "View LifeTech on GitHub",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://github.com"
+    },
     {
       "source": "medtech:calendar.html",
       "sourcePath": "calendar.html",
@@ -189,6 +542,16 @@
       "source": "medtech:calendar.html",
       "sourcePath": "calendar.html",
       "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:calendar.html",
+      "sourcePath": "calendar.html",
+      "sourceRepo": "medtech",
       "href": "https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V",
       "textRole": "Join LifeTech on WhatsApp",
       "kind": "external-handoff",
@@ -204,16 +567,6 @@
       "kind": "external-handoff",
       "targetRepo": "",
       "origin": "https://github.com"
-    },
-    {
-      "source": "medtech:calendar.html",
-      "sourcePath": "calendar.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "medtech:clickthrough.html",
@@ -317,22 +670,22 @@
       "source": "medtech:clickthrough.html",
       "sourcePath": "clickthrough.html",
       "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:clickthrough.html",
+      "sourcePath": "clickthrough.html",
+      "sourceRepo": "medtech",
       "href": "#main-content",
       "textRole": "",
       "kind": "same-page-anchor",
       "targetRepo": "medtech",
       "target": "medtech:clickthrough.html",
       "fragment": "main-content"
-    },
-    {
-      "source": "medtech:clickthrough.html",
-      "sourcePath": "clickthrough.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "medtech:datasets.html",
@@ -524,32 +877,32 @@
       "source": "medtech:datasets.html",
       "sourcePath": "datasets.html",
       "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets.html",
+      "sourcePath": "datasets.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
+    },
+    {
+      "source": "medtech:datasets.html",
+      "sourcePath": "datasets.html",
+      "sourceRepo": "medtech",
       "href": "#main-content",
       "textRole": "",
       "kind": "same-page-anchor",
       "targetRepo": "medtech",
       "target": "medtech:datasets.html",
       "fragment": "main-content"
-    },
-    {
-      "source": "medtech:datasets.html",
-      "sourcePath": "datasets.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets.html",
-      "sourcePath": "datasets.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "medtech:datasets/allied-care-teams.html",
@@ -692,6 +1045,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/allied-care-teams.html",
+      "sourcePath": "datasets/allied-care-teams.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/allied-care-teams.html",
+      "sourcePath": "datasets/allied-care-teams.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/allied-care-teams.html",
@@ -741,26 +1114,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/allied-care-teams.html",
-      "sourcePath": "datasets/allied-care-teams.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/allied-care-teams.html",
-      "sourcePath": "datasets/allied-care-teams.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/bls-oews-baltimore.html",
       "sourcePath": "datasets/bls-oews-baltimore.html",
       "sourceRepo": "medtech",
@@ -901,6 +1254,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/bls-oews-baltimore.html",
+      "sourcePath": "datasets/bls-oews-baltimore.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/bls-oews-baltimore.html",
+      "sourcePath": "datasets/bls-oews-baltimore.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/bls-oews-baltimore.html",
@@ -950,26 +1323,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/bls-oews-baltimore.html",
-      "sourcePath": "datasets/bls-oews-baltimore.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/bls-oews-baltimore.html",
-      "sourcePath": "datasets/bls-oews-baltimore.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/clinical-code-systems.html",
       "sourcePath": "datasets/clinical-code-systems.html",
       "sourceRepo": "medtech",
@@ -1110,6 +1463,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/clinical-code-systems.html",
+      "sourcePath": "datasets/clinical-code-systems.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/clinical-code-systems.html",
+      "sourcePath": "datasets/clinical-code-systems.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/clinical-code-systems.html",
@@ -1159,26 +1532,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/clinical-code-systems.html",
-      "sourcePath": "datasets/clinical-code-systems.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/clinical-code-systems.html",
-      "sourcePath": "datasets/clinical-code-systems.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/clinical-semantic-systems.html",
       "sourcePath": "datasets/clinical-semantic-systems.html",
       "sourceRepo": "medtech",
@@ -1319,6 +1672,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/clinical-semantic-systems.html",
+      "sourcePath": "datasets/clinical-semantic-systems.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/clinical-semantic-systems.html",
+      "sourcePath": "datasets/clinical-semantic-systems.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/clinical-semantic-systems.html",
@@ -1368,26 +1741,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/clinical-semantic-systems.html",
-      "sourcePath": "datasets/clinical-semantic-systems.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/clinical-semantic-systems.html",
-      "sourcePath": "datasets/clinical-semantic-systems.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/cms-doctors-clinicians.html",
       "sourcePath": "datasets/cms-doctors-clinicians.html",
       "sourceRepo": "medtech",
@@ -1528,6 +1881,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/cms-doctors-clinicians.html",
+      "sourcePath": "datasets/cms-doctors-clinicians.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/cms-doctors-clinicians.html",
+      "sourcePath": "datasets/cms-doctors-clinicians.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/cms-doctors-clinicians.html",
@@ -1577,26 +1950,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/cms-doctors-clinicians.html",
-      "sourcePath": "datasets/cms-doctors-clinicians.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/cms-doctors-clinicians.html",
-      "sourcePath": "datasets/cms-doctors-clinicians.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/cms-provider-services.html",
       "sourcePath": "datasets/cms-provider-services.html",
       "sourceRepo": "medtech",
@@ -1737,6 +2090,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/cms-provider-services.html",
+      "sourcePath": "datasets/cms-provider-services.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/cms-provider-services.html",
+      "sourcePath": "datasets/cms-provider-services.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/cms-provider-services.html",
@@ -1786,26 +2159,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/cms-provider-services.html",
-      "sourcePath": "datasets/cms-provider-services.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/cms-provider-services.html",
-      "sourcePath": "datasets/cms-provider-services.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/hrsa-ahrf.html",
       "sourcePath": "datasets/hrsa-ahrf.html",
       "sourceRepo": "medtech",
@@ -1946,6 +2299,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/hrsa-ahrf.html",
+      "sourcePath": "datasets/hrsa-ahrf.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/hrsa-ahrf.html",
+      "sourcePath": "datasets/hrsa-ahrf.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/hrsa-ahrf.html",
@@ -1995,26 +2368,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/hrsa-ahrf.html",
-      "sourcePath": "datasets/hrsa-ahrf.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/hrsa-ahrf.html",
-      "sourcePath": "datasets/hrsa-ahrf.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/maryland-medicaid-provider-finder.html",
       "sourcePath": "datasets/maryland-medicaid-provider-finder.html",
       "sourceRepo": "medtech",
@@ -2155,6 +2508,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/maryland-medicaid-provider-finder.html",
+      "sourcePath": "datasets/maryland-medicaid-provider-finder.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/maryland-medicaid-provider-finder.html",
+      "sourcePath": "datasets/maryland-medicaid-provider-finder.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/maryland-medicaid-provider-finder.html",
@@ -2204,26 +2577,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/maryland-medicaid-provider-finder.html",
-      "sourcePath": "datasets/maryland-medicaid-provider-finder.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/maryland-medicaid-provider-finder.html",
-      "sourcePath": "datasets/maryland-medicaid-provider-finder.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/maryland-medicaid-pvs.html",
       "sourcePath": "datasets/maryland-medicaid-pvs.html",
       "sourceRepo": "medtech",
@@ -2364,6 +2717,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/maryland-medicaid-pvs.html",
+      "sourcePath": "datasets/maryland-medicaid-pvs.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/maryland-medicaid-pvs.html",
+      "sourcePath": "datasets/maryland-medicaid-pvs.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/maryland-medicaid-pvs.html",
@@ -2413,26 +2786,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/maryland-medicaid-pvs.html",
-      "sourcePath": "datasets/maryland-medicaid-pvs.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/maryland-medicaid-pvs.html",
-      "sourcePath": "datasets/maryland-medicaid-pvs.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/medical-science-field-atlas.html",
       "sourcePath": "datasets/medical-science-field-atlas.html",
       "sourceRepo": "medtech",
@@ -2573,6 +2926,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/medical-science-field-atlas.html",
+      "sourcePath": "datasets/medical-science-field-atlas.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/medical-science-field-atlas.html",
+      "sourcePath": "datasets/medical-science-field-atlas.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/medical-science-field-atlas.html",
@@ -2622,26 +2995,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/medical-science-field-atlas.html",
-      "sourcePath": "datasets/medical-science-field-atlas.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/medical-science-field-atlas.html",
-      "sourcePath": "datasets/medical-science-field-atlas.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/medtech-meta-index.html",
       "sourcePath": "datasets/medtech-meta-index.html",
       "sourceRepo": "medtech",
@@ -2782,6 +3135,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/medtech-meta-index.html",
+      "sourcePath": "datasets/medtech-meta-index.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/medtech-meta-index.html",
+      "sourcePath": "datasets/medtech-meta-index.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/medtech-meta-index.html",
@@ -2831,26 +3204,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/medtech-meta-index.html",
-      "sourcePath": "datasets/medtech-meta-index.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/medtech-meta-index.html",
-      "sourcePath": "datasets/medtech-meta-index.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/need-availability-distortions.html",
       "sourcePath": "datasets/need-availability-distortions.html",
       "sourceRepo": "medtech",
@@ -2991,6 +3344,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/need-availability-distortions.html",
+      "sourcePath": "datasets/need-availability-distortions.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/need-availability-distortions.html",
+      "sourcePath": "datasets/need-availability-distortions.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/need-availability-distortions.html",
@@ -3040,26 +3413,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/need-availability-distortions.html",
-      "sourcePath": "datasets/need-availability-distortions.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/need-availability-distortions.html",
-      "sourcePath": "datasets/need-availability-distortions.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/nppes-registry.html",
       "sourcePath": "datasets/nppes-registry.html",
       "sourceRepo": "medtech",
@@ -3200,6 +3553,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/nppes-registry.html",
+      "sourcePath": "datasets/nppes-registry.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/nppes-registry.html",
+      "sourcePath": "datasets/nppes-registry.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/nppes-registry.html",
@@ -3249,26 +3622,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/nppes-registry.html",
-      "sourcePath": "datasets/nppes-registry.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/nppes-registry.html",
-      "sourcePath": "datasets/nppes-registry.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/service-delivery-source-catalog.html",
       "sourcePath": "datasets/service-delivery-source-catalog.html",
       "sourceRepo": "medtech",
@@ -3409,6 +3762,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/service-delivery-source-catalog.html",
+      "sourcePath": "datasets/service-delivery-source-catalog.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:datasets/service-delivery-source-catalog.html",
@@ -3458,26 +3831,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:datasets/service-delivery-source-catalog.html",
-      "sourcePath": "datasets/service-delivery-source-catalog.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/service-delivery-source-catalog.html",
-      "sourcePath": "datasets/service-delivery-source-catalog.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:datasets/strategy-field-metrics.html",
       "sourcePath": "datasets/strategy-field-metrics.html",
       "sourceRepo": "medtech",
@@ -3623,6 +3976,26 @@
       "source": "medtech:datasets/strategy-field-metrics.html",
       "sourcePath": "datasets/strategy-field-metrics.html",
       "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:datasets/strategy-field-metrics.html",
+      "sourcePath": "datasets/strategy-field-metrics.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
+    },
+    {
+      "source": "medtech:datasets/strategy-field-metrics.html",
+      "sourcePath": "datasets/strategy-field-metrics.html",
+      "sourceRepo": "medtech",
       "href": "#",
       "textRole": "",
       "kind": "runtime-placeholder",
@@ -3665,26 +4038,6 @@
       "targetRepo": "medtech",
       "target": "medtech:datasets/strategy-field-metrics.html",
       "fragment": "main-content"
-    },
-    {
-      "source": "medtech:datasets/strategy-field-metrics.html",
-      "sourcePath": "datasets/strategy-field-metrics.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:datasets/strategy-field-metrics.html",
-      "sourcePath": "datasets/strategy-field-metrics.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "medtech:ecosystem/index.html",
@@ -4431,6 +4784,16 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:ecosystem/index.html",
+      "sourcePath": "ecosystem/index.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
     },
     {
       "source": "medtech:ecosystem/index.html",
@@ -5606,16 +5969,6 @@
       "kind": "external-handoff",
       "targetRepo": "",
       "origin": "https://iwbmore.org"
-    },
-    {
-      "source": "medtech:ecosystem/index.html",
-      "sourcePath": "ecosystem/index.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "medtech:ecosystem/index.html",
@@ -7324,6 +7677,16 @@
       "source": "medtech:ecosystem/network.html",
       "sourcePath": "ecosystem/network.html",
       "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:ecosystem/network.html",
+      "sourcePath": "ecosystem/network.html",
+      "sourceRepo": "medtech",
       "href": "#main-content",
       "textRole": "",
       "kind": "same-page-anchor",
@@ -7421,16 +7784,6 @@
       "kind": "external-handoff",
       "targetRepo": "",
       "origin": "https://innovate.umd.edu"
-    },
-    {
-      "source": "medtech:ecosystem/network.html",
-      "sourcePath": "ecosystem/network.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "medtech:ecosystem/network.html",
@@ -7778,6 +8131,50 @@
       "source": "medtech:index.html",
       "sourcePath": "index.html",
       "sourceRepo": "medtech",
+      "href": "/about.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "about.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:index.html",
+      "sourcePath": "index.html",
+      "sourceRepo": "medtech",
+      "href": "/about.html",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "about.html",
+      "fragment": ""
+    },
+    {
+      "source": "medtech:index.html",
+      "sourcePath": "index.html",
+      "sourceRepo": "medtech",
+      "href": "/about.html#regional-glossary",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "about.html",
+      "fragment": "regional-glossary"
+    },
+    {
+      "source": "medtech:index.html",
+      "sourcePath": "index.html",
+      "sourceRepo": "medtech",
+      "href": "/about.html#ways-in",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "medtech",
+      "target": "about.html",
+      "fragment": "ways-in"
+    },
+    {
+      "source": "medtech:index.html",
+      "sourcePath": "index.html",
+      "sourceRepo": "medtech",
       "href": "/calendar.html",
       "textRole": "",
       "kind": "internal-page",
@@ -7794,49 +8191,6 @@
       "kind": "internal-page",
       "targetRepo": "medtech",
       "target": "calendar.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/calendar.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "calendar.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/chat?start=group&org=baltimore-medtech",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/chat"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/datasets.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "datasets.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/ecosystem",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "ecosystem/index.html",
       "fragment": ""
     },
     {
@@ -7887,39 +8241,6 @@
       "source": "medtech:index.html",
       "sourcePath": "index.html",
       "sourceRepo": "medtech",
-      "href": "/map.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "map.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/map.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "map.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/need-availability-distortions.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "need-availability-distortions.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
       "href": "/org-events",
       "textRole": "",
       "kind": "portal-route",
@@ -7950,21 +8271,11 @@
       "source": "medtech:index.html",
       "sourcePath": "index.html",
       "sourceRepo": "medtech",
-      "href": "/org-events",
+      "href": "/people",
       "textRole": "",
       "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "/org-events"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/org-events",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/org-events"
+      "target": "/people"
     },
     {
       "source": "medtech:index.html",
@@ -8014,12 +8325,21 @@
       "source": "medtech:index.html",
       "sourcePath": "index.html",
       "sourceRepo": "medtech",
-      "href": "/taxonomy.html",
+      "href": "/users/login",
       "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "taxonomy.html",
-      "fragment": ""
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:index.html",
+      "sourcePath": "index.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
     },
     {
       "source": "medtech:index.html",
@@ -8031,28 +8351,6 @@
       "targetRepo": "medtech",
       "target": "medtech:index.html",
       "fragment": "main-content"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "#regional-glossary",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "medtech",
-      "target": "medtech:index.html",
-      "fragment": "regional-glossary"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "#ways-in",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "medtech",
-      "target": "medtech:index.html",
-      "fragment": "ways-in"
     },
     {
       "source": "medtech:index.html",
@@ -8073,46 +8371,6 @@
       "kind": "external-handoff",
       "targetRepo": "",
       "origin": "https://github.com"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/people",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/search?q=lifetech&scope=people",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "medtech",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "medtech:map.html",
@@ -8183,6 +8441,16 @@
       "source": "medtech:map.html",
       "sourcePath": "map.html",
       "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:map.html",
+      "sourcePath": "map.html",
+      "sourceRepo": "medtech",
       "href": "https://chat.whatsapp.com/Fpsd3Ko6l7q0Fy8DEYxw8V",
       "textRole": "Join LifeTech on WhatsApp",
       "kind": "external-handoff",
@@ -8198,16 +8466,6 @@
       "kind": "external-handoff",
       "targetRepo": "",
       "origin": "https://github.com"
-    },
-    {
-      "source": "medtech:map.html",
-      "sourcePath": "map.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "medtech:need-availability-distortions.html",
@@ -8344,6 +8602,26 @@
       "source": "medtech:need-availability-distortions.html",
       "sourcePath": "need-availability-distortions.html",
       "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:need-availability-distortions.html",
+      "sourcePath": "need-availability-distortions.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
+    },
+    {
+      "source": "medtech:need-availability-distortions.html",
+      "sourcePath": "need-availability-distortions.html",
+      "sourceRepo": "medtech",
       "href": "#distortion-care-team",
       "textRole": "",
       "kind": "same-page-anchor",
@@ -8396,26 +8674,6 @@
       "fragment": "main-content"
     },
     {
-      "source": "medtech:need-availability-distortions.html",
-      "sourcePath": "need-availability-distortions.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:need-availability-distortions.html",
-      "sourcePath": "need-availability-distortions.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:start.html",
       "sourcePath": "start.html",
       "sourceRepo": "medtech",
@@ -8586,6 +8844,36 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:start.html",
+      "sourcePath": "start.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:start.html",
+      "sourcePath": "start.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
+    },
+    {
+      "source": "medtech:start.html",
+      "sourcePath": "start.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:start.html",
@@ -8619,36 +8907,6 @@
       "origin": "https://github.com"
     },
     {
-      "source": "medtech:start.html",
-      "sourcePath": "start.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:start.html",
-      "sourcePath": "start.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:start.html",
-      "sourcePath": "start.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
       "source": "medtech:taxonomy.html",
       "sourcePath": "taxonomy.html",
       "sourceRepo": "medtech",
@@ -8766,6 +9024,26 @@
       "targetRepo": "medtech",
       "target": "taxonomy.html",
       "fragment": ""
+    },
+    {
+      "source": "medtech:taxonomy.html",
+      "sourcePath": "taxonomy.html",
+      "sourceRepo": "medtech",
+      "href": "/users/login",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "medtech:taxonomy.html",
+      "sourcePath": "taxonomy.html",
+      "sourceRepo": "medtech",
+      "href": "/users/register",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/register"
     },
     {
       "source": "medtech:taxonomy.html",
@@ -8872,26 +9150,6 @@
       "kind": "external-handoff",
       "targetRepo": "",
       "origin": "https://github.com"
-    },
-    {
-      "source": "medtech:taxonomy.html",
-      "sourcePath": "taxonomy.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/login",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
-    },
-    {
-      "source": "medtech:taxonomy.html",
-      "sourcePath": "taxonomy.html",
-      "sourceRepo": "medtech",
-      "href": "https://lifetech.fyi/users/register",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://lifetech.fyi"
     },
     {
       "source": "orgportal:public/standalone.html",
@@ -9066,10 +9324,9 @@
       "sourceRepo": "orgportal",
       "href": "/users/login",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "users/login.html",
-      "fragment": ""
+      "target": "/users/login"
     },
     {
       "source": "orgportal:src/ui/router/createAppRouter.tsx",
@@ -9327,10 +9584,9 @@
       "sourceRepo": "orgportal",
       "href": "/people",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "people.html",
-      "fragment": ""
+      "target": "/people"
     },
     {
       "source": "orgportal:src/ui/shell/Header.tsx",
@@ -9455,11 +9711,11 @@
       "source": "orgportal:src/ui/views/chat/NativeChatPage.tsx",
       "sourcePath": "src/ui/views/chat/NativeChatPage.tsx",
       "sourceRepo": "orgportal",
-      "href": "/chat",
+      "href": "/people",
       "textRole": "",
       "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "/chat"
+      "target": "/people"
     },
     {
       "source": "orgportal:src/ui/views/chat/OrgChatPage.tsx",
@@ -9630,10 +9886,9 @@
       "sourceRepo": "orgportal",
       "href": "/users/login",
       "textRole": "",
-      "kind": "internal-page",
+      "kind": "portal-route",
       "targetRepo": "orgportal",
-      "target": "users/login.html",
-      "fragment": ""
+      "target": "/users/login"
     },
     {
       "source": "orgportal:src/ui/views/NotFoundPage.tsx",
@@ -9721,17 +9976,6 @@
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "orgs/profile.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/views/orgs/OrgLoginPage.tsx",
-      "sourcePath": "src/ui/views/orgs/OrgLoginPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "/orgs/register",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "orgs/register.html",
       "fragment": ""
     },
     {
@@ -10057,204 +10301,6 @@
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "profile.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/base.html",
-      "sourcePath": "frontend/templates/base.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/billing",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/billing.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/base.html",
-      "sourcePath": "frontend/templates/base.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/profile",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/profile.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/base.html",
-      "sourcePath": "frontend/templates/base.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/sites",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/sites.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/base.html",
-      "sourcePath": "frontend/templates/base.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base or '/' }}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20or%20'/'%20%7D%7D.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/base.html",
-      "sourcePath": "frontend/templates/base.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base or '/' }}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20or%20'/'%20%7D%7D.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/base.html",
-      "sourcePath": "frontend/templates/base.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base or '/' }}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20or%20'/'%20%7D%7D.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/dashboard.html",
-      "sourcePath": "frontend/templates/dashboard.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/sites",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/sites.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/dashboard.html",
-      "sourcePath": "frontend/templates/dashboard.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/sites/{{ website.id }}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/sites/%7B%7B%20website.id%20%7D%7D.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/home.html",
-      "sourcePath": "frontend/templates/home.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/auth/github/login?next={{ (login_next or (ui_base or '/')) | urlencode }}{% if login_app_slug %}&app={{ login_app_slug | urlencode }}{% endif %}{% if login_force_owner %}&owner=1{% endif %}",
-      "textRole": "Login with GitHub",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/auth/github/login.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/home.html",
-      "sourcePath": "frontend/templates/home.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/auth/google/login?next={{ (login_next or (ui_base or '/')) | urlencode }}{% if login_app_slug %}&app={{ login_app_slug | urlencode }}{% endif %}{% if login_force_owner %}&owner=1{% endif %}",
-      "textRole": "Login with Google",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/auth/google/login.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/site_detail.html",
-      "sourcePath": "frontend/templates/site_detail.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/app/login?app={{ website.slug | urlencode }}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/app/login.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/site_detail.html",
-      "sourcePath": "frontend/templates/site_detail.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/sites",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/sites.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:frontend/templates/sites.html",
-      "sourcePath": "frontend/templates/sites.html",
-      "sourceRepo": "pidp",
-      "href": "{{ ui_base }}/sites/{{ website.id }}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "%7B%7B%20ui_base%20%7D%7D/sites/%7B%7B%20website.id%20%7D%7D.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:migrate_encrypt_identity_data.py",
-      "sourcePath": "migrate_encrypt_identity_data.py",
-      "sourceRepo": "pidp",
-      "href": "store_true",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "store_true.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:serverless/src/index.ts",
-      "sourcePath": "serverless/src/index.ts",
-      "sourceRepo": "pidp",
-      "href": "/app/login",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "app/login.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:serverless/src/profilePage.ts",
-      "sourcePath": "serverless/src/profilePage.ts",
-      "sourceRepo": "pidp",
-      "href": "${escapeHtml(item.href)}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "$%7BescapeHtml(item.href)%7D.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:serverless/src/profilePage.ts",
-      "sourcePath": "serverless/src/profilePage.ts",
-      "sourceRepo": "pidp",
-      "href": "${escapeHtml(item.href)}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "$%7BescapeHtml(item.href)%7D.html",
-      "fragment": ""
-    },
-    {
-      "source": "pidp:serverless/src/profilePage.ts",
-      "sourcePath": "serverless/src/profilePage.ts",
-      "sourceRepo": "pidp",
-      "href": "${escapeHtml(qrDownloadUrl)}",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "pidp",
-      "target": "$%7BescapeHtml(qrDownloadUrl)%7D.html",
       "fragment": ""
     }
   ]

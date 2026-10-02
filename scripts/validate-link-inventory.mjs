@@ -52,6 +52,10 @@ const ecosystemLinks = new Set([
   ...ecosystemData.financing.map(f => f.sourceUrl),
 ].filter(Boolean))
 const knownPortalRoutes = new Set([
+  '/users/login',
+  '/users/register',
+  '/people',
+  '/search',
   '/branding',
   '/chat',
   '/org-events',

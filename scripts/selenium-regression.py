@@ -18,7 +18,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-PORTAL_URL = "https://lifetech.fyi/users/login"
 
 
 def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
@@ -303,14 +302,11 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         const heroImageStyle = getComputedStyle(document.querySelector('.hero-image'));
         const heroOverlayStyle = getComputedStyle(document.querySelector('.hero'), '::before');
         const heroImageSrc = document.querySelector('.hero-image')?.currentSrc || document.querySelector('.hero-image')?.src || '';
-        const actionStrip = document.querySelector('.action-strip').getBoundingClientRect();
-        const pathways = document.querySelector('.pathways').getBoundingClientRect();
-        const glossary = document.querySelector('.glossary').getBoundingClientRect();
         const bodyText = document.body.textContent;
         return {
           title: document.title,
           bodyText,
-          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href === 'https://lifetech.fyi/users/login'),
+          loginHrefs: Array.from(document.querySelectorAll('a')).map((link) => link.href).filter((href) => href === new URL('/users/login', location.origin).href),
           headerLoginHref: document.querySelector('header .account-controls a.button')?.href || '',
           heroLeft: hero.left,
           heroRight: hero.right,
@@ -332,17 +328,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
           imageObjectPosition: heroImageStyle.objectPosition,
           heroImageSrc,
           heroTitle: document.querySelector('.hero-copy h1')?.textContent.trim() || '',
-          actionTop: actionStrip.top,
-          actionBottom: actionStrip.bottom,
-          actionCount: document.querySelectorAll('.action-strip a').length,
-          pathwaysTop: pathways.top,
-          pathwayCount: document.querySelectorAll('.pathway-card').length,
-          pathwayTitles: Array.from(document.querySelectorAll('.pathway-card h3'), (title) => title.textContent.trim()),
-          glossaryTop: glossary.top,
-          glossaryEntryCount: document.querySelectorAll('.glossary-entry').length,
-          glossaryTitles: Array.from(document.querySelectorAll('.glossary-entry h3'), (title) => title.textContent.trim()),
-          glossaryRegionalText: document.querySelector('.glossary-lede')?.textContent || '',
-          revealEnabled: document.documentElement.classList.contains('reveal-enabled'),
+          mainSectionCount: document.querySelectorAll('main > section').length,
           footerPresent: !!document.querySelector('.site-footer'),
           navEnhanced: document.documentElement.classList.contains('nav-enhanced'),
           navOpenInitial: document.getElementById('primary-nav')?.classList.contains('is-open') || false
@@ -354,7 +340,8 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: unexpected title {metrics['title']!r}")
     if "LifeTech" not in metrics["bodyText"]:
         raise AssertionError(f"{viewport} home: missing LifeTech body text")
-    if metrics["headerLoginHref"] != PORTAL_URL or PORTAL_URL not in metrics["loginHrefs"]:
+    portal_url = f"{base_url.rstrip('/')}/users/login"
+    if metrics["headerLoginHref"] != portal_url or portal_url not in metrics["loginHrefs"]:
         raise AssertionError(f"{viewport} home: login links did not target the LifeTech portal profile: {metrics}")
     if "lifetech-hero" not in metrics["heroImageSrc"]:
         raise AssertionError(f"{viewport} home: hero background should use the LifeTech editorial image: {metrics}")
@@ -366,20 +353,10 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: hero no longer forms a focused opening chapter: {metrics}")
     if "Next LifeTech event" in metrics["bodyText"] and "6:00 PM" not in metrics["bodyText"]:
         raise AssertionError(f"{viewport} home: next-event card must render in Baltimore time: {metrics}")
-    if metrics["actionCount"] != 4 or metrics["actionTop"] > metrics["heroBottom"] or metrics["actionBottom"] <= metrics["heroBottom"]:
-        raise AssertionError(f"{viewport} home: action strip must bridge the hero and next section: {metrics}")
-    if metrics["pathwaysTop"] < metrics["actionBottom"] - 2:
-        raise AssertionError(f"{viewport} home: pathways must follow the action strip: {metrics}")
+    if metrics["mainSectionCount"] != 1:
+        raise AssertionError(f"{viewport} home: content below the hero should live on About Us")
     if metrics["heroTitle"] != "Better care starts with a better-connected city.":
         raise AssertionError(f"{viewport} home: editorial promise is missing: {metrics}")
-    if metrics["pathwayCount"] != 3 or metrics["pathwayTitles"] != ["General Calendar", "Medical map", "LifeTech index"]:
-        raise AssertionError(f"{viewport} home: community pathways are incomplete: {metrics}")
-    if metrics["glossaryEntryCount"] != 3 or metrics["glossaryTitles"] != ["Health", "Medicine", "Biotech"]:
-        raise AssertionError(f"{viewport} home: regional glossary fields are incomplete: {metrics}")
-    if "specific to the Baltimore regional medical community" not in metrics["glossaryRegionalText"]:
-        raise AssertionError(f"{viewport} home: glossary regional context is missing: {metrics}")
-    if not metrics["revealEnabled"]:
-        raise AssertionError(f"{viewport} home: progressive scroll reveal did not initialize: {metrics}")
     if not metrics["footerPresent"] or not metrics["navEnhanced"]:
         raise AssertionError(f"{viewport} home: navigation or footer enhancement is missing: {metrics}")
     if metrics["navOpenInitial"]:
@@ -418,6 +395,27 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         metrics["mobileNavCheck"] = nav_metrics
 
     metrics["themeCheck"] = assert_theme_control(driver, viewport, screenshot_dir)
+
+    driver.find_element(By.LINK_TEXT, "Explore the community").click()
+    settle(driver)
+    if urlparse(driver.current_url).path != "/about.html":
+        raise AssertionError("Explore the community must open About Us")
+    assert_no_horizontal_overflow(driver, f"{viewport} about")
+    about = driver.execute_script("""
+      return {
+        title: document.querySelector('#about-title')?.textContent.trim(),
+        headingBottom: document.querySelector('main > section').getBoundingClientRect().bottom,
+        actionTop: document.querySelector('.action-strip').getBoundingClientRect().top,
+        pathways: [...document.querySelectorAll('.pathway-card h3')].map(n => n.textContent.trim()),
+        glossary: [...document.querySelectorAll('.glossary-entry h3')].map(n => n.textContent.trim()),
+        revealEnabled: document.documentElement.classList.contains('reveal-enabled')
+      };
+    """)
+    if about["title"] != "About Us" or about["pathways"] != ["General Calendar", "Medical map", "LifeTech index"] or about["glossary"] != ["Health", "Medicine", "Biotech"]:
+        raise AssertionError(f"{viewport} about: moved content is incomplete: {about}")
+    if about["actionTop"] < about["headingBottom"] - 2 or not about["revealEnabled"]:
+        raise AssertionError(f"{viewport} about: content overlaps or reveal is unavailable: {about}")
+    metrics["aboutCheck"] = about
 
     driver.execute_script("document.querySelector('.pathway-grid').scrollIntoView({block: 'center', behavior: 'instant'})")
     WebDriverWait(driver, 10).until(

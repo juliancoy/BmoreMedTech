@@ -168,8 +168,9 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
   const tenantLogin = await worker.fetch(new Request('https://lifetech.fyi/users/login', {
     headers: { accept: 'text/html' },
   }), env)
-  assert.equal(tenantLogin.status, 302)
-  assert.equal(tenantLogin.headers.get('location'), 'https://lifetech.fyi/users/login?portalProfile=baltimore-medtech')
+  assert.equal(tenantLogin.status, 200)
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
+  assert.equal(tenantLogin.headers.has('location'), false)
 
   const fetchCountBeforeStaticCalendar = seen.length
   const staticCalendar = await worker.fetch(new Request('https://lifetech.fyi/calendar', {

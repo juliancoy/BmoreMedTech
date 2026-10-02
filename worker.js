@@ -341,11 +341,6 @@ export default {
     const url = new URL(request.url)
     if (request.method === 'OPTIONS') return preflightResponse(request)
 
-    if (['/users/login', '/users/register'].includes(url.pathname) && !url.searchParams.has('portalProfile')) {
-      url.searchParams.set('portalProfile', 'baltimore-medtech')
-      return Response.redirect(url.toString(), 302)
-    }
-
     if (url.pathname === '/community' || url.pathname.startsWith('/community/')) {
       return Response.redirect(`${url.origin}/`, 301)
     }

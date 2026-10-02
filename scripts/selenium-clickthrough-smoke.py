@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import argparse
 import os
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit, parse_qs
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -41,6 +41,9 @@ def visible_text(driver: webdriver.Remote) -> str:
 
 
 def assert_no_broken_images(driver: webdriver.Remote, label: str) -> None:
+    WebDriverWait(driver, 30).until(
+        lambda d: d.execute_script("return Array.from(document.images).every(img => img.complete)")
+    )
     broken = driver.execute_script(
         """
         return Array.from(document.images)
@@ -128,47 +131,32 @@ def click_current_login(driver: webdriver.Remote) -> None:
     settle(driver)
 
 
-def simulate_login(driver: webdriver.Remote, base_url: str) -> None:
-    driver.get(urljoin(base_url, "/users/login"))
-    settle(driver)
-    WebDriverWait(driver, 45).until(lambda d: "Welcome to LifeTech" in visible_text(d))
-    if driver.title != "LifeTech Portal • User login":
-        raise AssertionError(f"Login did not pick the LifeTech tenant: {driver.title}")
+def assert_tenant_login(driver: webdriver.Remote, base_url: str) -> None:
+    tenant = driver.execute_async_script("""
+        const done = arguments[arguments.length - 1];
+        fetch('/api/org/api/portal/tenant').then(response => {
+          if (!response.ok) throw new Error(`Tenant lookup: ${response.status}`);
+          return response.json();
+        }).then(done).catch(error => done({error: String(error)}));
+    """)
+    if tenant.get('error') or not tenant.get('name'):
+        raise AssertionError(f"Tenant configuration unavailable: {tenant}")
+    WebDriverWait(driver, 45).until(
+        lambda d: f"Welcome to {tenant['name']}" in visible_text(d)
+    )
+    if urlsplit(driver.current_url).netloc != urlsplit(base_url).netloc:
+        raise AssertionError(f"Login left its tenant: {driver.current_url}")
     assert_no_broken_images(driver, "login")
-
-    form_count = driver.execute_script("return document.querySelectorAll('form').length")
-    if form_count < 1:
-        raise AssertionError("Login page did not expose an email/password form")
-
-    submitted = driver.execute_script(
-        """
-        const form = Array.from(document.querySelectorAll('form'))
-          .find((candidate) => candidate.querySelector('input[type="password"]'));
-        if (!form) return { ok: false, reason: 'missing password form' };
-        const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
-        for (const input of form.querySelectorAll('input')) {
-          const key = `${input.name} ${input.id} ${input.placeholder} ${input.getAttribute('aria-label') || ''}`.toLowerCase();
-          if (input.type === 'email' || key.includes('email')) setValue.call(input, 'selenium.invalid@example.com');
-          if (input.type === 'password' || key.includes('password')) setValue.call(input, 'not-a-real-password-123');
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-        const button = form.querySelector('button[type="submit"], input[type="submit"], button:not([type])');
-        if (!button) return { ok: false, reason: 'missing submit button' };
-        button.click();
-        return { ok: true, label: button.textContent || button.value || '' };
-        """
-    )
-    if not submitted["ok"]:
-        raise AssertionError(f"Login form could not be submitted: {submitted}")
-
-    WebDriverWait(driver, 30).until(
-        lambda d: d.find_elements(By.ID, 'user-login-error')
-        and d.find_element(By.ID, 'user-login-error').is_displayed()
-        and d.find_element(By.ID, 'user-login-error').text.strip()
-    )
-    if "Page not found" in visible_text(driver):
-        raise AssertionError("Fake login routed to Page not found")
+    for label in ('Continue with email', 'Continue with Google', 'Continue with GitHub'):
+        links = driver.find_elements(By.XPATH, f"//a[@aria-label='{label}' or normalize-space(.)='{label}']")
+        if len(links) != 1:
+            raise AssertionError(f"Missing sign-in option: {label}")
+        target = urlsplit(links[0].get_attribute('href'))
+        if target.netloc != urlsplit(base_url).netloc or target.path != '/pidp/auth/sso/start':
+            raise AssertionError(f"Sign-in bypasses tenant PIdP proxy: {target.geturl()}")
+        callback = urlsplit(parse_qs(target.query).get('next', [''])[0])
+        if callback.netloc != urlsplit(base_url).netloc or callback.path != '/auth/callback':
+            raise AssertionError(f"Sign-in callback lost tenant: {callback.geturl()}")
 
 
 def run(base_url: str, selenium_url: str) -> None:
@@ -187,16 +175,10 @@ def run(base_url: str, selenium_url: str) -> None:
         driver.get(urljoin(base_url, "/"))
         settle(driver)
         click_current_login(driver)
-        WebDriverWait(driver, 45).until(lambda d: "Welcome to LifeTech" in visible_text(d))
-        assert_no_broken_images(driver, "login clickthrough")
+        assert_tenant_login(driver, base_url)
     finally:
         driver.quit()
 
-    driver = new_driver(selenium_url, 390, 844)
-    try:
-        simulate_login(driver, base_url)
-    finally:
-        driver.quit()
 
 
 def main() -> None:

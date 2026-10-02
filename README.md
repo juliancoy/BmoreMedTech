@@ -20,6 +20,11 @@ the MedTech site and Selenium harness:
 python run.py start --medtech-only
 ```
 
+Local portal branding comes from OrgPortal's domain registry. Set the registered
+tenant hostname with `--tenant-host`, `PORTAL_TENANT_HOST`, or a single line in
+`.local/tenant-host` (kept outside Git). The launcher forwards it only for the
+portal tenant lookup; OrgPortal remains responsible for branding and permissions.
+
 ## Link Inventory
 
 The repository intentionally does not generate an exhaustive click-through

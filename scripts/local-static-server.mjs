@@ -13,6 +13,7 @@ const orgApiOrigin = process.env.ORG_API_ORIGIN || 'https://org-codecollective.j
 const chatApiOrigin = process.env.CHAT_API_ORIGIN || 'https://chat-codecollective.jcloiacon.workers.dev'
 const pidpApiOrigin = process.env.PIDP_PROXY_ORIGIN || process.env.PIDP_API_ORIGIN || 'https://pidp-codecollective.jcloiacon.workers.dev'
 const portalSiteOrigin = process.env.PORTAL_SITE_ORIGIN || 'https://codecollective.us'
+const portalTenantHost = process.env.PORTAL_TENANT_HOST || ''
 const allowedCorsOrigins = new Set([
   'https://baltimore-medtech.jcloiacon.workers.dev',
   'https://baltimoremedtech.org',
@@ -233,8 +234,7 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
       targetUrl.pathname = requestUrl.pathname.slice(stripPrefix.length) || '/'
     }
     const proxiedRequest = webRequest(req, targetUrl)
-    // Local hosts use the existing registered MedTech tenant through the portal's tenant lookup.
-    proxiedRequest.headers.set('x-forwarded-host', requestUrl.pathname === '/api/org/api/portal/tenant' ? 'medtech.social' : req.headers.host || '')
+    proxiedRequest.headers.set('x-forwarded-host', requestUrl.pathname === '/api/org/api/portal/tenant' && portalTenantHost ? portalTenantHost : req.headers.host || '')
     proxiedRequest.headers.set('x-forwarded-proto', requestUrl.protocol.replace(':', ''))
     if (stripPrefix) proxiedRequest.headers.set('x-forwarded-prefix', stripPrefix)
     const response = await fetch(targetUrl, {

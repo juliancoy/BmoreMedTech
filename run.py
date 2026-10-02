@@ -401,6 +401,8 @@ def start_site(args: argparse.Namespace) -> None:
         "TLS_CERT_FILE": "/certs/localhost.crt",
         "TLS_KEY_FILE": "/certs/localhost.key",
     }
+    if args.tenant_host:
+        environment["PORTAL_TENANT_HOST"] = args.tenant_host
     if args.org_api_origin:
         environment["ORG_API_ORIGIN"] = args.org_api_origin
     if args.pidp_origin:
@@ -534,6 +536,8 @@ def status(_args: argparse.Namespace) -> None:
 
 
 def add_common_options(parser: argparse.ArgumentParser) -> None:
+    tenant_host_file = root / ".local" / "tenant-host"
+    parser.add_argument("--tenant-host", default=os.getenv("PORTAL_TENANT_HOST", tenant_host_file.read_text().strip() if tenant_host_file.is_file() else ""), help="Registered portal tenant hostname for local branding.")
     parser.add_argument("--site-port", type=int, default=int(os.getenv("BMORE_MEDTECH_SITE_PORT", "8769")))
     parser.add_argument("--selenium-port", type=int, default=int(os.getenv("BMORE_MEDTECH_SELENIUM_PORT", "4445")))
     parser.add_argument("--site-container-name", default=os.getenv("BMORE_MEDTECH_SITE_CONTAINER", f"{PREFIX}site"))

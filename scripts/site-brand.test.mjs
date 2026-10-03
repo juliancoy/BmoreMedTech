@@ -69,3 +69,14 @@ test('MedTech showcase preserves image provenance and local index connections', 
   assert.ok(medtech.includes('CT / CAT scanning'))
   assert.ok(medtech.includes('MRI · Baltimore'))
 })
+
+test('Drive carousel stays on MedTech and links the requested source folder', () => {
+  const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+  const medtech = renderSiteBrand(template, siteBrand('medtech'))
+  const lifetech = renderSiteBrand(template, siteBrand('lifetech'))
+  assert.ok(medtech.includes('id="community-photos"'))
+  assert.ok(medtech.includes('id="drive-carousel"'))
+  assert.ok(medtech.includes('https://drive.google.com/drive/folders/1PoJ9KQvInRhJeoY91ODJ-915_eGuPAmb'))
+  assert.ok(!lifetech.includes('id="drive-carousel"'))
+  assert.ok(!lifetech.includes('1PoJ9KQvInRhJeoY91ODJ-915_eGuPAmb'))
+})

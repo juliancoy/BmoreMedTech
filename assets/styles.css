@@ -3742,3 +3742,13 @@ h2 {
 .showcase-index-link { display: inline-block; margin-top: 16px; color: var(--blue); font-weight: 750; line-height: 1.5; }
 @media (max-width: 1000px) { .hero-spotlight { margin-bottom: 40px; } }
 @media (max-width: 700px) { .showcase-grid { grid-template-columns: 1fr; } .hero-spotlight figcaption { padding: 18px; } }
+
+.drive-carousel-section { max-width: 1440px; margin: 0 auto; padding: clamp(48px, 7vw, 100px) clamp(22px, 5vw, 76px) 0; }
+.drive-carousel-tabs, .drive-carousel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 20px 0; }
+.drive-carousel-tabs button, .drive-carousel-actions button { padding: 12px 20px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); background: var(--paper); font: inherit; cursor: pointer; }
+.drive-carousel-tabs button[aria-pressed="true"] { background: var(--blue); color: var(--paper); }
+.drive-carousel-tabs button:disabled, .drive-carousel-actions button:disabled { opacity: .5; cursor: default; }
+.drive-carousel-slide { margin: 0; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--paper); }
+.drive-carousel-slide > a { display: flex; align-items: center; justify-content: center; background: #061a26; }
+.drive-carousel-slide img { display: block; width: 100%; height: clamp(240px, 55vw, 620px); object-fit: contain; color: #fff; }
+.drive-carousel-slide figcaption { padding: 18px 22px; overflow-wrap: anywhere; }

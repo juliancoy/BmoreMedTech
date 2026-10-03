@@ -1,5 +1,17 @@
 import { createElement, Menu, MessageCircle, UserRound } from 'lucide';
 
+
+let siteAccount = { user: null, token: null, pending: true }
+let resolveAccountReady
+export const accountReady = new Promise(resolve => { resolveAccountReady = resolve })
+export function getSiteAccount() { return siteAccount }
+function publishSiteAccount(user, token) {
+  const changed = siteAccount.pending || siteAccount.user?.id !== user?.id || siteAccount.token !== token
+  siteAccount = { user, token, pending: false }
+  resolveAccountReady(siteAccount)
+  if (changed) window.dispatchEvent(new Event('site-account-change'))
+}
+
 const THEME_STORAGE_KEY = 'lifetech.theme';
 const VALID_MODES = new Set(['system', 'light', 'dark']);
 
@@ -212,7 +224,7 @@ function setupPrimaryNavigation() {
 async function setupAuthNavigation() {
   const header = document.querySelector('.site-header')
   const login = header?.querySelector('a[href*="/users/login"]')
-  if (!login) return
+  if (!login) { publishSiteAccount(null, null); return }
   const controls = document.createElement('div')
   controls.className = 'account-controls'
   controls.setAttribute('role', 'group')
@@ -244,6 +256,7 @@ async function setupAuthNavigation() {
       if (typeof session.access_token === 'string' && session.access_token.trim()) token = session.access_token.trim()
     }
     if (!token) {
+      if (current === sequence) publishSiteAccount(null, null)
       if (response.status === 401 && current === sequence) { controls.replaceChildren(login); header.classList.remove('has-account'); renderedUserId = null; updateEntryLinks(false) }
       return
     }
@@ -254,6 +267,7 @@ async function setupAuthNavigation() {
     })
     if (current !== sequence) return
     if (!profileResponse.ok) {
+      publishSiteAccount(null, null)
       if (profileResponse.status === 401 || profileResponse.status === 403) {
         try { localStorage.removeItem('orgportal.auth.accessToken') } catch { /* Storage may be disabled. */ }
         controls.replaceChildren(login); header.classList.remove('has-account'); renderedUserId = null; updateEntryLinks(false)
@@ -261,7 +275,10 @@ async function setupAuthNavigation() {
       return
     }
     const user = await profileResponse.json()
-    if (current !== sequence || !user.id || !user.email || renderedUserId === user.id) return
+    if (current !== sequence) return
+    if (!user.id || !user.email) { publishSiteAccount(null, null); return }
+    publishSiteAccount(user, token)
+    if (renderedUserId === user.id) return
     renderedUserId = user.id
     const name = user.identity_data?.display_name || user.full_name || user.email
     const icon = (node) => createElement(node, { width: 20, height: 20, 'aria-hidden': 'true' })
@@ -323,6 +340,7 @@ async function setupAuthNavigation() {
         const result = await fetch('/pidp/auth/session/logout', { method: 'POST', credentials: 'include' })
         if (!result.ok) throw new Error('Sign out failed')
         try { localStorage.removeItem('orgportal.auth.accessToken') } catch { /* Storage may be disabled. */ }
+        publishSiteAccount(null, null)
         location.reload()
       } catch {
         error.textContent = 'Unable to sign out. Please try again.'
@@ -347,6 +365,7 @@ async function setupAuthNavigation() {
     })
 
    } catch {
+     if (current === sequence) publishSiteAccount(null, null)
     // A transient request failure keeps the last validated account display.
    }
   }

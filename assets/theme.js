@@ -222,22 +222,47 @@ async function setupAuthNavigation() {
   login.textContent = 'Login'
   login.className = 'button account-login'
 
-  try {
+  const entryLinks = [...document.querySelectorAll('a[href]')]
+    .filter(link => link !== login && new URL(link.href).pathname === '/users/login')
+    .map(link => ({ link, href: link.getAttribute('href'), text: link.textContent }))
+  function updateEntryLinks(signedIn) {
+    for (const {link, href, text} of entryLinks) { link.setAttribute('href', signedIn ? '/profile' : href); link.textContent = signedIn ? 'My account' : text }
+  }
+  let sequence = 0
+  let renderedUserId = null
+  async function hydrateAccount() {
+   const current = ++sequence
+   try {
+    let token = null
+    try { token = localStorage.getItem('orgportal.auth.accessToken')?.trim() || null } catch { /* Storage may be disabled. */ }
     const response = await fetch('/pidp/auth/session-token', {
       credentials: 'include',
       cache: 'no-store',
     })
-    if (!response.ok) return
-    const session = await response.json()
-    if (typeof session.access_token !== 'string' || !session.access_token.trim()) return
+    if (response.ok) {
+      const session = await response.json()
+      if (typeof session.access_token === 'string' && session.access_token.trim()) token = session.access_token.trim()
+    }
+    if (!token) {
+      if (response.status === 401 && current === sequence) { controls.replaceChildren(login); header.classList.remove('has-account'); renderedUserId = null; updateEntryLinks(false) }
+      return
+    }
     const profileResponse = await fetch('/pidp/auth/me', {
       credentials: 'include',
       cache: 'no-store',
-      headers: { Authorization: `Bearer ${session.access_token}` },
+      headers: { Authorization: `Bearer ${token}` },
     })
-    if (!profileResponse.ok) return
+    if (current !== sequence) return
+    if (!profileResponse.ok) {
+      if (profileResponse.status === 401 || profileResponse.status === 403) {
+        try { localStorage.removeItem('orgportal.auth.accessToken') } catch { /* Storage may be disabled. */ }
+        controls.replaceChildren(login); header.classList.remove('has-account'); renderedUserId = null; updateEntryLinks(false)
+      }
+      return
+    }
     const user = await profileResponse.json()
-    if (!user.id || !user.email) return
+    if (current !== sequence || !user.id || !user.email || renderedUserId === user.id) return
+    renderedUserId = user.id
     const name = user.identity_data?.display_name || user.full_name || user.email
     const icon = (node) => createElement(node, { width: 20, height: 20, 'aria-hidden': 'true' })
     const profile = document.createElement('a')
@@ -297,6 +322,7 @@ async function setupAuthNavigation() {
       try {
         const result = await fetch('/pidp/auth/session/logout', { method: 'POST', credentials: 'include' })
         if (!result.ok) throw new Error('Sign out failed')
+        try { localStorage.removeItem('orgportal.auth.accessToken') } catch { /* Storage may be disabled. */ }
         location.reload()
       } catch {
         error.textContent = 'Unable to sign out. Please try again.'
@@ -308,6 +334,7 @@ async function setupAuthNavigation() {
     menu.append(summary, items)
     controls.replaceChildren(profile, messages, menu)
     header.classList.add('has-account')
+    updateEntryLinks(true)
     document.addEventListener('click', (event) => {
       if (!menu.contains(event.target)) menu.open = false
     })
@@ -319,9 +346,14 @@ async function setupAuthNavigation() {
       }
     })
 
-  } catch {
-    // An unavailable or non-JSON session endpoint must never imply a signed-in user.
+   } catch {
+    // A transient request failure keeps the last validated account display.
+   }
   }
+  void hydrateAccount()
+  window.addEventListener('pageshow', () => void hydrateAccount())
+  window.addEventListener('focus', () => void hydrateAccount())
+  window.addEventListener('storage', (event) => { if (event.key === 'orgportal.auth.accessToken') void hydrateAccount() })
 }
 
 setupThemeControls();

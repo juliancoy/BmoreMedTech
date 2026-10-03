@@ -3718,3 +3718,27 @@ h2 {
 .technology-invitation h3 { font-size: 1.5rem; margin-bottom: 10px; }
 .technology-invitation .button { flex-shrink: 0; }
 @media (max-width: 700px) { .technology-grid { grid-template-columns: 1fr; } .technology-invitation { flex-direction: column; align-items: flex-start; } }
+
+.hero-spotlight { margin: 0; overflow: hidden; border: 1px solid rgba(157, 231, 238, .35); border-radius: 20px; background: #0b2634; box-shadow: 0 28px 70px rgba(0, 0, 0, .3); color: #fff; }
+.hero-spotlight img { display: block; width: 100%; height: auto; }
+.hero-spotlight figcaption { padding: 22px 24px; }
+.hero-spotlight figcaption span { display: block; color: #9de7ee; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+.hero-spotlight figcaption strong { display: block; margin: 8px 0 12px; font-size: 1.8rem; }
+.hero-spotlight figcaption a { color: rgba(255, 255, 255, .8); font-size: .8rem; line-height: 1.6; }
+.showcase-section { max-width: 1440px; margin: 0 auto; padding: clamp(48px, 7vw, 100px) clamp(22px, 5vw, 76px) 0; }
+.showcase-group-title { margin: 40px 0 20px; font-size: 1.3rem; }
+.showcase-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; }
+.showcase-card { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); }
+.showcase-card figure { margin: 0; }
+.showcase-image-link { display: block; background: #0b2634; }
+.showcase-card img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: contain; }
+.showcase-card figcaption { padding: 10px 24px; border-bottom: 1px solid var(--line); font-size: .75rem; line-height: 1.5; color: var(--muted); }
+.showcase-card figcaption a { color: inherit; }
+.showcase-card-copy { padding: 24px; }
+.showcase-card-copy h4 { margin: 12px 0 16px; font-size: clamp(1.5rem, 2.2vw, 2.1rem); line-height: 1.15; letter-spacing: -.035em; }
+.showcase-card-copy > p { line-height: 1.65; }
+.showcase-card-copy .eyebrow { font-size: .7rem; }
+.showcase-card-copy .showcase-company { font-weight: 750; }
+.showcase-index-link { display: inline-block; margin-top: 16px; color: var(--blue); font-weight: 750; line-height: 1.5; }
+@media (max-width: 1000px) { .hero-spotlight { margin-bottom: 40px; } }
+@media (max-width: 700px) { .showcase-grid { grid-template-columns: 1fr; } .hero-spotlight figcaption { padding: 18px; } }

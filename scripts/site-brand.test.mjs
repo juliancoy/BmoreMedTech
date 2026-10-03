@@ -43,3 +43,29 @@ test('medical technology showcase belongs only to MedTech', () => {
   assert.ok(!medtech.includes('{{home.'))
   assert.ok(!lifetech.includes('{{home.'))
 })
+
+test('MedTech showcase preserves image provenance and local index connections', () => {
+  const showcase = JSON.parse(readFileSync(new URL('../lib/medtech-showcase.json', import.meta.url)))
+  const organizations = JSON.parse(readFileSync(new URL('../assets/data/ecosystem.json', import.meta.url))).organizations
+  const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+  const medtech = renderSiteBrand(template, siteBrand('medtech'))
+  const lifetech = renderSiteBrand(template, siteBrand('lifetech'))
+  assert.equal(showcase.entries.length, 6)
+  for (const entry of showcase.entries) {
+    assert.ok(readFileSync(new URL(`..${entry.image}`, import.meta.url)).length > 1000)
+    assert.ok(medtech.includes(entry.image))
+    assert.ok(medtech.includes(entry.sourceUrl))
+    assert.ok(!lifetech.includes(entry.image))
+    assert.equal(new URL(entry.sourceImageUrl).protocol, 'https:')
+    if (entry.indexOrganizationId) {
+      assert.ok(organizations.some(organization => organization.id === entry.indexOrganizationId && organization.directory), `${entry.name}: missing index organization`)
+      const directory = readFileSync(new URL('../ecosystem/index.html', import.meta.url), 'utf8')
+      assert.ok(directory.includes(`id="${entry.indexOrganizationId}"`), `${entry.name}: missing directory anchor`)
+    }
+  }
+  assert.ok(!lifetech.includes('showcase-section'))
+  assert.ok(!lifetech.includes('hero-spotlight'))
+  assert.ok(!medtech.includes('{{home.'))
+  assert.ok(medtech.includes('CT / CAT scanning'))
+  assert.ok(medtech.includes('MRI · Baltimore'))
+})

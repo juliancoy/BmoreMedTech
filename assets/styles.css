@@ -3703,3 +3703,18 @@ h2 {
 .about-body .action-strip {
   margin-top: 0;
 }
+
+/* MedTech's technology showcase is supplied by its brand configuration. */
+.technology-section { max-width: 1440px; margin: 0 auto; padding: clamp(48px, 7vw, 100px) clamp(22px, 5vw, 76px); }
+.technology-heading { max-width: 760px; margin-bottom: 36px; }
+.technology-heading h2 { font-size: clamp(2.2rem, 4vw, 4rem); line-height: 1.05; letter-spacing: -.04em; margin: 12px 0 20px; }
+.technology-heading > p:last-child, .technology-card > p:last-child, .technology-invitation p { line-height: 1.65; }
+.technology-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.technology-card { position: relative; padding: clamp(24px, 3vw, 40px); border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(135deg, rgba(91, 215, 229, .09), transparent); }
+.technology-number { display: block; font-size: 2.5rem; font-weight: 700; color: var(--blue); margin-bottom: 24px; }
+.technology-card h3 { font-size: clamp(1.5rem, 2.5vw, 2.1rem); line-height: 1.2; margin: 12px 0 16px; }
+.technology-card .eyebrow { font-size: .75rem; }
+.technology-invitation { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 36px; padding-top: 32px; border-top: 1px solid var(--line); }
+.technology-invitation h3 { font-size: 1.5rem; margin-bottom: 10px; }
+.technology-invitation .button { flex-shrink: 0; }
+@media (max-width: 700px) { .technology-grid { grid-template-columns: 1fr; } .technology-invitation { flex-direction: column; align-items: flex-start; } }

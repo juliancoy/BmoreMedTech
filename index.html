@@ -6,12 +6,12 @@
     <title>LifeTech</title>
     <meta
       name="description"
-      content="LifeTech connects health, medicine, and biotech to strengthen Baltimore's medical community and improve care."
+      content="{{home.description}}"
     />
     <meta property="og:title" content="LifeTech" />
     <meta
       property="og:description"
-      content="A recurring meetup connecting health, medicine, and biotech in Baltimore."
+      content="{{home.description}}"
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://lifetech.fyi/" />
@@ -24,7 +24,7 @@
     <meta property="og:image:alt" content="LifeTech — Health × Medicine × Biotech" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="LifeTech" />
-    <meta name="twitter:description" content="A recurring meetup connecting health, medicine, and biotech in Baltimore." />
+    <meta name="twitter:description" content="{{home.description}}" />
     <meta name="twitter:image" content="https://lifetech.fyi/assets/images/lifetech-social-preview.png" />
     <link rel="icon" type="image/png" href="/assets/images/lifetech-logo.png" />
     <link rel="apple-touch-icon" href="/assets/images/lifetech-logo.png" />
@@ -95,10 +95,9 @@
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Health <span>&times;</span> Medicine <span>&times;</span> Biotech</p>
-            <h1 id="hero-title">Better care starts with a better-connected city.</h1>
+            <h1 id="hero-title">{{home.title}}</h1>
             <p>
-              LifeTech brings clinicians, builders, researchers, and founders into one regional community—so
-              useful ideas move closer to patients.
+              {{home.intro}}
             </p>
             <article id="next-medtech-event" class="hero-event" aria-live="polite" hidden></article>
             <div class="hero-actions">
@@ -112,11 +111,12 @@
           </div>
           <div class="hero-place" aria-hidden="true">
             <span>Baltimore, Maryland</span>
-            <strong>Connected care.<br />Built locally.</strong>
+            <strong>{{home.place}}</strong>
           </div>
         </div>
       </section>
 
+      {{home.topics}}
     </main>
 
     <footer class="site-footer">

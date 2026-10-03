@@ -7,7 +7,35 @@
     "social": "/assets/images/baltimore-medtech-social-preview.png",
     "socialWidth": "1200",
     "socialHeight": "630",
-    "themeKey": "bmore-medtech.theme"
+    "themeKey": "bmore-medtech.theme",
+    "home": {
+      "title": "Surgical robots. Smarter devices. New possibilities.",
+      "description": "Explore surgical robotics, medical devices, imaging, and clinical AI with Baltimore’s clinicians, engineers, researchers, and founders.",
+      "intro": "From surgical robots to wearable sensors, Baltimore MedTech connects the people building medical technology with the people who use it. Bring your prototype, your research, or a problem worth solving.",
+      "place": "Medical technology.<br />Built together.",
+      "topics": [
+        {
+          "title": "Surgical robotics",
+          "label": "Precision meets engineering",
+          "description": "Robot-assisted surgery, surgical navigation, simulation, and the instruments that connect engineering to the operating room."
+        },
+        {
+          "title": "Medical devices & wearables",
+          "label": "Hardware with a human purpose",
+          "description": "Connected sensors, prosthetics, rehabilitation tools, and devices shaped by everyday clinical needs."
+        },
+        {
+          "title": "Imaging & diagnostics",
+          "label": "See more. Ask better questions.",
+          "description": "Medical imaging, point-of-care diagnostics, biosensors, and new ways to turn measurements into useful information."
+        },
+        {
+          "title": "Clinical AI & software",
+          "label": "Build with the care team",
+          "description": "Decision support, workflow tools, and clinical data systems—with room to discuss evidence, usability, and real-world evaluation."
+        }
+      ]
+    }
   },
   "lifetech": {
     "name": "LifeTech",
@@ -17,6 +45,13 @@
     "social": "/assets/images/lifetech-social-preview.png",
     "socialWidth": "1733",
     "socialHeight": "908",
-    "themeKey": "lifetech.theme"
+    "themeKey": "lifetech.theme",
+    "home": {
+      "title": "Better care starts with a better-connected city.",
+      "description": "LifeTech connects health, medicine, and biotech to strengthen Baltimore's medical community and improve care.",
+      "intro": "LifeTech brings clinicians, builders, researchers, and founders into one regional community—so useful ideas move closer to patients.",
+      "place": "Connected care.<br />Built locally.",
+      "topics": []
+    }
   }
 }

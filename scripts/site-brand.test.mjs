@@ -31,3 +31,15 @@ test('deployment routes and asset directories keep the sites separate', () => {
   assert.deepEqual(config.env.lifetech.routes.map(route => route.pattern), [new URL(siteBrand('lifetech').origin).hostname])
   assert.throws(() => siteBrand('unknown'), /Unknown site brand/)
 })
+
+test('medical technology showcase belongs only to MedTech', () => {
+  const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+  const medtech = renderSiteBrand(template, siteBrand('medtech'))
+  const lifetech = renderSiteBrand(template, siteBrand('lifetech'))
+  assert.ok(medtech.includes('Surgical robotics'))
+  assert.ok(medtech.includes('Clinical AI &amp; software'))
+  assert.ok(!lifetech.includes('technology-section'))
+  assert.ok(lifetech.includes('Better care starts with a better-connected city.'))
+  assert.ok(!medtech.includes('{{home.'))
+  assert.ok(!lifetech.includes('{{home.'))
+})

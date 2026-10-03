@@ -283,7 +283,7 @@ function isPortalDevAssetPath(pathname) {
 }
 
 function isPortalRoute(pathname) {
-  return pathname === '/availability' || pathname.startsWith('/availability/')
+  return pathname === '/onboarding' || pathname === '/availability' || pathname.startsWith('/availability/')
     || pathname === '/governance' || pathname.startsWith('/governance/')
     || pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')

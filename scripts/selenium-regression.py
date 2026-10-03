@@ -247,7 +247,7 @@ def assert_primary_navigation(driver: webdriver.Remote) -> None:
         assert account.find_element(By.LINK_TEXT, 'My profile').is_displayed()
         if compact:
             assert not toggle.is_displayed()
-            assert account.find_element(By.LINK_TEXT, f'{BRAND_NAME} meetups').is_displayed()
+            assert account.find_element(By.LINK_TEXT, 'Events').is_displayed()
         menu.send_keys(Keys.ESCAPE)
         if compact:
             return
@@ -259,27 +259,31 @@ def assert_primary_navigation(driver: webdriver.Remote) -> None:
         toggle.click()
         WebDriverWait(driver, 5).until(
             lambda d: [item.text for item in nav.find_elements(By.CSS_SELECTOR, '.nav-group > summary')]
-            == ['Events', 'Research']
+            == ['Research', 'Community']
         )
     summaries = nav.find_elements(By.CSS_SELECTOR, '.nav-group > summary')
-    assert [item.text for item in summaries] == ['Events', 'Research']
-    summaries[0].click()
-    events = nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')
-    assert [item.text for item in events] == [
-        f'{BRAND_NAME} meetups', 'Community calendar', 'Event map', 'Find a group meeting time', 'Robert’s Rules of Order'
-    ]
-    assert [urlparse(item.get_attribute('href')).path for item in events] == [
-        '/org-events', '/calendar.html', '/map.html', '/availability', '/governance/roberts'
-    ]
+    assert [item.text for item in summaries] == ['Research', 'Community']
+    for label, path in [('Events', '/org-events'), ('Calendar', '/calendar.html')]:
+        link = nav.find_element(By.LINK_TEXT, label)
+        assert urlparse(link.get_attribute('href')).path == path
     summaries[1].click()
+    community = nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')
+    assert [item.text for item in community] == [
+        'Event map', 'Get involved', 'Find a group meeting time', 'Robert’s Rules of Order'
+    ]
+    assert [urlparse(item.get_attribute('href')).path for item in community] == [
+        '/map.html', '/start.html', '/availability', '/governance/roberts'
+    ]
+    summaries[0].click()
     WebDriverWait(driver, 5).until(lambda d: len(nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')) == 1)
     assert [item.text for item in nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')] == [
         'Medical atlas', 'Datasets', 'Brand guide', f'{BRAND_NAME} ecosystem', 'Relationship network'
     ]
-    summaries[1].send_keys(Keys.ESCAPE)
+    summaries[0].send_keys(Keys.ESCAPE)
     assert not nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')
-    assert driver.switch_to.active_element == summaries[1]
-    assert nav.find_element(By.LINK_TEXT, 'Get involved').get_attribute('href').endswith('/start.html')
+    assert driver.switch_to.active_element == summaries[0]
+    assert nav.find_element(By.CSS_SELECTOR, 'a[href="/start.html"]').get_attribute('href').endswith('/start.html')
+
     if mobile:
         toggle.click()
 
@@ -464,7 +468,7 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
 def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
     driver.get(f"{base_url.rstrip('/')}/calendar")
     settle(driver)
-    WebDriverWait(driver, 30).until(lambda d: d.find_element(By.CSS_SELECTOR, ".event-card"))
+    WebDriverWait(driver, 75).until(lambda d: d.find_element(By.CSS_SELECTOR, ".event-card"))
     WebDriverWait(driver, 30).until(lambda d: d.execute_script("return Array.from(document.querySelectorAll('.event-image')).some(image => image.complete && image.naturalWidth > 0)"))
     assert_no_horizontal_overflow(driver, f"{viewport} calendar")
 
@@ -506,7 +510,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
 def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
     driver.get(f"{base_url.rstrip('/')}/map")
     settle(driver)
-    WebDriverWait(driver, 65).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
+    WebDriverWait(driver, 85).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
     assert_no_horizontal_overflow(driver, f"{viewport} map")
 
     screenshot = screenshot_dir / f"{viewport}-map.png"
@@ -817,7 +821,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         compressed_current_url = driver.current_url
         driver.get(compressed_current_url)
         settle(driver)
-        WebDriverWait(driver, 65).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
+        WebDriverWait(driver, 85).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
         roundtrip = driver.execute_script(
             """
             const sheet = document.getElementById('map-share-sheet');
@@ -1076,10 +1080,10 @@ def run(args: argparse.Namespace) -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run site Selenium regressions.")
-    parser.add_argument("--selenium-url", default=os.environ.get("SELENIUM_URL", "http://127.0.0.1:4444/wd/hub"))
+    parser.add_argument("--selenium-url", default=os.environ.get("SELENIUM_URL", "http://127.0.0.1:4445/wd/hub"))
     parser.add_argument(
         "--base-url",
-        default=os.environ.get("BMORE_MEDTECH_BASE_URL", "https://host.docker.internal:8768"),
+        default=os.environ.get("BMORE_MEDTECH_BASE_URL", "https://host.docker.internal:8769"),
     )
     parser.add_argument(
         "--screenshot-dir",

@@ -87,7 +87,7 @@ function formatEventMeta(event, date) {
 }
 
 function loadJson(url) {
-  return fetch(url, { cache: 'no-store' }).then((response) => {
+  return fetch(url, { cache: url === MEDICAL_EVENTS_SOURCE_URL ? 'default' : 'no-store', signal: AbortSignal.timeout(60000) }).then((response) => {
     if (!response.ok) throw new Error(`Calendar source returned ${response.status}`)
     return response.json()
   })

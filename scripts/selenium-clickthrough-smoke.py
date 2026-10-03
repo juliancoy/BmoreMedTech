@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused Selenium clickthrough checks for the public LifeTech flow."""
+"""Focused Selenium clickthrough checks for the configured local public site."""
 
 from __future__ import annotations
 
@@ -187,7 +187,7 @@ def run(base_url: str, selenium_url: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-url", default=os.environ.get("BMORE_MEDTECH_BASE_URL", "https://medtech.social"))
+    parser.add_argument("--base-url", default=os.environ.get("BMORE_MEDTECH_BASE_URL", "https://host.docker.internal:8769"))
     parser.add_argument("--selenium-url", default=os.environ.get("SELENIUM_URL", "http://127.0.0.1:4445/wd/hub"))
     args = parser.parse_args()
     run(args.base_url.rstrip("/") + "/", args.selenium_url)

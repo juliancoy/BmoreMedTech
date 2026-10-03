@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
   eventImageUrl,
+  parseEventDate,
   isMedicalEvent,
   isLifeTechOwnedEvent,
   medtechEventUrl,
@@ -53,4 +54,13 @@ test('LifeTech event URLs stay on the LifeTech base domain', () => {
     medtechEventUrl({ public_url: 'https://codecollective.us/events/example-event' }),
     'https://lifetech.fyi/events/example-event',
   )
+})
+
+ test('date-only portal events retain their calendar day', () => {
+  const event = normalizeLifeTechPortalEvent({ title: 'November gathering', event_date: '2026-11-17', starts_at: null })
+  const date = parseEventDate(event)
+  assert.equal(date.getFullYear(), 2026)
+  assert.equal(date.getMonth(), 10)
+  assert.equal(date.getDate(), 17)
+  assert.equal(parseEventDate({ startDate: 'invalid' }), null)
 })

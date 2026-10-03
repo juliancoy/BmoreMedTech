@@ -138,7 +138,7 @@ export function normalizeLifeTechPortalEvent(event) {
   return {
     name: event.title || event.name || 'LifeTech event',
     description: event.description || '',
-    startDate: event.starts_at || event.startDate || '',
+    startDate: event.starts_at || event.startDate || event.event_date || '',
     endTime: event.ends_at || event.endTime || '',
     url: medtechEventUrl(event),
     status: 'ACTIVE',
@@ -184,7 +184,8 @@ export function mergeEventSources(...sources) {
 }
 
 export function parseEventDate(event) {
-  const date = new Date(event.startDate)
+  const value = event.startDate || event.starts_at || event.event_date || ''
+  const date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T12:00:00` : value)
   return Number.isNaN(date.getTime()) ? null : date
 }
 

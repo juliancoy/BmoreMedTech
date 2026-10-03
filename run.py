@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Run the LifeTech local test stack in Docker.
+"""Run the configured MedTech or LifeTech local test stack in Docker.
 
 Containers read live source from bind mounts. The test command builds the site,
-serves the built dist directory through the local HTTPS server, starts Selenium,
+serves the selected build directory through the local HTTPS server, starts Selenium,
 and runs the Selenium regression against that mounted server.
 """
 

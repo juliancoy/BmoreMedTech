@@ -856,7 +856,7 @@ async function fetchLayerGeojson(layer) {
   const services = layer.services || [{ url: layer.service, label: layer.label }]
   const collections = await Promise.all(services.map(async (service) => {
     const url = arcgisQueryUrl(service.url, layer, service.label)
-    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(45000) })
+    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(60000) })
     if (!response.ok) throw new Error(`${layer.label} returned ${response.status}`)
     const geojson = await response.json()
     if (!geojson || !Array.isArray(geojson.features)) {
@@ -875,7 +875,7 @@ async function fetchLayerGeojson(layer) {
 }
 
 async function fetchMedicalEventsGeojson() {
-  const response = await fetch(MEDICAL_EVENTS_SOURCE_URL, { cache: 'no-store', signal: AbortSignal.timeout(45000) })
+  const response = await fetch(MEDICAL_EVENTS_SOURCE_URL, { cache: 'default', signal: AbortSignal.timeout(60000) })
   if (!response.ok) throw new Error(`Medical events calendar returned ${response.status}`)
   const sourceEvents = await response.json()
   const now = new Date()

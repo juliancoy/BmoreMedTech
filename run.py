@@ -504,6 +504,7 @@ def run_tests(args: argparse.Namespace) -> None:
                 "BMORE_MEDTECH_BASE_URL": base_url,
                 "BMORE_MEDTECH_SCREENSHOT_DIR": "/screenshots",
                 "BMORE_MEDTECH_TEST_PAGES": args.test_pages,
+                "BMORE_MEDTECH_PUBLIC_DATA": args.public_data,
             },
             "command": [
                 "sh",
@@ -587,6 +588,7 @@ def parse_args() -> argparse.Namespace:
 
     test_parser = subparsers.add_parser("test")
     add_common_options(test_parser)
+    test_parser.add_argument("--public-data", "--map-data", dest="public_data", choices=["live", "fixtures"], default=os.getenv("BMORE_MEDTECH_PUBLIC_DATA", "fixtures"), help="Fixtures make public GIS/event display regressions repeatable; portal and identity requests remain live.")
     test_parser.add_argument(
         "--screenshot-dir",
         default=os.getenv("BMORE_MEDTECH_SCREENSHOT_DIR", "/tmp/bmore-medtech-selenium-regression"),

@@ -22,7 +22,10 @@ python run.py start --medtech-only
 
 Select the local build and browser-test brand with `--site-brand medtech` (default)
 or `--site-brand lifetech`. The launcher uses the matching build directory and runs
-both regression and click-through checks with `python run.py test`.
+both regression and click-through checks with `python run.py test`. Local display
+regressions use synthetic GIS and regional-event fixtures; pass `--public-data live`
+to require the external public feeds. Portal, identity, tenant, and account requests
+always use their real interfaces. Fixtures never enter the site build.
 
 Local portal branding comes from OrgPortal's domain registry. The selected brand's
 registered hostname is the default. Override it with `--tenant-host`,

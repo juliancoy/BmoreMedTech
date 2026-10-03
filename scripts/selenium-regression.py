@@ -21,7 +21,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 SITE = json.loads((pathlib.Path(__file__).resolve().parents[1] / 'sites.json').read_text())[os.environ.get('SITE_BRAND', 'medtech')]
 BRAND_NAME = SITE['name']
 
-def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
+def new_driver(selenium_url: str, width: int, height: int, public_data: str = "live") -> webdriver.Remote:
     options = Options()
     if os.environ.get("SELENIUM_HEADLESS", "true").lower() != "false":
         options.add_argument("--headless=new")
@@ -107,6 +107,35 @@ def new_driver(selenium_url: str, width: int, height: int) -> webdriver.Remote:
             """
         },
     )
+    if public_data == "fixtures":
+        services = json.loads((pathlib.Path(__file__).resolve().parent / 'fixtures/map-data.json').read_text())["services"]
+        driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": "const regressionMapServices = " + json.dumps(services) + ";" + r"""
+          (() => {
+            const realFetch = window.fetch.bind(window);
+            window.fetch = async (input, options) => {
+              const url = new URL(input instanceof Request ? input.url : input, location.href);
+              if (url.href === 'https://codecollective.us/baltimore/upcoming_events.json') {
+                const events = [7, 14].map((days, index) => {
+                  const date = new Date(); date.setUTCDate(date.getUTCDate() + days); date.setUTCHours(22, 0, 0, 0);
+                  return {name: `Regression medical meetup ${index + 1}`, description: 'Synthetic public event for local display regression checks.', startDate: date.toISOString(), url: `https://example.org/medical-regression-${index}`, tags: ['health'], source_group: 'Regression organizer', imageUrl: new URL('/assets/images/lifetech-logo.png', location.origin).href, location: {name: 'Regression venue', latitude: 39.31 + index * .01, longitude: -76.58}};
+                });
+                return new Response(JSON.stringify(events), {headers: {'Content-Type': 'application/json'}});
+              }
+              const records = regressionMapServices[url.origin + url.pathname.replace(/\/query$/, '')];
+              if (!records) return realFetch(input, options);
+              let features = records;
+              const state = /STATE = '([A-Z]{2})'/.exec(url.searchParams.get('where') || '');
+              if (state) features = features.filter(f => f.properties.STATE === state[1]);
+              const bounds = JSON.parse(url.searchParams.get('geometry') || 'null');
+              if (bounds) features = features.filter(f => {
+                if (f.geometry.type !== 'Point') return true;
+                const [x, y] = f.geometry.coordinates;
+                return x >= bounds.xmin && x <= bounds.xmax && y >= bounds.ymin && y <= bounds.ymax;
+              });
+              return new Response(JSON.stringify({type: 'FeatureCollection', features}), {headers: {'Content-Type': 'application/geo+json'}});
+            };
+          })();
+        """})
     if width <= 760:
         driver.execute_cdp_cmd(
             "Emulation.setDeviceMetricsOverride",
@@ -469,7 +498,8 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
     driver.get(f"{base_url.rstrip('/')}/calendar")
     settle(driver)
     WebDriverWait(driver, 75).until(lambda d: d.find_element(By.CSS_SELECTOR, ".event-card"))
-    WebDriverWait(driver, 30).until(lambda d: d.execute_script("return Array.from(document.querySelectorAll('.event-image')).some(image => image.complete && image.naturalWidth > 0)"))
+    driver.execute_script("document.querySelectorAll('.event-card img').forEach(img => { img.loading = 'eager' })")
+    WebDriverWait(driver, 30).until(lambda d: d.execute_script("return Array.from(document.querySelectorAll('.event-card img')).some(image => image.complete && image.naturalWidth > 0)"))
     assert_no_horizontal_overflow(driver, f"{viewport} calendar")
 
     screenshot = screenshot_dir / f"{viewport}-calendar.png"
@@ -484,7 +514,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
           title: document.title,
           pageSections,
           cardCount: cards.length,
-          loadedImages: Array.from(document.querySelectorAll('.event-image')).filter(image => image.complete && image.naturalWidth > 0).map(image => image.currentSrc),
+          loadedImages: Array.from(document.querySelectorAll('.event-card img')).filter(image => image.complete && image.naturalWidth > 0).map(image => image.currentSrc),
           eventCountText: document.getElementById('event-count')?.textContent || '',
           statusHidden: document.getElementById('status')?.hidden || false,
           listTop: listSection.top,
@@ -1048,7 +1078,7 @@ def run(args: argparse.Namespace) -> int:
 
     checks: list[dict] = []
     for viewport, width, height in viewports:
-        driver = new_driver(args.selenium_url, width, height)
+        driver = new_driver(args.selenium_url, width, height, args.public_data)
         try:
             for page in requested_pages:
                 try:
@@ -1074,12 +1104,13 @@ def run(args: argparse.Namespace) -> int:
         finally:
             driver.quit()
 
-    print(json.dumps({"base_url": args.base_url, "checks": checks}, indent=2))
+    print(json.dumps({"base_url": args.base_url, "public_data": args.public_data, "checks": checks}, indent=2))
     return 0
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run site Selenium regressions.")
+    parser.add_argument("--public-data", "--map-data", dest="public_data", choices=["live", "fixtures"], default=os.environ.get("BMORE_MEDTECH_PUBLIC_DATA", "live"), help="Use live GIS/event feeds or synthetic public-data regression records; portal and identity requests remain live.")
     parser.add_argument("--selenium-url", default=os.environ.get("SELENIUM_URL", "http://127.0.0.1:4445/wd/hub"))
     parser.add_argument(
         "--base-url",

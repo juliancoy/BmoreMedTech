@@ -1,0 +1,228 @@
+{
+  "description": "Synthetic GIS records used only by the explicit Selenium fixture mode. These are not medical datasets or production fallback data.",
+  "services": {
+    "https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/US_Hospitals/FeatureServer/0": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.612,
+            39.3
+          ]
+        },
+        "properties": {
+          "NAME": "Regression Hospital A",
+          "STATE": "MD",
+          "COUNTY": "BALTIMORE CITY",
+          "BEDS": 500
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.63,
+            39.32
+          ]
+        },
+        "properties": {
+          "NAME": "Regression Hospital B",
+          "STATE": "MD",
+          "COUNTY": "BALTIMORE CITY",
+          "BEDS": 100
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -75.16,
+            39.95
+          ]
+        },
+        "properties": {
+          "NAME": "Regression Hospital PA",
+          "STATE": "PA",
+          "COUNTY": "PHILADELPHIA",
+          "BEDS": 200
+        }
+      }
+    ],
+    "https://mdgeodata.md.gov/imap/rest/services/Health/MD_Hospitals/FeatureServer/0": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.6,
+            39.31
+          ]
+        },
+        "properties": {
+          "Facility_Name": "Regression Maryland Hospital A",
+          "County": "BALTIMORE CITY",
+          "License_Capacity": 250
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.64,
+            39.33
+          ]
+        },
+        "properties": {
+          "Facility_Name": "Regression Maryland Hospital B",
+          "County": "BALTIMORE CITY",
+          "License_Capacity": 50
+        }
+      }
+    ],
+    "https://geodata.baltimorecity.gov/egis/rest/services/Housing/BLP_PM_HHP/MapServer/0": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.65,
+            39.28
+          ]
+        },
+        "properties": {
+          "address": "Regression housing referral",
+          "status": "Pending",
+          "blocklot": "test"
+        }
+      }
+    ],
+    "https://mdgeodata.md.gov/imap/rest/services/Environment/MD_EnviroScreen/FeatureServer/0": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -76.7,
+                39.24
+              ],
+              [
+                -76.5,
+                39.24
+              ],
+              [
+                -76.5,
+                39.4
+              ],
+              [
+                -76.7,
+                39.4
+              ],
+              [
+                -76.7,
+                39.24
+              ]
+            ]
+          ]
+        },
+        "properties": {
+          "GEOID20": "regression-tract",
+          "COUNTYFP20": "510",
+          "P_Asthma": 90,
+          "P_EJ": 80,
+          "P_RESP": 70
+        }
+      }
+    ],
+    "https://mdgeodata.md.gov/imap/rest/services/Health/MD_LongTermCareAssistedLiving/FeatureServer/1": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.58,
+            39.3
+          ]
+        },
+        "properties": {
+          "Facility_Name": "Regression care facility 1",
+          "County": "BALTIMORE CITY",
+          "License_Capacity": 30
+        }
+      }
+    ],
+    "https://mdgeodata.md.gov/imap/rest/services/Health/MD_LongTermCareAssistedLiving/FeatureServer/3": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.58,
+            39.3
+          ]
+        },
+        "properties": {
+          "Facility_Name": "Regression care facility 3",
+          "County": "BALTIMORE CITY",
+          "License_Capacity": 50
+        }
+      }
+    ],
+    "https://mdgeodata.md.gov/imap/rest/services/Health/MD_LongTermCareAssistedLiving/FeatureServer/5": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.58,
+            39.3
+          ]
+        },
+        "properties": {
+          "Facility_Name": "Regression care facility 5",
+          "County": "BALTIMORE CITY",
+          "License_Capacity": 70
+        }
+      }
+    ],
+    "https://mdgeodata.md.gov/imap/rest/services/Health/MD_LongTermCareAssistedLiving/FeatureServer/6": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.58,
+            39.3
+          ]
+        },
+        "properties": {
+          "Facility_Name": "Regression care facility 6",
+          "County": "BALTIMORE CITY",
+          "License_Capacity": 80
+        }
+      }
+    ],
+    "https://mdgeodata.md.gov/imap/rest/services/Health/MD_LongTermCareAssistedLiving/FeatureServer/9": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -76.58,
+            39.3
+          ]
+        },
+        "properties": {
+          "Facility_Name": "Regression care facility 9",
+          "County": "BALTIMORE CITY",
+          "License_Capacity": 110
+        }
+      }
+    ]
+  }
+}

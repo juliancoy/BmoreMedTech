@@ -123,7 +123,7 @@
     "pidp:serverless/src/profilePage.ts",
     "pidp:serverless/test/mcp-authorization.test.mjs"
   ],
-  "linkCount": 1174,
+  "linkCount": 1172,
   "links": [
     {
       "source": "medtech:about.html",
@@ -12019,26 +12019,6 @@
       "targetRepo": "orgportal",
       "target": "events.html",
       "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicCalendarPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicCalendarPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "/org-events",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/org-events"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicCalendarPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicCalendarPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "https://codecollective.us/calendar.html?city=baltimore&lm=individual_tags&lt=health.science",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "orgportal",
-      "origin": "https://codecollective.us"
     },
     {
       "source": "orgportal:src/ui/views/public/PublicContactPage.tsx",

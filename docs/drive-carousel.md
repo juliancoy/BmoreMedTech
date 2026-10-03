@@ -4,7 +4,18 @@ The MedTech homepage displays images from the public Google Drive folder
 [20260929 PH3 Photos](https://drive.google.com/drive/folders/1PoJ9KQvInRhJeoY91ODJ-915_eGuPAmb).
 The shared OrgPortal API reads Google's public folder view and caches its image
 manifest for two minutes. HEIC files use Google's JPEG previews; videos are
-excluded. No Drive credentials, file mutations, or sharing changes are involved.
+excluded from the photo manifest. The featured 3.43-second group greeting is
+served locally at `/assets/videos/medtech-community.mp4`, with a poster, English
+captions, and sound-enabled native playback controls. Its public source is
+[the original Drive clip](https://drive.google.com/file/d/1IoIN2F9zSsiDDvP5qIxGLWJMFjdyomtw/view).
+No Drive credentials, file mutations, or sharing changes are involved.
+
+The photo carousel supports previous/next buttons, thumbnails, arrow keys,
+and touch swipes. Adjacent photos preload. The five-second slideshow pauses
+while the carousel is hovered, keyboard navigation is active, or the carousel
+is outside the viewport. Reduced-motion users start with the slideshow paused.
+Public photos load independently of sign-in; account preferences remain in
+OrgPortal. Loading failures expose a retry action and the original Drive link.
 
 Hide is a personal account preference. Signed-in users remove an image from their
 own carousel; other visitors still see it. The carousel's Hidden images view and

@@ -3764,3 +3764,20 @@ h2 {
 .amplify-copy small { display: block; margin-top: 18px; color: rgba(255,255,255,.7); }
 .amplify-copy small a { color: inherit; }
 @media (max-width: 1000px) { .hero-features .hero-spotlight { margin-bottom: 0; } .hero-features { margin-bottom: 40px; } }
+
+.community-video { margin: 0 0 40px; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); }
+.community-video figcaption { padding: 24px; }
+.community-video h3 { margin: 10px 0; font-size: clamp(1.8rem, 3vw, 3rem); }
+.community-video video { display: block; width: 100%; height: auto; background: #061a26; }
+.community-video-source { display: inline-block; margin: 16px 24px; }
+.community-photo-title { font-size: 1.5rem; }
+.drive-carousel-stage { position: relative; }
+.drive-carousel-stage .drive-carousel-slide img { height: auto; aspect-ratio: 16 / 9; max-height: 560px; }
+.drive-carousel-navigation { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 16px 0; }
+.drive-carousel-navigation button, .drive-carousel-retry { padding: 12px 20px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; }
+.drive-carousel-status { color: var(--muted); margin: 12px 0; }
+.drive-carousel-thumbnails { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 14px; }
+.drive-carousel-thumbnails button { flex: 0 0 72px; padding: 0; border: 3px solid transparent; border-radius: 8px; overflow: hidden; cursor: pointer; background: #061a26; }
+.drive-carousel-thumbnails button[aria-current="true"] { border-color: var(--blue); }
+.drive-carousel-thumbnails img { display: block; width: 66px; height: 48px; object-fit: cover; }
+@media (max-width: 600px) { .drive-carousel-navigation button { padding: 10px 14px; } .community-video figcaption { padding: 18px; } }

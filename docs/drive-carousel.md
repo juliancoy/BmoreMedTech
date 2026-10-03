@@ -1,6 +1,6 @@
 # Community photo carousel
 
-The MedTech homepage displays images from the public Google Drive folder
+The MedTech and LifeTech homepages displays images from the public Google Drive folder
 [20260929 PH3 Photos](https://drive.google.com/drive/folders/1PoJ9KQvInRhJeoY91ODJ-915_eGuPAmb).
 The shared OrgPortal API reads Google's public folder view and caches its image
 manifest for two minutes. HEIC files use Google's JPEG previews; videos are
@@ -31,7 +31,8 @@ and hidden-image view.
 OrgPortal owns `/api/media/carousels/medtech-photos`, its authenticated `/me`
 preferences, and the private profile panel. MedTech proxies these through its
 existing `/api/org` gateway and reuses its existing PIdP session hydration.
-LifeTech does not display this folder, and the API rejects other tenants.
+Both tenants share the public folder. Hidden-photo preferences remain separate
+by tenant and authenticated user; the API rejects other tenants.
 
 Release the exact upstream migration
 `org-worker/migrations/0048_user_hidden_carousel_images.sql` before releasing

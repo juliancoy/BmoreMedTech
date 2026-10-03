@@ -20,26 +20,9 @@
         document.documentElement.dataset.theme = resolved;
       })();
     </script>
-    <link rel="preload" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" /></noscript>
     <link rel="stylesheet" href="/assets/styles.css" />
     <script type="module" src="/assets/theme.js"></script>
-    <script type="module">
-      window.addEventListener('load', () => {
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js';
-        script.async = true;
-        script.onload = () => import('/assets/med-map.js').catch(handleMapError);
-        script.onerror = handleMapError;
-        document.head.appendChild(script);
-
-        function handleMapError(error) {
-          console.error('Unable to initialize the medical map.', error);
-          const status = document.getElementById('map-status');
-          if (status) status.textContent = 'Unable to load the interactive map.';
-        }
-      }, { once: true });
-    </script>
+    <script type="module" src="/assets/med-map.js"></script>
   </head>
   <body>
     <header class="site-header">

@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import os
+import json
+from pathlib import Path
 from urllib.parse import urljoin, urlsplit, parse_qs
 
 from selenium import webdriver
@@ -41,6 +43,7 @@ def visible_text(driver: webdriver.Remote) -> str:
 
 
 def assert_no_broken_images(driver: webdriver.Remote, label: str) -> None:
+    driver.execute_script("document.querySelectorAll('img[loading=lazy]').forEach(img => { img.loading = 'eager' })")
     WebDriverWait(driver, 30).until(
         lambda d: d.execute_script("return Array.from(document.images).every(img => img.complete)")
     )
@@ -162,7 +165,8 @@ def assert_tenant_login(driver: webdriver.Remote, base_url: str) -> None:
 def run(base_url: str, selenium_url: str) -> None:
     driver = new_driver(selenium_url, 390, 844)
     try:
-        open_page(driver, base_url, "/", "Better care starts")
+        site = json.loads((Path(__file__).resolve().parents[1] / "sites.json").read_text())[os.environ.get("SITE_BRAND", "medtech")]
+        open_page(driver, base_url, "/", site["home"]["title"])
         click_link(driver, "Start Here")
         WebDriverWait(driver, 30).until(lambda d: "Pick the first move" in visible_text(d))
         assert_no_broken_images(driver, "start clickthrough")
@@ -183,8 +187,8 @@ def run(base_url: str, selenium_url: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-url", default="https://lifetech.fyi")
-    parser.add_argument("--selenium-url", default="http://127.0.0.1:4445/wd/hub")
+    parser.add_argument("--base-url", default=os.environ.get("BMORE_MEDTECH_BASE_URL", "https://medtech.social"))
+    parser.add_argument("--selenium-url", default=os.environ.get("SELENIUM_URL", "http://127.0.0.1:4445/wd/hub"))
     args = parser.parse_args()
     run(args.base_url.rstrip("/") + "/", args.selenium_url)
     print("Selenium clickthrough smoke passed")

@@ -77,6 +77,7 @@
     "orgportal:src/ui/views/LandingPage.tsx",
     "orgportal:src/ui/views/LifeInsurancePage.tsx",
     "orgportal:src/ui/views/NotFoundPage.tsx",
+    "orgportal:src/ui/views/OnboardingPage.tsx",
     "orgportal:src/ui/views/PeoplePage.tsx",
     "orgportal:src/ui/views/TenantBrandingPage.tsx",
     "orgportal:src/ui/views/TenantHomePage.tsx",
@@ -122,7 +123,7 @@
     "pidp:serverless/src/profilePage.ts",
     "pidp:serverless/test/mcp-authorization.test.mjs"
   ],
-  "linkCount": 999,
+  "linkCount": 1002,
   "links": [
     {
       "source": "medtech:about.html",
@@ -9991,6 +9992,37 @@
       "targetRepo": "orgportal",
       "target": "index.html",
       "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/OnboardingPage.tsx",
+      "sourcePath": "src/ui/views/OnboardingPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/onboarding",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "onboarding.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/OnboardingPage.tsx",
+      "sourcePath": "src/ui/views/OnboardingPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/users/login?next=%2Fonboarding",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
+      "source": "orgportal:src/ui/views/OnboardingPage.tsx",
+      "sourcePath": "src/ui/views/OnboardingPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "https://codecollective.us/constitution",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "orgportal",
+      "origin": "https://codecollective.us"
     },
     {
       "source": "orgportal:src/ui/views/orgs/OrgEventsPage.tsx",

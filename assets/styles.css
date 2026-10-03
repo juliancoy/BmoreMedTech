@@ -1179,7 +1179,8 @@ h2 {
   min-height: calc(100vh - 72px);
 }
 
-.medical-map {
+.medical-map,
+.medical-map.maplibregl-map {
   position: absolute;
   inset: 0;
 }
@@ -2061,6 +2062,7 @@ h2 {
 }
 
 .home-body .hero-copy {
+  min-width: 0;
   width: auto;
   max-width: 810px;
   padding: clamp(60px, 9vh, 110px) 0;
@@ -3284,7 +3286,7 @@ h2 {
   }
 
   .hero-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     align-content: end;
     gap: 0;
   }

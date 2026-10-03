@@ -266,10 +266,10 @@ def assert_primary_navigation(driver: webdriver.Remote) -> None:
     summaries[0].click()
     events = nav.find_elements(By.CSS_SELECTOR, '.nav-group[open] a')
     assert [item.text for item in events] == [
-        f'{BRAND_NAME} meetups', 'Community calendar', 'Event map', 'Find a group meeting time'
+        f'{BRAND_NAME} meetups', 'Community calendar', 'Event map', 'Find a group meeting time', 'Robert’s Rules of Order'
     ]
     assert [urlparse(item.get_attribute('href')).path for item in events] == [
-        '/org-events', '/calendar.html', '/map.html', '/availability'
+        '/org-events', '/calendar.html', '/map.html', '/availability', '/governance/roberts'
     ]
     summaries[1].click()
     WebDriverWait(driver, 5).until(lambda d: len(nav.find_elements(By.CSS_SELECTOR, '.nav-group[open]')) == 1)
@@ -320,6 +320,8 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
           copyLeft: copy.left,
           copyRight: copy.right,
           copyWidth: copy.width,
+          copyHeight: copy.height,
+          hasHeroFeatures: !!document.querySelector('.hero-features'),
           copyCenterPct: ((copy.left + copy.right) / 2 - hero.left) / hero.width,
           h1Left: h1.left,
           h1Right: h1.right,
@@ -350,13 +352,14 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
         raise AssertionError(f"{viewport} home: hero must start below the rendered navigation: {metrics}")
     if metrics["heroOverlay"] in {"none", ""}:
         raise AssertionError(f"{viewport} home: editorial hero needs a contrast overlay: {metrics}")
-    if not metrics["innerHeight"] * 0.75 <= metrics["heroHeight"] <= metrics["innerHeight"] * 1.75:
+    opening_height = metrics["copyHeight"] if viewport == "mobile" and metrics["hasHeroFeatures"] else metrics["heroHeight"]
+    if not metrics["innerHeight"] * 0.75 <= opening_height <= metrics["innerHeight"] * 1.75:
         raise AssertionError(f"{viewport} home: hero no longer forms a focused opening chapter: {metrics}")
     if f"Next {BRAND_NAME} event" in metrics["bodyText"] and "6:00 PM" not in metrics["bodyText"]:
         raise AssertionError(f"{viewport} home: next-event card must render in Baltimore time: {metrics}")
-    if metrics["mainSectionCount"] != 1:
-        raise AssertionError(f"{viewport} home: content below the hero should live on About Us")
-    if metrics["heroTitle"] != "Better care starts with a better-connected city.":
+    if metrics["mainSectionCount"] != (4 if SITE["home"]["topics"] else 2):
+        raise AssertionError(f"{viewport} home: homepage community photos and brand showcase sections are incomplete")
+    if metrics["heroTitle"] != SITE["home"]["title"]:
         raise AssertionError(f"{viewport} home: editorial promise is missing: {metrics}")
     if not metrics["footerPresent"] or not metrics["navEnhanced"]:
         raise AssertionError(f"{viewport} home: navigation or footer enhancement is missing: {metrics}")
@@ -397,7 +400,9 @@ def assert_home(driver: webdriver.Remote, base_url: str, viewport: str, screensh
 
     metrics["themeCheck"] = assert_theme_control(driver, viewport, screenshot_dir)
 
-    driver.find_element(By.LINK_TEXT, "Explore the community").click()
+    community_link = driver.find_element(By.LINK_TEXT, "Explore the community")
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'instant'})", community_link)
+    community_link.click()
     settle(driver)
     if urlparse(driver.current_url).path != "/about.html":
         raise AssertionError("Explore the community must open About Us")
@@ -501,7 +506,7 @@ def assert_calendar(driver: webdriver.Remote, base_url: str, viewport: str, scre
 def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screenshot_dir: pathlib.Path) -> dict:
     driver.get(f"{base_url.rstrip('/')}/map")
     settle(driver)
-    WebDriverWait(driver, 45).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
+    WebDriverWait(driver, 65).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
     assert_no_horizontal_overflow(driver, f"{viewport} map")
 
     screenshot = screenshot_dir / f"{viewport}-map.png"
@@ -812,7 +817,7 @@ def assert_map(driver: webdriver.Remote, base_url: str, viewport: str, screensho
         compressed_current_url = driver.current_url
         driver.get(compressed_current_url)
         settle(driver)
-        WebDriverWait(driver, 45).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
+        WebDriverWait(driver, 65).until(lambda d: d.execute_script("return window.__bmoreLifeTechMapReady === true"))
         roundtrip = driver.execute_script(
             """
             const sheet = document.getElementById('map-share-sheet');

@@ -10,7 +10,7 @@ import {
   parseEventDate,
 } from './medical-events.js'
 
-const PORTAL_URL = 'https://lifetech.fyi/users/login'
+const PORTAL_URL = new URL('/users/login', location.origin).href
 const EVENT_TIME_ZONE = 'America/New_York'
 
 const state = {

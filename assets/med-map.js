@@ -1,3 +1,6 @@
+import maplibregl from 'maplibre-gl'
+import { pointRadiusExpression } from '../lib/map-style.js'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import { MEDICAL_EVENTS_SOURCE_URL, eventCoordinates, isMedicalEvent, parseEventDate } from './medical-events.js'
 
 const ARCGIS_QUERY_DEFAULTS = {
@@ -607,23 +610,7 @@ async function copyShareUrl(preferCompressed) {
   }
 }
 
-function waitForMapLibre() {
-  if (window.maplibregl?.Map) return Promise.resolve()
-  return new Promise((resolve, reject) => {
-    const started = performance.now()
-    const timer = window.setInterval(() => {
-      if (window.maplibregl?.Map) {
-        window.clearInterval(timer)
-        resolve()
-        return
-      }
-      if (performance.now() - started > 8000) {
-        window.clearInterval(timer)
-        reject(new Error('MapLibre failed to load'))
-      }
-    }, 25)
-  })
-}
+
 
 const initialUiState = await readUiStateFromUrl()
 const state = {
@@ -676,8 +663,6 @@ const initialRegionCenter = state.regionKey === 'state'
   : REGIONS[state.regionKey].center
 const initialRegionZoom = state.regionKey === 'state' ? selectedStateView[2] : REGIONS[state.regionKey].zoom
 
-await waitForMapLibre()
-
 const map = new maplibregl.Map({
   container: mapEl,
   style: 'https://tiles.openfreemap.org/styles/liberty',
@@ -691,7 +676,7 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right')
 map.on('moveend', persistUiState)
 
-map.on('load', () => {
+map.once('style.load', () => {
   renderControls()
   loadVisibleLayers()
   map.on('mousemove', (event) => {
@@ -873,7 +858,7 @@ async function fetchLayerGeojson(layer) {
   const services = layer.services || [{ url: layer.service, label: layer.label }]
   const collections = await Promise.all(services.map(async (service) => {
     const url = arcgisQueryUrl(service.url, layer, service.label)
-    const response = await fetch(url, { cache: 'no-store' })
+    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(45000) })
     if (!response.ok) throw new Error(`${layer.label} returned ${response.status}`)
     const geojson = await response.json()
     if (!geojson || !Array.isArray(geojson.features)) {
@@ -892,7 +877,7 @@ async function fetchLayerGeojson(layer) {
 }
 
 async function fetchMedicalEventsGeojson() {
-  const response = await fetch(MEDICAL_EVENTS_SOURCE_URL, { cache: 'no-store' })
+  const response = await fetch(MEDICAL_EVENTS_SOURCE_URL, { cache: 'no-store', signal: AbortSignal.timeout(45000) })
   if (!response.ok) throw new Error(`Medical events calendar returned ${response.status}`)
   const sourceEvents = await response.json()
   const now = new Date()
@@ -952,6 +937,11 @@ function arcgisQueryUrl(serviceUrl, layer, subLayerLabel) {
   params.outFields = layer.fields ? layer.fields.join(',') : '*'
   params.resultRecordCount = String(layer.limit || (layer.kind === 'polygon' ? 1800 : 2000))
   params.where = whereFor(layer, subLayerLabel)
+  if (layer.kind === 'polygon') {
+    // These are contextual tract layers; avoid transferring survey-level vertices.
+    params.geometryPrecision = '5'
+    params.maxAllowableOffset = '0.0001'
+  }
 
   const region = currentRegion()
   if (region.bbox && !['us', 'worldwide'].includes(state.regionKey)) {
@@ -1137,13 +1127,7 @@ function refreshLoadedLayerSizing() {
   window.__bmoreLifeTechLayerStack = [...state.layerOrder]
 }
 
-function pointRadiusExpression() {
-  return [
-    '*',
-    ['interpolate', ['linear'], ['zoom'], 3, 4, 9, 6.5, 13, 9.5],
-    ['coalesce', ['get', '_medicalPointScale'], 1],
-  ]
-}
+
 
 function decorateLayerGeojson(layer, geojson) {
   const features = Array.isArray(geojson.features) ? geojson.features : []

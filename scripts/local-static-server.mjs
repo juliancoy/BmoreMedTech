@@ -13,7 +13,9 @@ const orgApiOrigin = process.env.ORG_API_ORIGIN || 'https://org-codecollective.j
 const chatApiOrigin = process.env.CHAT_API_ORIGIN || 'https://chat-codecollective.jcloiacon.workers.dev'
 const pidpApiOrigin = process.env.PIDP_PROXY_ORIGIN || process.env.PIDP_API_ORIGIN || 'https://pidp-codecollective.jcloiacon.workers.dev'
 const portalSiteOrigin = process.env.PORTAL_SITE_ORIGIN || 'https://codecollective.us'
-const portalTenantHost = process.env.PORTAL_TENANT_HOST || ''
+const portalRootPrefix = process.env.PORTAL_ROOT_PREFIX ?? (new URL(portalSiteOrigin).port === '5173' ? '' : '/__portal_root')
+const brands = JSON.parse(readFileSync(new URL('../sites.json', import.meta.url), 'utf8'))
+const portalTenantHost = process.env.PORTAL_TENANT_HOST || new URL(brands[process.env.SITE_BRAND || 'medtech'].origin).hostname
 const allowedCorsOrigins = new Set([
   'https://baltimore-medtech.jcloiacon.workers.dev',
   'https://baltimoremedtech.org',
@@ -234,7 +236,7 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
       targetUrl.pathname = requestUrl.pathname.slice(stripPrefix.length) || '/'
     }
     const proxiedRequest = webRequest(req, targetUrl)
-    proxiedRequest.headers.set('x-forwarded-host', requestUrl.pathname === '/api/org/api/portal/tenant' && portalTenantHost ? portalTenantHost : req.headers.host || '')
+    proxiedRequest.headers.set('x-forwarded-host', (requestUrl.pathname === '/api/org/api/portal/tenant' || (req.method === 'GET' && requestUrl.pathname === '/api/org/api/media/carousels/medtech-photos')) ? portalTenantHost : req.headers.host || '')
     proxiedRequest.headers.set('x-forwarded-proto', requestUrl.protocol.replace(':', ''))
     if (stripPrefix) proxiedRequest.headers.set('x-forwarded-prefix', stripPrefix)
     const response = await fetch(targetUrl, {
@@ -257,13 +259,13 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
 
 async function servePortalRootAssetProxy(req, res, requestUrl) {
   const targetUrl = new URL(requestUrl)
-  targetUrl.pathname = `/__portal_root${targetUrl.pathname}`
+  targetUrl.pathname = `${portalRootPrefix}${targetUrl.pathname}`
   await serveProxy(req, res, targetUrl, portalSiteOrigin)
 }
 
 async function servePortalRootNavigationProxy(req, res, requestUrl) {
   const targetUrl = new URL(requestUrl)
-  targetUrl.pathname = '/__portal_root/'
+  targetUrl.pathname = `${portalRootPrefix}/`
   await serveProxy(req, res, targetUrl, portalSiteOrigin)
 }
 

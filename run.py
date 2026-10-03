@@ -379,13 +379,15 @@ def build_site(args: argparse.Namespace) -> None:
             },
             "environment": {
                 "NODE_ENV": "development",
+                "SITE_BRAND": args.site_brand,
+                "SITE_OUTPUT_DIRECTORY": "dist-lifetech" if args.site_brand == "lifetech" else "dist",
                 "HOST_UID": str(os.getuid()),
                 "HOST_GID": str(os.getgid()),
             },
             "command": [
                 "sh",
                 "-c",
-                "npm ci --ignore-scripts --no-audit --no-fund && npm run build && chown -R ${HOST_UID}:${HOST_GID} dist assets/data",
+                "npm ci --ignore-scripts --no-audit --no-fund && npm run build && chown -R ${HOST_UID}:${HOST_GID} ${SITE_OUTPUT_DIRECTORY} assets/data",
             ],
         }
     )
@@ -396,13 +398,13 @@ def start_site(args: argparse.Namespace) -> None:
     ensure_local_certificates(cert_dir)
     docker_utils.remove_container(args.site_container_name)
     environment = {
-        "SITE_ROOT": f"{WORKSPACE}/dist",
+        "SITE_ROOT": f"{WORKSPACE}/{'dist-lifetech' if args.site_brand == 'lifetech' else 'dist'}",
         "CONTAINER_PORT": "8080",
         "TLS_CERT_FILE": "/certs/localhost.crt",
         "TLS_KEY_FILE": "/certs/localhost.key",
     }
-    if args.tenant_host:
-        environment["PORTAL_TENANT_HOST"] = args.tenant_host
+    environment["SITE_BRAND"] = args.site_brand
+    environment["PORTAL_TENANT_HOST"] = args.tenant_host or json.loads((root / "sites.json").read_text())[args.site_brand]["origin"].split("//", 1)[1]
     if args.org_api_origin:
         environment["ORG_API_ORIGIN"] = args.org_api_origin
     if args.pidp_origin:
@@ -497,6 +499,7 @@ def run_tests(args: argparse.Namespace) -> None:
                 str(screenshot_dir): {"bind": "/screenshots", "mode": "rw"},
             },
             "environment": {
+                "SITE_BRAND": args.site_brand,
                 "SELENIUM_URL": selenium_url,
                 "BMORE_MEDTECH_BASE_URL": base_url,
                 "BMORE_MEDTECH_SCREENSHOT_DIR": "/screenshots",
@@ -505,7 +508,7 @@ def run_tests(args: argparse.Namespace) -> None:
             "command": [
                 "sh",
                 "-c",
-                "pip install --quiet --disable-pip-version-check selenium==4.36.0 && python scripts/selenium-regression.py",
+                "pip install --quiet --disable-pip-version-check selenium==4.36.0 && python scripts/selenium-regression.py && python scripts/selenium-clickthrough-smoke.py",
             ],
         }
     )
@@ -536,6 +539,7 @@ def status(_args: argparse.Namespace) -> None:
 
 
 def add_common_options(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--site-brand", choices=["medtech", "lifetech"], default=os.getenv("SITE_BRAND", "medtech"), help="Brand to build, serve, and test.")
     tenant_host_file = root / ".local" / "tenant-host"
     parser.add_argument("--tenant-host", default=os.getenv("PORTAL_TENANT_HOST", tenant_host_file.read_text().strip() if tenant_host_file.is_file() else ""), help="Registered portal tenant hostname for local branding.")
     parser.add_argument("--site-port", type=int, default=int(os.getenv("BMORE_MEDTECH_SITE_PORT", "8769")))

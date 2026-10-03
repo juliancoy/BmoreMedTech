@@ -35,7 +35,8 @@
           "description": "Decision support, workflow tools, and clinical data systems—with room to discuss evidence, usability, and real-world evaluation."
         }
       ]
-    }
+    },
+    "organizationId": "org-baltimore-medtech"
   },
   "lifetech": {
     "name": "LifeTech",
@@ -52,6 +53,7 @@
       "intro": "LifeTech brings clinicians, builders, researchers, and founders into one regional community—so useful ideas move closer to patients.",
       "place": "Connected care.<br />Built locally.",
       "topics": []
-    }
+    },
+    "organizationId": "ef646755-9443-4c7b-ba4b-a7a29754f666"
   }
 }

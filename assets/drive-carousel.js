@@ -2,6 +2,27 @@ import { getSiteAccount } from './theme.js'
 
 const root = document.getElementById('drive-carousel')
 const api = '/api/org/api/media/carousels/medtech-photos'
+const agentPanel = document.getElementById('agent-photo-upload')
+function updateAgentPanel() {
+ if (!agentPanel) return
+ const account = getSiteAccount()
+ agentPanel.hidden = account.pending || !account.user
+}
+agentPanel?.querySelector('[data-copy-agent-request]')?.addEventListener('click', async () => {
+ const request = agentPanel.querySelector('textarea')
+ const status = agentPanel.querySelector('.agent-copy-status')
+ try {
+  await navigator.clipboard.writeText(request.value)
+  status.textContent = 'Copied. Paste this request into your AI agent, then approve its account connection.'
+ } catch {
+  agentPanel.querySelector('details').open = true
+  request.focus(); request.select()
+  status.textContent = 'Select and copy the request below, then paste it into your AI agent.'
+ }
+})
+window.addEventListener('site-account-change', updateAgentPanel)
+updateAgentPanel()
+
 function element(tag, text, className) {
  const node = document.createElement(tag)
  if (text) node.textContent = text

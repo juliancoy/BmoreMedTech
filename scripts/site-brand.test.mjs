@@ -84,3 +84,18 @@ test('Both sites share the Drive carousel and featured community video', () => {
     assert.ok(html.includes('<video controls playsinline'))
   }
 })
+
+
+test('agent photo requests use the matching site connection and existing upload approval flow', () => {
+  const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+  for (const id of ['medtech', 'lifetech']) {
+    const brand = siteBrand(id)
+    const html = renderSiteBrand(template, brand)
+    assert.ok(html.includes('id="agent-photo-upload" aria-labelledby="agent-photo-upload-title" hidden'))
+    assert.ok(html.includes(`${brand.origin}/api/org/mcp/uploads/organization-media`))
+    assert.ok(html.includes(`${brand.origin}/.well-known/oauth-protected-resource/api/org/mcp`))
+    assert.ok(html.includes(`Organization ID: ${brand.organizationId}`))
+    assert.ok(html.includes('confirm=true'))
+    assert.ok(html.includes('ask for approval'))
+  }
+})

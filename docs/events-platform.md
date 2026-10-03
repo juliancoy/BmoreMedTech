@@ -22,6 +22,19 @@ See `../OrgPortal/docs/deployment/EVENTS_MCP.md` for MCP tools,
 configuration, and verification. The presence of local code does not establish
 which MCP features are enabled in the live deployment.
 
+## Directing an AI agent
+
+Signed-in homepage visitors can use **Upload photos with your AI** beside the
+community carousel. **Copy request for my AI** supplies the current site's MCP
+resource, OAuth discovery URL, organization ID, upload endpoints, supported
+formats, and required preview/approval flow. The expanded instructions remain
+selectable if clipboard access is blocked. No account tokens are included.
+
+Agents authorize using the same portal account through PIdP. Organization
+permissions still apply; sign-in alone does not grant upload access. Uploads
+append to the organization or selected event gallery. The Drive-backed homepage
+carousel is a separate source and is not modified by gallery uploads.
+
 ## Account-authorized photo uploads
 
 Use OrgPortal's shared browser-authorized uploader for local gallery images:
@@ -29,7 +42,7 @@ Use OrgPortal's shared browser-authorized uploader for local gallery images:
 ```sh
 node ../OrgPortal/org-worker/scripts/event-upload.mjs \
   --resource https://lifetech.fyi/api/org/mcp \
-  --organization org-baltimore-medtech \
+  --organization ef646755-9443-4c7b-ba4b-a7a29754f666 \
   --event medtech-in-the-hut \
   --directory "$HOME/Downloads/NOLA_MENU"
 ```

@@ -70,13 +70,17 @@ test('MedTech showcase preserves image provenance and local index connections', 
   assert.ok(medtech.includes('MRI · Baltimore'))
 })
 
-test('Drive carousel stays on MedTech and links the requested source folder', () => {
+test('Both sites share the Drive carousel and featured community video', () => {
   const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
   const medtech = renderSiteBrand(template, siteBrand('medtech'))
   const lifetech = renderSiteBrand(template, siteBrand('lifetech'))
   assert.ok(medtech.includes('id="community-photos"'))
   assert.ok(medtech.includes('id="drive-carousel"'))
   assert.ok(medtech.includes('https://drive.google.com/drive/folders/1PoJ9KQvInRhJeoY91ODJ-915_eGuPAmb'))
-  assert.ok(!lifetech.includes('id="drive-carousel"'))
-  assert.ok(!lifetech.includes('1PoJ9KQvInRhJeoY91ODJ-915_eGuPAmb'))
+  assert.ok(lifetech.includes('id="drive-carousel"'))
+  assert.ok(lifetech.includes('1PoJ9KQvInRhJeoY91ODJ-915_eGuPAmb'))
+  for (const html of [medtech, lifetech]) {
+    assert.ok(html.includes('/assets/videos/medtech-community.mp4'))
+    assert.ok(html.includes('<video controls playsinline'))
+  }
 })

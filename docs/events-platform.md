@@ -10,6 +10,14 @@ provider registry, and external-provider adapter have been removed. Use the
 existing portal for event administration. Shared event changes belong in
 OrgPortal.
 
+Use separate MCP connections for the two brands:
+
+- MedTech: `https://medtech.social/api/org/mcp`, organization `org-baltimore-medtech`.
+- LifeTech: `https://lifetech.fyi/api/org/mcp`, organization `ef646755-9443-4c7b-ba4b-a7a29754f666`.
+
+Each connection requires its own OAuth grant and operates only on its own
+organization. A MedTech token cannot be used on LifeTech or vice versa.
+
 See `../OrgPortal/docs/deployment/EVENTS_MCP.md` for MCP tools,
 configuration, and verification. The presence of local code does not establish
 which MCP features are enabled in the live deployment.

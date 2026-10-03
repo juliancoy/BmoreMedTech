@@ -107,8 +107,8 @@ function organizeNavigation() {
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
   if (!nav) return
   const destinations = [
-    ['/org-events', 'LifeTech meetups'],
-    ['/calendar.html', 'Community calendar'],
+    ['/org-events', 'Events'],
+    ['/calendar.html', 'Calendar'],
     ['/map.html', 'Event map'],
     ['/taxonomy.html', 'Medical atlas'],
     ['/datasets.html', 'Datasets'],
@@ -130,7 +130,7 @@ function organizeNavigation() {
     link.textContent = label
     link.removeAttribute('aria-current')
     const cleanPath = path.endsWith('.html') ? path.slice(0, -5) : path
-    if (location.pathname === path || location.pathname === cleanPath || (path === '/datasets.html' && location.pathname.startsWith('/datasets/'))) {
+    if (location.pathname === path || location.pathname.replace(/\/$/, '').replace(/\/index\.html$/, '') === cleanPath || (path === '/datasets.html' && location.pathname.startsWith('/datasets/'))) {
       link.setAttribute('aria-current', 'page')
     }
     return link
@@ -152,7 +152,7 @@ function organizeNavigation() {
     groups.push(details)
     return details
   }
-  nav.prepend(group('Events', [...links.slice(0, 3), links[9], links[11]]), group('Research', [...links.slice(3, 6), ...links.slice(7, 9)]), links[6], links[10])
+  nav.prepend(links[0], links[1], group('Research', [...links.slice(3, 6), ...links.slice(7, 9)]), group('Community', [links[2], links[6], links[9], links[11]]), links[10])
   document.addEventListener('click', (event) => {
     groups.forEach((group) => { if (!group.contains(event.target) || event.target.closest('a')) group.open = false })
   })

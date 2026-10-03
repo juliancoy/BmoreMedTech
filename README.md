@@ -25,7 +25,8 @@ or `--site-brand lifetech`. The launcher uses the matching build directory and r
 both regression and click-through checks with `python run.py test`.
 
 Local portal branding comes from OrgPortal's domain registry. The selected brand's
-registered hostname is the default. Override it with `--tenant-host`, `PORTAL_TENANT_HOST`, or a single line in
+registered hostname is the default. Override it with `--tenant-host`,
+`PORTAL_TENANT_HOST`, or a single line in
 `.local/tenant-host` (kept outside Git). The launcher forwards it for the
 portal tenant lookup and the public photo-carousel read; OrgPortal remains
 responsible for branding and permissions. Authenticated API requests retain their

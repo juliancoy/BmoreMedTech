@@ -6,7 +6,7 @@ if (process.env.CI === 'true') await import('./sync-ecosystem.mjs')
 const data = JSON.parse(await readFile(new URL('../assets/data/ecosystem.json', import.meta.url)))
 const template = await readFile(new URL('../datasets.html', import.meta.url), 'utf8')
 const init = template.match(/<script>\(\(\)=>[\s\S]*?<\/script>/)?.[0] || ''
-const header = template.match(/<header class="site-header">[\s\S]*?<\/header>/)[0].replace('aria-current="page" ', '').replace('<a class="button nav-cta"', '<a href="/ecosystem">Ecosystem</a><a class="button nav-cta"')
+const header = template.match(/<header class="site-header">[\s\S]*?<\/header>/)[0].replace('aria-current="page" ', '')
 const directory = data.organizations.filter(o => o.directory)
 const head = (title, script) => `<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} | LifeTech</title><meta name="description" content="Explore Baltimore’s LifeTech organizations, documented relationships and funding sources."><link rel="icon" href="/assets/images/lifetech-logo.png">${init}<link rel="stylesheet" href="/assets/styles.css"><link rel="stylesheet" href="/assets/ecosystem.css"><script type="module" src="/assets/theme.js"></script><script type="module" src="/assets/${script}.js"></script></head><body class="ecosystem-body"><a class="skip-link" href="#main-content">Skip to main content</a>${header}`
 const footer = `<footer class="eco-footer"><a href="/">LifeTech</a><span>Health × Medicine × Biotech</span><a href="/ecosystem">Directory</a><a href="/ecosystem/network">Network</a><a href="/org-events">Meet the community ↗</a></footer></body></html>`

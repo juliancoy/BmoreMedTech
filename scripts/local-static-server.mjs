@@ -236,7 +236,11 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
       targetUrl.pathname = requestUrl.pathname.slice(stripPrefix.length) || '/'
     }
     const proxiedRequest = webRequest(req, targetUrl)
-    proxiedRequest.headers.set('x-forwarded-host', (requestUrl.pathname === '/api/org/api/portal/tenant' || (req.method === 'GET' && requestUrl.pathname === '/api/org/api/media/carousels/medtech-photos')) ? portalTenantHost : req.headers.host || '')
+    // Only public presentation reads use the registered branding hostname.
+    // Preserve the request's host for account routes and every mutation.
+    const publicTenantRead = requestUrl.pathname === '/api/org/api/portal/tenant'
+      || (req.method === 'GET' && requestUrl.pathname === '/api/org/api/media/carousels/medtech-photos')
+    proxiedRequest.headers.set('x-forwarded-host', publicTenantRead ? portalTenantHost : req.headers.host || '')
     proxiedRequest.headers.set('x-forwarded-proto', requestUrl.protocol.replace(':', ''))
     if (stripPrefix) proxiedRequest.headers.set('x-forwarded-prefix', stripPrefix)
     const response = await fetch(targetUrl, {

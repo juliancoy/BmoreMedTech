@@ -59,6 +59,8 @@ const knownPortalRoutes = new Set([
   '/branding',
   '/chat',
   '/org-events',
+  '/availability',
+  '/governance/roberts',
   '/resources',
 ])
 const writeIndex = process.argv.indexOf('--write')

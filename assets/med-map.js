@@ -610,8 +610,6 @@ async function copyShareUrl(preferCompressed) {
   }
 }
 
-
-
 const initialUiState = await readUiStateFromUrl()
 const state = {
   regionKey: initialUiState.region,
@@ -1126,8 +1124,6 @@ function refreshLoadedLayerSizing() {
   window.__bmoreLifeTechLayerState = layerDiagnostics()
   window.__bmoreLifeTechLayerStack = [...state.layerOrder]
 }
-
-
 
 function decorateLayerGeojson(layer, geojson) {
   const features = Array.isArray(geojson.features) ? geojson.features : []

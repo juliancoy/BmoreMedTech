@@ -1,3 +1,4 @@
+import { openPhotoTags } from './photo-tags.js'
 import { getSiteAccount } from './theme.js'
 
 const root = document.getElementById('drive-carousel')
@@ -95,8 +96,10 @@ if (root) {
    caption.append(element('span', `Photo ${index + 1} of ${images.length}`))
    const hide = button(view === 'hidden' ? 'Restore' : account.user ? 'Hide' : 'Sign in to hide', `hide-${image.id}`, () => void hideImage(image))
    hide.disabled = busy || account.pending || (!!account.user && !preferencesReady)
-   caption.append(hide); figure.append(link, caption)
-   if (duplicate) { link.tabIndex = -1; hide.tabIndex = -1 }
+   const tags = button('People tags', `tags-${image.id}`, () => void openPhotoTags(image))
+   tags.disabled = busy
+   caption.append(tags, hide); figure.append(link, caption)
+   if (duplicate) { link.tabIndex = -1; hide.tabIndex = -1; tags.tabIndex = -1 }
    return figure
   }
   if (view === 'hidden') {

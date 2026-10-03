@@ -3799,3 +3799,9 @@ h2 {
 .agent-photo-upload details p { overflow-wrap: anywhere; margin-top: 16px; }
 .agent-photo-upload label { display: block; margin: 16px 0 8px; }
 .agent-photo-upload textarea { display: block; width: 100%; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); font: inherit; line-height: 1.5; resize: vertical; }
+
+.community-photo-tags{width:min(560px,calc(100vw - 32px));max-height:85dvh;overflow:auto;padding:24px;border:1px solid var(--line);border-radius:12px;color:var(--ink);background:var(--surface-raised)}
+.community-photo-tags::backdrop{background:#0009}
+.community-photo-tags img{display:block;max-width:100%;max-height:40vh;object-fit:contain;margin:12px auto}
+.community-photo-tags label{display:grid;gap:8px}.community-photo-tags textarea{width:100%;font:inherit;color:inherit;background:var(--surface-raised);border:1px solid var(--line)}
+.community-photo-tags button{margin:8px 8px 0 0;font:inherit;color:inherit;background:var(--surface-raised);border:1px solid var(--line);padding:8px 12px;border-radius:6px;cursor:pointer}

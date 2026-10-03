@@ -284,6 +284,7 @@ function isPortalDevAssetPath(pathname) {
 
 function isPortalRoute(pathname) {
   return pathname === '/availability' || pathname.startsWith('/availability/')
+    || pathname === '/governance' || pathname.startsWith('/governance/')
     || pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')
@@ -375,6 +376,11 @@ export default {
     }
 
     if (url.pathname === '/.well-known/oauth-protected-resource/api/org/mcp' || url.pathname.startsWith('/.well-known/oauth-protected-resource/api/org/mcp/')) {
+      const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url)
+      return applyApiHeaders(request, response)
+    }
+
+    if (url.pathname === '/api/governance' || url.pathname.startsWith('/api/governance/')) {
       const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url)
       return applyApiHeaders(request, response)
     }

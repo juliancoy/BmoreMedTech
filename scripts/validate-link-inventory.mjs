@@ -194,12 +194,14 @@ const failures = []
 
 function classifyWorkspaceForUrl(url, sourceRepo = 'medtech') {
   if (url.origin === 'https://medtech.local') {
+    if (url.pathname === '/governance' || url.pathname.startsWith('/governance/')) return 'orgportal'
     if (url.pathname.startsWith('/pidp') || url.pathname.startsWith('/oauth') || url.pathname.startsWith('/auth/') || url.pathname.startsWith('/session/')) return 'pidp'
     if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/create') || url.pathname.startsWith('/branding') || url.pathname.startsWith('/resources')) return 'orgportal'
     if (sourceRepo !== 'medtech') return sourceRepo
     return 'medtech'
   }
   if (url.hostname === 'lifetech.fyi') {
+    if (url.pathname === '/governance' || url.pathname.startsWith('/governance/')) return 'orgportal'
     if (url.pathname.startsWith('/pidp') || url.pathname.startsWith('/oauth') || url.pathname.startsWith('/auth/') || url.pathname.startsWith('/session/')) return 'pidp'
     if (url.pathname.startsWith('/users') || url.pathname.startsWith('/org') || url.pathname.startsWith('/people') || url.pathname.startsWith('/chat') || url.pathname.startsWith('/events') || url.pathname.startsWith('/medtech-events') || url.pathname.startsWith('/create') || url.pathname.startsWith('/branding') || url.pathname.startsWith('/resources')) return 'orgportal'
     return 'medtech'

@@ -225,3 +225,35 @@ test('LifeTech availability polls use the existing tenant portal mount', async (
   assert.equal(response.status,200);assert.equal(await response.text(),'portal')
  }
 })
+
+test('LifeTech mounts shared governance pages and preserves authenticated API requests', async (t) => {
+  const seen = []
+  t.mock.method(globalThis, 'fetch', async (request) => {
+    seen.push(request)
+    return new Response('shared governance', { headers: { 'content-type': 'text/html' } })
+  })
+  const env = {
+    PORTAL_SITE_ORIGIN: 'https://portal.example',
+    ORG_API_ORIGIN: 'https://org.example',
+    ASSETS: { fetch: async () => { throw new Error('Governance must not fall back to static assets') } },
+  }
+  for (const path of ['/governance', '/governance/roberts', '/governance/roberts/propose', '/governance/roberts/mot-123', '/governance/roberts/mot-123/amend']) {
+    const response = await worker.fetch(new Request(`https://lifetech.fyi${path}`), env)
+    assert.equal(response.status, 200)
+    assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
+    assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'lifetech.fyi')
+  }
+  for (const path of ['/api/governance/motions/mot-123/vote', '/api/org/api/governance/motions/mot-123/vote']) {
+    await worker.fetch(new Request(`https://lifetech.fyi${path}`, {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-token', 'content-type': 'application/json' },
+      body: JSON.stringify({ choice: 'yea' }),
+    }), env)
+    const upstream = seen.at(-1)
+    assert.equal(upstream.url, 'https://org.example/api/governance/motions/mot-123/vote')
+    assert.equal(upstream.method, 'POST')
+    assert.equal(upstream.headers.get('authorization'), 'Bearer test-token')
+    assert.equal(upstream.headers.get('x-forwarded-host'), 'lifetech.fyi')
+    assert.deepEqual(await upstream.json(), { choice: 'yea' })
+  }
+})

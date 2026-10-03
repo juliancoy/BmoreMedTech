@@ -50,9 +50,12 @@
     "orgportal:public/standalone.html",
     "orgportal:src/App.tsx",
     "orgportal:src/infrastructure/platform/inAppBrowser.test.ts",
+    "orgportal:src/ui/components/EventVenues.tsx",
     "orgportal:src/ui/components/FloatingSocialDock.tsx",
+    "orgportal:src/ui/components/OrganizationTools.tsx",
     "orgportal:src/ui/components/SpecialtyResourcesPanel.tsx",
     "orgportal:src/ui/components/governance/GovernanceNav.tsx",
+    "orgportal:src/ui/components/media/HiddenCarouselImages.tsx",
     "orgportal:src/ui/components/media/ImageEditorModal.tsx",
     "orgportal:src/ui/components/system/AppUpdatePrompt.tsx",
     "orgportal:src/ui/router/createAppRouter.tsx",
@@ -92,6 +95,7 @@
     "orgportal:src/ui/views/orgs/OrgInitiativesPage.tsx",
     "orgportal:src/ui/views/orgs/OrgProfilePage.tsx",
     "orgportal:src/ui/views/orgs/OrgRegisterPage.tsx",
+    "orgportal:src/ui/views/orgs/VenuesPage.tsx",
     "orgportal:src/ui/views/public/EventRegistration.tsx",
     "orgportal:src/ui/views/public/GlobalSearchPage.tsx",
     "orgportal:src/ui/views/public/PublicAdminPage.tsx",
@@ -118,7 +122,7 @@
     "pidp:serverless/src/profilePage.ts",
     "pidp:serverless/test/mcp-authorization.test.mjs"
   ],
-  "linkCount": 990,
+  "linkCount": 999,
   "links": [
     {
       "source": "medtech:about.html",
@@ -9200,6 +9204,17 @@
       "fragment": ""
     },
     {
+      "source": "orgportal:src/ui/components/EventVenues.tsx",
+      "sourcePath": "src/ui/components/EventVenues.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/orgs/events/venues",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs/events/venues.html",
+      "fragment": ""
+    },
+    {
       "source": "orgportal:src/ui/components/FloatingSocialDock.tsx",
       "sourcePath": "src/ui/components/FloatingSocialDock.tsx",
       "sourceRepo": "orgportal",
@@ -9230,6 +9245,72 @@
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "governance/roberts.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/components/media/HiddenCarouselImages.tsx",
+      "sourcePath": "src/ui/components/media/HiddenCarouselImages.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/#community-photos",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "index.html",
+      "fragment": "community-photos"
+    },
+    {
+      "source": "orgportal:src/ui/components/OrganizationTools.tsx",
+      "sourcePath": "src/ui/components/OrganizationTools.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/availability",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "availability.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/components/OrganizationTools.tsx",
+      "sourcePath": "src/ui/components/OrganizationTools.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/governance",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "governance.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/components/OrganizationTools.tsx",
+      "sourcePath": "src/ui/components/OrganizationTools.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/governance/roberts",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "governance/roberts.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/components/OrganizationTools.tsx",
+      "sourcePath": "src/ui/components/OrganizationTools.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/orgs/events/venues",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs/events/venues.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/components/OrganizationTools.tsx",
+      "sourcePath": "src/ui/components/OrganizationTools.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/orgs/initiatives",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs/initiatives.html",
       "fragment": ""
     },
     {
@@ -9915,6 +9996,17 @@
       "source": "orgportal:src/ui/views/orgs/OrgEventsPage.tsx",
       "sourcePath": "src/ui/views/orgs/OrgEventsPage.tsx",
       "sourceRepo": "orgportal",
+      "href": "/orgs/events/venues",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs/events/venues.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/orgs/OrgEventsPage.tsx",
+      "sourcePath": "src/ui/views/orgs/OrgEventsPage.tsx",
+      "sourceRepo": "orgportal",
       "href": "/orgs/initiatives",
       "textRole": "",
       "kind": "internal-page",
@@ -10003,17 +10095,6 @@
       "source": "orgportal:src/ui/views/orgs/OrgProfilePage.tsx",
       "sourcePath": "src/ui/views/orgs/OrgProfilePage.tsx",
       "sourceRepo": "orgportal",
-      "href": "/orgs/initiatives",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "orgs/initiatives.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/views/orgs/OrgProfilePage.tsx",
-      "sourcePath": "src/ui/views/orgs/OrgProfilePage.tsx",
-      "sourceRepo": "orgportal",
       "href": "/profile",
       "textRole": "",
       "kind": "internal-page",
@@ -10030,6 +10111,28 @@
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "orgs/login.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/orgs/VenuesPage.tsx",
+      "sourcePath": "src/ui/views/orgs/VenuesPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/orgs/events",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs/events.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/orgs/VenuesPage.tsx",
+      "sourcePath": "src/ui/views/orgs/VenuesPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/orgs/events/venues",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs/events/venues.html",
       "fragment": ""
     },
     {

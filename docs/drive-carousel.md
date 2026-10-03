@@ -10,10 +10,12 @@ captions, and sound-enabled native playback controls. Its public source is
 [the original Drive clip](https://drive.google.com/file/d/1IoIN2F9zSsiDDvP5qIxGLWJMFjdyomtw/view).
 No Drive credentials, file mutations, or sharing changes are involved.
 
-The photo carousel supports previous/next buttons, thumbnails, arrow keys,
-and touch swipes. Adjacent photos preload. The five-second slideshow pauses
-while the carousel is hovered, keyboard navigation is active, or the carousel
-is outside the viewport. Reduced-motion users start with the slideshow paused.
+The photo carousel follows CodeCollective’s continuously scrolling strip:
+photos appear side by side in two identical groups for a seamless loop. Hover
+or hold the left/right edge to reverse or accelerate scrolling at six times
+normal speed. Pause, previous/next controls, and arrow keys also work. Keyboard
+focus and an offscreen carousel pause movement; reduced-motion users start
+paused. Hidden photos appear in a static grid with Restore controls.
 Public photos load independently of sign-in; account preferences remain in
 OrgPortal. Loading failures expose a retry action and the original Drive link.
 

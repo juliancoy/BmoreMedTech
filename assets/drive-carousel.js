@@ -14,29 +14,42 @@ async function json(response) {
 }
 if (root) {
  root.tabIndex = 0
- let folder, hidden = new Set(), view = 'carousel', position = 0, busy = false, error = '', preferencesReady = false, sequence = 0
- let playing = !matchMedia('(prefers-reduced-motion: reduce)').matches, visible = false, hovering = false
+ let folder, hidden = new Set(), view = 'carousel', busy = false, error = '', preferencesReady = false, sequence = 0
+ const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
+ let playing = !reducedMotion.matches, animation, resizeObserver, inView = false, speed = 1
  const authHeaders = () => ({ Authorization: `Bearer ${getSiteAccount().token}` })
- const imagesForView = () => (folder?.images || []).filter(image => view === 'hidden' ? hidden.has(image.id) : !hidden.has(image.id))
- const previewCache = new Map()
- function preload(image) {
-  if (!image || previewCache.has(image.imageUrl)) return
-  const img = new Image(); img.referrerPolicy = 'no-referrer'; img.src = image.imageUrl
-  previewCache.set(image.imageUrl, img)
- }
  function button(label, action, onclick) {
   const b = element('button', label); b.type = 'button'; b.dataset.action = action; b.onclick = onclick
   return b
  }
- function move(delta) { position += delta; render() }
+ function updateAnimation() {
+  if (!animation) return
+  animation.playbackRate = speed
+  if (playing && inView && !document.hidden && !root.contains(document.activeElement) && !busy && view === 'carousel') animation.play()
+  else animation.pause()
+ }
+ async function hideImage(image) {
+  const account = getSiteAccount()
+  if (!account.user || !account.token) { location.href = '/users/login?next=' + encodeURIComponent('/#community-photos'); return }
+  const operationSequence = sequence, actor = account.user.id, restoring = view === 'hidden'
+  busy = true; error = ''; updateAnimation()
+  root.querySelectorAll('button').forEach(b => { b.disabled = true })
+  try {
+   await json(await fetch(`${api}/me/hidden/${encodeURIComponent(image.id)}`, { method: restoring ? 'DELETE' : 'PUT', headers: authHeaders(), credentials: 'include', cache: 'no-store', signal: AbortSignal.timeout(10000) }))
+   if (operationSequence !== sequence || getSiteAccount().user?.id !== actor) return
+   if (restoring) hidden.delete(image.id); else hidden.add(image.id)
+  } catch (e) { if (operationSequence === sequence) error = e.message }
+  finally { if (operationSequence === sequence) { busy = false; render() } }
+ }
  function render() {
   const focusedAction = root.contains(document.activeElement) ? document.activeElement.dataset.action : null
+  animation?.cancel(); resizeObserver?.disconnect(); animation = undefined; speed = 1
   root.replaceChildren()
   const account = getSiteAccount()
   if (account.pending || !account.user) view = 'carousel'
   const controls = element('div', '', 'drive-carousel-tabs')
   for (const [key, label] of [['carousel', 'Photos'], ['hidden', `Hidden images (${hidden.size})`]]) {
-   const b = button(label, key, () => { view = key; position = 0; error = ''; render() })
+   const b = button(label, key, () => { view = key; error = ''; render() })
    b.disabled = busy || (key === 'hidden' && (!account.user || !preferencesReady)); b.setAttribute('aria-pressed', String(view === key)); controls.append(b)
   }
   if (account.user) { const link = element('a', 'My hidden photos'); link.href = '/profile#hidden-community-photos'; controls.append(link) }
@@ -47,50 +60,68 @@ if (root) {
   }
   if (!folder) { const status = element('p', error ? 'The folder is temporarily unavailable. Use the Drive folder link above.' : 'Loading community photos…'); status.setAttribute('role', 'status'); root.append(status); return }
   if (account.user && !preferencesReady) { root.append(element('p', error ? 'Your photo preferences could not load. Retry to view your photos.' : 'Loading your photo preferences…')); return }
-  const images = imagesForView()
+  const images = folder.images.filter(image => view === 'hidden' ? hidden.has(image.id) : !hidden.has(image.id))
   if (!images.length) { root.append(element('p', view === 'hidden' ? 'You have no hidden photos.' : 'No photos to show. Restore a hidden photo or open the Drive folder.')); return }
-  position = (position + images.length) % images.length
-  const image = images[position]
-  preload(images[(position + 1) % images.length]); preload(images[(position + images.length - 1) % images.length])
-  const nav = element('div', '', 'drive-carousel-navigation')
-  for (const [label, delta] of [['Previous', -1], ['Next', 1]]) {
-   const b = button(label, label.toLowerCase(), () => move(delta)); b.disabled = busy || images.length < 2; nav.append(b)
+  function card(image, index, duplicate = false) {
+   const figure = element('figure', '', 'community-strip-card')
+   const link = element('a'); link.href = image.driveUrl; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.setAttribute('aria-label', `Open meetup photo ${index + 1} in Google Drive`)
+   const img = element('img'); img.alt = `MedTech community meetup photo ${index + 1}`; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'
+   img.src = image.imageUrl.replace(/=w\d+$/, '=w1000')
+   img.onload = () => { figure.classList.add('loaded') }
+   img.onerror = () => { img.alt = 'Preview unavailable. Open this photo in Google Drive.'; figure.classList.add('loaded') }
+   link.append(img)
+   const caption = element('figcaption')
+   caption.append(element('span', `Photo ${index + 1} of ${images.length}`))
+   const hide = button(view === 'hidden' ? 'Restore' : account.user ? 'Hide' : 'Sign in to hide', `hide-${image.id}`, () => void hideImage(image))
+   hide.disabled = busy || account.pending || (!!account.user && !preferencesReady)
+   caption.append(hide); figure.append(link, caption)
+   if (duplicate) { link.tabIndex = -1; hide.tabIndex = -1 }
+   return figure
   }
-  const play = button(playing ? 'Pause slideshow' : 'Play slideshow', 'play', () => { playing = !playing; render() })
-  play.disabled = images.length < 2 || view === 'hidden'; nav.insertBefore(play, nav.lastChild); root.append(nav)
-  const stage = element('div', '', 'drive-carousel-stage')
-  const figure = element('figure', '', 'drive-carousel-slide')
-  const link = element('a'); link.href = image.driveUrl; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.setAttribute('aria-label', `Open photo ${position + 1} in Google Drive`)
-  const img = element('img'); img.alt = `MedTech community meetup photo ${position + 1}`; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'
-  const status = element('p', 'Loading photo…', 'drive-carousel-status'); status.setAttribute('role', 'status')
-  img.onload = () => { status.textContent = '' }
-  img.onerror = () => { status.textContent = 'This preview could not load. Open the photo in Google Drive or try another photo.' }
-  img.src = image.imageUrl
-  link.append(img)
-  const caption = element('figcaption', `${position + 1} of ${images.length} · Community meetup`)
-  caption.setAttribute('aria-live', playing ? 'off' : 'polite'); figure.append(link, caption); stage.append(figure, status); root.append(stage)
-  const thumbnails = element('div', '', 'drive-carousel-thumbnails'); thumbnails.setAttribute('aria-label', 'Choose a photo')
-  images.forEach((item, index) => {
-   const b = button('', `photo-${item.id}`, () => { position = index; playing = false; render() }); b.disabled = busy; b.setAttribute('aria-label', `Show photo ${index + 1}`); b.setAttribute('aria-current', String(index === position))
-   const thumb = element('img'); thumb.alt = ''; thumb.loading = 'lazy'; thumb.referrerPolicy = 'no-referrer'; thumb.src = item.imageUrl.replace(/=w\d+$/, '=w160'); b.append(thumb); thumbnails.append(b)
-  })
-  root.append(thumbnails)
-  thumbnails.scrollLeft = Math.max(0, position * 80 - thumbnails.clientWidth / 2 + 40)
-  const actions = element('div', '', 'drive-carousel-actions')
-  const hide = button(view === 'hidden' ? 'Restore to carousel' : account.user ? 'Hide this photo' : 'Sign in to hide photos', 'hide', async () => {
-   const actorAccount = getSiteAccount()
-   if (!actorAccount.user || !actorAccount.token) { location.href = '/users/login?next=' + encodeURIComponent('/#community-photos'); return }
-   const operationSequence = sequence, actor = actorAccount.user.id, restoring = view === 'hidden'
-   busy = true; error = ''; render()
-   try {
-    await json(await fetch(`${api}/me/hidden/${encodeURIComponent(image.id)}`, { method: restoring ? 'DELETE' : 'PUT', headers: authHeaders(), credentials: 'include', cache: 'no-store', signal: AbortSignal.timeout(10000) }))
-    if (operationSequence !== sequence || getSiteAccount().user?.id !== actor) return
-    if (restoring) hidden.delete(image.id); else hidden.add(image.id)
-   } catch (e) { if (operationSequence === sequence) error = e.message }
-   finally { if (operationSequence === sequence) { busy = false; render() } }
-  })
-  hide.disabled = busy || account.pending || (!!account.user && !preferencesReady); actions.append(hide); root.append(actions)
-  if (focusedAction) root.querySelector(`[data-action="${CSS.escape(focusedAction)}"]`)?.focus({ preventScroll: true })
+  if (view === 'hidden') {
+   const grid = element('div', '', 'community-hidden-grid'); images.forEach((image, index) => grid.append(card(image, index))); root.append(grid)
+  } else {
+   const viewport = element('div', '', 'community-strip')
+   const track = element('div', '', 'community-strip-track')
+   const group = element('div', '', 'community-strip-group')
+   images.forEach((image, index) => group.append(card(image, index)))
+   const duplicate = element('div', '', 'community-strip-group'); duplicate.setAttribute('aria-hidden', 'true')
+   images.forEach((image, index) => duplicate.append(card(image, index, true)))
+   track.append(group, duplicate); viewport.append(track); root.append(viewport)
+   function startAnimation() {
+    const distance = group.getBoundingClientRect().width
+    if (!distance) return
+    const progress = animation ? Number(animation.currentTime || 0) / Number(animation.effect.getTiming().duration) % 1 : 0
+    animation?.cancel()
+    animation = track.animate([{ transform: 'translateX(0)' }, { transform: `translateX(-${distance}px)` }], { duration: Math.max(36000, distance / 60 * 1000), iterations: Infinity, easing: 'linear' })
+    animation.currentTime = (1 + progress) * Number(animation.effect.getTiming().duration)
+    updateAnimation()
+   }
+   startAnimation(); resizeObserver = new ResizeObserver(startAnimation); resizeObserver.observe(group)
+   for (const [side, factor] of [['left', -6], ['right', 6]]) {
+    const zone = element('div', '', `community-speed-zone ${side}`); zone.setAttribute('aria-hidden', 'true')
+    const faster = () => { speed = factor; updateAnimation() }, normal = () => { speed = 1; updateAnimation() }
+    zone.addEventListener('mouseenter', faster); zone.addEventListener('mouseleave', normal)
+    zone.addEventListener('touchstart', faster, { passive: true }); zone.addEventListener('touchend', normal); zone.addEventListener('touchcancel', normal)
+    viewport.append(zone)
+   }
+   const nav = element('div', '', 'drive-carousel-actions')
+   for (const [label, delta] of [['Previous photos', -1], ['Next photos', 1]]) {
+    nav.append(button(label, label.startsWith('Previous') ? 'previous' : 'next', () => {
+     playing = false; const duration = Number(animation.effect.getTiming().duration); animation.currentTime = duration + ((Number(animation.currentTime || 0) + delta * 5000) % duration + duration) % duration; updateAnimation(); updatePlayLabel()
+    }))
+   }
+   const play = button(playing ? 'Pause scrolling' : 'Play scrolling', 'play', () => {
+    playing = !playing; play.blur(); updateAnimation(); updatePlayLabel()
+   })
+   function updatePlayLabel() { play.textContent = playing ? 'Pause scrolling' : 'Play scrolling'; play.setAttribute('aria-pressed', String(playing)) }
+   nav.append(play); root.append(nav); updatePlayLabel()
+   root.append(element('p', 'Hover or hold the edges to scroll faster in either direction. Use Pause to stop and choose a photo.', 'drive-carousel-status'))
+  }
+  if (focusedAction) {
+   const nextFocus = root.querySelector(`[data-action="${CSS.escape(focusedAction)}"]`) || root.querySelector('[data-action="carousel"]')
+   nextFocus?.focus({ preventScroll: true })
+  }
  }
  async function load() {
   const current = ++sequence
@@ -110,21 +141,21 @@ if (root) {
   if (current === sequence) render()
  }
  root.addEventListener('keydown', event => {
-  if (!busy && ['ArrowLeft', 'ArrowRight'].includes(event.key) && !['INPUT', 'TEXTAREA'].includes(event.target.tagName)) { event.preventDefault(); playing = false; move(event.key === 'ArrowLeft' ? -1 : 1) }
+  if (animation && !busy && ['ArrowLeft', 'ArrowRight'].includes(event.key) && !['INPUT', 'TEXTAREA'].includes(event.target.tagName)) {
+   event.preventDefault(); root.querySelector(`[data-action="${event.key === 'ArrowLeft' ? 'previous' : 'next'}"]`)?.click()
+  }
  })
- root.addEventListener('mouseenter', () => { hovering = true })
- root.addEventListener('mouseleave', () => { hovering = false })
- let touchX
- root.addEventListener('touchstart', event => { touchX = event.touches[0].clientX }, { passive: true })
- root.addEventListener('touchend', event => {
-  if (touchX === undefined || busy) return
-  const delta = event.changedTouches[0].clientX - touchX; touchX = undefined
-  if (Math.abs(delta) > 50) { playing = false; move(delta < 0 ? 1 : -1) }
- }, { passive: true })
- new IntersectionObserver(([entry]) => { visible = entry.isIntersecting }, { threshold: .2 }).observe(root)
+ // Keep reverse playback away from the beginning of the animation timeline.
  setInterval(() => {
-  if (playing && visible && !hovering && !document.hidden && (!root.contains(document.activeElement) || document.activeElement.dataset.action === 'play') && !busy && view === 'carousel' && imagesForView().length > 1) move(1)
- }, 5000)
+  if (!animation || animation.playState !== 'running') return
+  const duration = Number(animation.effect.getTiming().duration), time = Number(animation.currentTime || 0)
+  if (time < duration || time >= duration * 2) animation.currentTime = duration + ((time % duration) + duration) % duration
+ }, 500)
+ root.addEventListener('focusin', updateAnimation)
+ root.addEventListener('focusout', () => queueMicrotask(updateAnimation))
+ document.addEventListener('visibilitychange', updateAnimation)
+ reducedMotion.addEventListener('change', () => { playing = !reducedMotion.matches; render() })
+ new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; updateAnimation() }, { threshold: .1 }).observe(root)
  window.addEventListener('site-account-change', () => void load())
  void load()
 }

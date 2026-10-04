@@ -294,6 +294,7 @@ function isPortalRoute(pathname) {
     || pathname === '/chat' || pathname.startsWith('/chat/')
     || pathname === '/auth/callback'
     || pathname === '/email' || pathname.startsWith('/email/')
+    || pathname === '/admin' || pathname.startsWith('/admin/')
     || pathname === '/profile'
     || pathname === '/settings'
     || pathname === '/search'

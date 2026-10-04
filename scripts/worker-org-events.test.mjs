@@ -220,7 +220,7 @@ test('LifeTech availability polls use the existing tenant portal mount', async (
   assert.equal(request.headers.get('x-forwarded-host'),'lifetech.fyi')
   return new Response('portal',{headers:{'content-type':'text/html'}})
  })
- for(const path of ['/onboarding','/availability','/availability/poll-123']){
+ for(const path of ['/onboarding','/availability','/availability/poll-123','/admin','/admin/nametags']){
   const response=await worker.fetch(new Request(`https://lifetech.fyi${path}`),{PORTAL_SITE_ORIGIN:'https://portal.example',ASSETS:{fetch:async()=>new Response('missing',{status:404})}})
   assert.equal(response.status,200);assert.equal(await response.text(),'portal')
  }

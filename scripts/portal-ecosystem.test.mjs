@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {mergePortalEvidence,graphRelationships,financialNodeAmounts,financialNodeRadius} from '../lib/portal-ecosystem.js'
+import {mergePortalEvidence,graphRelationships,financialNodeAmounts,financialNodeRadius,loadPortalEvidence} from '../lib/portal-ecosystem.js'
 const base={organizations:[{id:'org-funder',name:'Funder',website:'https://funder.test/',publicEmails:[]}],relationships:[],financing:[],dashboard:[]}
 const orgs=[{id:'org-funder',name:'Funder',slug:'funder',tags:[]},{id:'venture',name:'Venture',slug:'venture',tags:['LifeTech','Venture']}]
 const record={id:'support:one',record_id:'one',record_type:'organization_support',status:'reported',transaction_type:'acceleration',from_organization_id:'org-funder',to_organization_id:'venture',from_label:'Funder',to_label:'Venture',amount:null,source_url:'https://funder.test/cohort',description:'Cohort',notes:'',evidence:'Named participant'}
@@ -17,4 +17,16 @@ test('financial sizing avoids overlap, unknown amounts and currency mixing',()=>
  assert.equal(financialNodeAmounts({relationships:[{...edge(1000000),currency:undefined,amountLabel:'$1,000,000'}]}).get('a'),1000000)
  assert.equal(financialNodeRadius(null),6)
  assert(financialNodeRadius(100000000)>financialNodeRadius(2000))
+})
+test('loads directories and support evidence beyond 500 without dropping recipient endpoints',async()=>{
+ const directory=[orgs[0],...Array.from({length:500},(_,i)=>({id:`venture-${i}`,slug:`venture-${i}`,name:`Venture ${i}`,tags:[]}))]
+ const records=directory.slice(1).map(o=>({...record,id:`support:${o.id}`,record_id:o.id,to_organization_id:o.id}))
+ const calls=[]
+ const fetcher=async path=>{calls.push(path);const url=new URL(path,'https://example.test');const offset=Number(url.searchParams.get('offset'));return {ok:true,json:async()=>url.pathname.endsWith('/orgs/public')?directory.slice(offset,offset+500):{records:records.slice(offset,offset+499),nextRecordOffset:offset===0?499:null}}}
+ const data=await loadPortalEvidence(base,fetcher)
+ assert.equal(data.organizations.length,501);assert.equal(data.relationships.length,500)
+ assert(calls.some(path=>path.includes('offset=500')));assert(calls.some(path=>path.includes('support?offset=499')))
+})
+test('rejects incomplete or looping support pagination',async()=>{
+ for(const nextRecordOffset of [undefined,0,'500'])await assert.rejects(()=>loadPortalEvidence(base,async path=>({ok:true,json:async()=>path.includes('/support?')?{records:[record],nextRecordOffset}:[orgs[0]]})),/incomplete/)
 })

@@ -391,3 +391,51 @@ if (document.querySelector('.taxonomy-page')) {
       console.error('Unable to initialize the medical atlas enhancements.', error);
     });
 }
+
+// The public LifeTech landing page shares the portal's live group access boundary.
+function setupOrganizationViews() {
+  if (document.querySelector('.brand strong')?.textContent.trim() !== 'LifeTech') return
+  const nav = document.querySelector('#primary-nav')
+  if (!nav) return
+  const label = document.createElement('label')
+  label.textContent = 'View as '
+  const select = document.createElement('select')
+  select.setAttribute('aria-label', 'Organization view')
+  for (const value of ['public', 'attendees', 'volunteers', 'members', 'organizers']) {
+    const option = document.createElement('option')
+    option.value = value
+    option.textContent = value[0].toUpperCase() + value.slice(1)
+    option.disabled = value === 'members' || value === 'organizers'
+    select.append(option)
+  }
+  label.append(select)
+  nav.append(label)
+  select.addEventListener('change', () => {
+    window.location.assign(select.value === 'public' ? '/?view=public' : `/orgs/lifetech?view=${select.value}`)
+  })
+  let sequence = 0
+  async function refresh() {
+    const current = ++sequence
+    select.value = 'public'
+    select.querySelector('[value="members"]').disabled = true
+    select.querySelector('[value="organizers"]').disabled = true
+    const { token } = getSiteAccount()
+    if (!token) return
+    try {
+      const response = await fetch('/api/org/api/network/orgs/public/lifetech', { cache: 'no-store' })
+      if (!response.ok) return
+      const group = await response.json()
+      const membershipResponse = await fetch(`/api/org/api/network/orgs/${encodeURIComponent(group.id)}/membership`, { cache: 'no-store', headers: { Authorization: `Bearer ${token}` } })
+      if (!membershipResponse.ok || current !== sequence) return
+      const membership = await membershipResponse.json()
+      if (current !== sequence || membership.status !== 'active') return
+      const organizer = ['owner', 'administrator'].includes(membership.role)
+      select.querySelector('[value="members"]').disabled = false
+      select.querySelector('[value="organizers"]').disabled = !organizer
+      if (organizer && window.location.pathname === '/' && new URLSearchParams(window.location.search).get('view') !== 'public') window.location.replace('/orgs/lifetech?view=organizers')
+    } catch { /* Keep public navigation available when membership cannot be checked. */ }
+  }
+  window.addEventListener('site-account-change', () => void refresh())
+  void accountReady.then(refresh)
+}
+setupOrganizationViews()

@@ -304,7 +304,8 @@ function isPortalRoute(pathname) {
 }
 
 function isLifeTechTenantOrgRoute(pathname) {
-  return pathname === '/orgs/login'
+  return pathname === '/orgs/lifetech' || pathname === '/orgs/lifetech/'
+    || pathname === '/orgs/login'
     || pathname.startsWith('/orgs/login/')
     || pathname === '/orgs/initiatives'
     || pathname.startsWith('/orgs/initiatives/')

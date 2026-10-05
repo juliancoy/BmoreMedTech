@@ -28,3 +28,14 @@ See `README.md` and `docs/events-platform.md` for the ownership boundary and
 event workflow. Deploying MedTech from this repository must not deploy
 OrgPortal, CodeCollective, PIdP, or chat; use the CodeCollective checkout for
 the shared portal release path.
+
+## Organization data source
+
+Always operate on remote production OrgPortal organization data through the
+existing tenant API/MCP (`https://lifetech.fyi/api/org` for LifeTech). Preserve
+member authentication, organization permissions, and preview/apply receipts.
+Local organization databases are eventually consistent public read replicas;
+they are not authoritative for edits or permission decisions. Keep replication
+enabled for ordinary local deployments and check remote data before acting.
+See `../OrgPortal/org-worker/REPLICATION.md` for setup and sync status. Isolated
+local authenticated browser tests remain an explicit fixture-only exception.

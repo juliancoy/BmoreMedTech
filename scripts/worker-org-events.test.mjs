@@ -133,26 +133,34 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
   const orgRegister = await worker.fetch(new Request('https://lifetech.fyi/orgs/register?from=medtech', {
     headers: { accept: 'text/html' },
   }), env)
-  assert.equal(orgRegister.status, 301)
-  assert.equal(orgRegister.headers.get('location'), 'https://portal.example/orgs/register?from=medtech')
+  assert.equal(orgRegister.status, 200)
+  assert.equal(orgRegister.headers.has('location'), false)
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/?from=medtech')
+  assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'lifetech.fyi')
 
   const createForProfit = await worker.fetch(new Request('https://lifetech.fyi/create/for-profit', {
     headers: { accept: 'text/html' },
   }), env)
-  assert.equal(createForProfit.status, 301)
-  assert.equal(createForProfit.headers.get('location'), 'https://portal.example/create/for-profit')
+  assert.equal(createForProfit.status, 200)
+  assert.equal(createForProfit.headers.has('location'), false)
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
+  assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'lifetech.fyi')
 
   const orgDirectory = await worker.fetch(new Request('https://lifetech.fyi/orgs?q=medtech', {
     headers: { accept: 'text/html' },
   }), env)
-  assert.equal(orgDirectory.status, 301)
-  assert.equal(orgDirectory.headers.get('location'), 'https://portal.example/orgs?q=medtech')
+  assert.equal(orgDirectory.status, 200)
+  assert.equal(orgDirectory.headers.has('location'), false)
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/?q=medtech')
+  assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'lifetech.fyi')
 
   const publicOrgProfile = await worker.fetch(new Request('https://lifetech.fyi/orgs/baltimore-medtech', {
     headers: { accept: 'text/html' },
   }), env)
-  assert.equal(publicOrgProfile.status, 301)
-  assert.equal(publicOrgProfile.headers.get('location'), 'https://portal.example/orgs/baltimore-medtech')
+  assert.equal(publicOrgProfile.status, 200)
+  assert.equal(publicOrgProfile.headers.has('location'), false)
+  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
+  assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'lifetech.fyi')
 
   const tenantOrgEvents = await worker.fetch(new Request('https://lifetech.fyi/orgs/events', {
     headers: { accept: 'text/html' },
@@ -255,5 +263,22 @@ test('LifeTech mounts shared governance pages and preserves authenticated API re
     assert.equal(upstream.headers.get('authorization'), 'Bearer test-token')
     assert.equal(upstream.headers.get('x-forwarded-host'), 'lifetech.fyi')
     assert.deepEqual(await upstream.json(), { choice: 'yea' })
+  }
+})
+
+
+test('organization pages stay on each tenant and keep authenticated requests intact', async (t) => {
+  const seen = []
+  t.mock.method(globalThis, 'fetch', async request => { seen.push(request); return new Response('<div id="root"></div>', { headers: { 'content-type': 'text/html' } }) })
+  const env = { PORTAL_SITE_ORIGIN: 'https://portal.example', ASSETS: { fetch: async () => { throw new Error('Organization pages belong in OrgPortal') } } }
+  for (const host of ['lifetech.fyi', 'medtech.social']) {
+    for (const path of ['/orgs/tedco', '/orgs/amplify-medtech', '/orgs/profile', '/orgs/register', '/create/non-profit']) {
+      const response = await worker.fetch(new Request(`https://${host}${path}`, { headers: { cookie: 'session=fixture', authorization: 'Bearer fixture', accept: 'text/html' } }), env)
+      assert.equal(response.status, 200)
+      assert.equal(response.headers.has('location'), false)
+      assert.equal(seen.at(-1).headers.get('x-forwarded-host'), host)
+      assert.equal(seen.at(-1).headers.get('authorization'), 'Bearer fixture')
+      assert.equal(seen.at(-1).headers.get('cookie'), 'session=fixture')
+    }
   }
 })

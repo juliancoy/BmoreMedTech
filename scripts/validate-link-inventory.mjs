@@ -62,6 +62,7 @@ const knownPortalRoutes = new Set([
   '/availability',
   '/governance/roberts',
   '/resources',
+  ...ecosystemData.organizations.filter(org => org.directory).map(org => `/orgs/${encodeURIComponent(org.id.replace(/^org-/, ''))}`),
 ])
 const writeIndex = process.argv.indexOf('--write')
 const plannedOutputPath = writeIndex === -1 ? '' : process.argv[writeIndex + 1]

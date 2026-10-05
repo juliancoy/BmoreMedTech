@@ -294,7 +294,8 @@ function isPortalRoute(pathname) {
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')
     || pathname === '/specialty' || pathname.startsWith('/specialty/')
-    || isLifeTechTenantOrgRoute(pathname)
+    || pathname === '/orgs' || pathname.startsWith('/orgs/')
+    || pathname === '/create' || pathname.startsWith('/create/')
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
     || pathname === '/auth/callback'
@@ -305,37 +306,6 @@ function isPortalRoute(pathname) {
     || pathname === '/branding'
     || pathname === '/resources' || pathname.startsWith('/resources/')
     || pathname === '/tools' || pathname.startsWith('/tools/')
-}
-
-function isLifeTechTenantOrgRoute(pathname) {
-  return pathname === '/orgs/login'
-    || pathname.startsWith('/orgs/login/')
-    || pathname === '/orgs/initiatives'
-    || pathname.startsWith('/orgs/initiatives/')
-    || pathname === '/orgs/profile'
-    || pathname.startsWith('/orgs/profile/')
-    || pathname === '/orgs/account'
-    || pathname.startsWith('/orgs/account/')
-    || pathname === '/orgs/events'
-    || pathname.startsWith('/orgs/events/')
-}
-
-function isMasterPortalOrgRoute(pathname) {
-  return pathname === '/orgs/register'
-    || pathname.startsWith('/orgs/register/')
-    || pathname === '/orgs'
-    || (pathname.startsWith('/orgs/') && !isLifeTechTenantOrgRoute(pathname))
-    || pathname === '/create'
-    || pathname.startsWith('/create/')
-}
-
-function masterPortalLocation(requestUrl) {
-  const target = new URL(requestUrl)
-  const origin = new URL(portalSiteOrigin.replace(/\/+$/, ''))
-  target.protocol = origin.protocol
-  target.hostname = origin.hostname
-  target.port = origin.port
-  return target.toString()
 }
 
 const server = https.createServer(
@@ -361,10 +331,6 @@ const server = https.createServer(
       }
       if (requestUrl.pathname === '/branding.html') {
         redirect(res, `/branding${requestUrl.search}${requestUrl.hash}`, 301)
-        return
-      }
-      if (isMasterPortalOrgRoute(requestUrl.pathname)) {
-        redirect(res, masterPortalLocation(requestUrl), 301)
         return
       }
       if (requestUrl.pathname === '/api/datasets' || requestUrl.pathname.startsWith('/api/datasets/')) {

@@ -289,7 +289,8 @@ function isPortalRoute(pathname) {
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')
     || pathname === '/specialty' || pathname.startsWith('/specialty/')
-    || isLifeTechTenantOrgRoute(pathname)
+    || pathname === '/orgs' || pathname.startsWith('/orgs/')
+    || pathname === '/create' || pathname.startsWith('/create/')
     || pathname === '/people' || pathname.startsWith('/people/')
     || pathname === '/chat' || pathname.startsWith('/chat/')
     || pathname === '/auth/callback'
@@ -301,37 +302,6 @@ function isPortalRoute(pathname) {
     || pathname === '/branding'
     || pathname === '/resources' || pathname.startsWith('/resources/')
     || pathname === '/tools' || pathname.startsWith('/tools/')
-}
-
-function isLifeTechTenantOrgRoute(pathname) {
-  return pathname === '/orgs/login'
-    || pathname.startsWith('/orgs/login/')
-    || pathname === '/orgs/initiatives'
-    || pathname.startsWith('/orgs/initiatives/')
-    || pathname === '/orgs/profile'
-    || pathname.startsWith('/orgs/profile/')
-    || pathname === '/orgs/account'
-    || pathname.startsWith('/orgs/account/')
-    || pathname === '/orgs/events'
-    || pathname.startsWith('/orgs/events/')
-}
-
-function isMasterPortalOrgRoute(pathname) {
-  return pathname === '/orgs/register'
-    || pathname.startsWith('/orgs/register/')
-    || pathname === '/orgs'
-    || (pathname.startsWith('/orgs/') && !isLifeTechTenantOrgRoute(pathname))
-    || pathname === '/create'
-    || pathname.startsWith('/create/')
-}
-
-function masterPortalRedirect(url, env, status = 301) {
-  const target = new URL(url)
-  const origin = new URL(trimTrailingSlash(env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN))
-  target.protocol = origin.protocol
-  target.hostname = origin.hostname
-  target.port = origin.port
-  return Response.redirect(target.toString(), status)
 }
 
 export default {
@@ -351,10 +321,6 @@ export default {
     if (url.pathname === '/branding.html') {
       url.pathname = '/branding'
       return Response.redirect(url.toString(), 301)
-    }
-
-    if (isMasterPortalOrgRoute(url.pathname)) {
-      return masterPortalRedirect(url, env)
     }
 
     if (isPortalDevAssetPath(url.pathname)) {

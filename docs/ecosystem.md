@@ -54,8 +54,11 @@ one investor. Directory affiliation edges cite the relevant program website.
 D3 force/link/collision layout clusters nodes by class. Three.js renders spheres,
 curved funding tubes and directional arrows; OrbitControls handles pan, zoom and
 orbit, and raycasting implements pointer selection. Labels are real keyboard
-buttons, prioritized to avoid collisions. Proximity controls node size; a log
-scale controls disclosed funding width. Selection can isolate one-hop neighbors.
+buttons, prioritized to avoid collisions. The largest disclosed USD funding/award sent or received controls node size
+on a logarithmic scale; unknown amounts use a small baseline. Capitalization
+enters sizing only when enabled. Overlapping amounts are not summed, and
+program terms and portfolio aggregates do not control size. A log scale controls
+disclosed funding width. Selection can isolate one-hop neighbors.
 Capitalization is opt-in; aggregate/program scopes remain in the table.
 
 Search covers every organization, including labels hidden for readability.
@@ -134,3 +137,18 @@ successful live evidence refresh, the 26-organization/21-link money view,
 nonmonetary table exclusion and AidRx's Techstars cohort details. The view
 selector remained usable at a 390-pixel viewport. Screenshots are saved in
 `artifacts/lifetech-money-map.png` and `artifacts/medtech-money-map.png`.
+
+### Financial icon sizing — October 5, 2026
+
+Both maps now size icons by the largest named USD funding/award sent or received,
+rather than proximity. The fixed logarithmic scale preserves sizes across view
+filters. Organizations without a disclosed positive amount have a small baseline;
+capitalization is included only when enabled. Tooltips explain the amount and its
+unverified payment status. Fourteen ecosystem tests and both builds passed.
+
+MedTech version: `fb704d7b-71f5-42d8-92c3-04b7c4a0ba8f`.
+LifeTech version: `d17f3baa-fdf4-451c-8115-ef1d44c95363`.
+
+SVG fallback also defines colors for services, mentoring, venue and in-kind
+support. Browser checks force unavailable WebGL and an unavailable live API to
+verify financial sizing against the deployed saved snapshot.

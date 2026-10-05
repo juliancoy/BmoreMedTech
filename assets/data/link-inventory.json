@@ -129,7 +129,7 @@
     "pidp:serverless/test/app-login.test.mjs",
     "pidp:serverless/test/mcp-authorization.test.mjs"
   ],
-  "linkCount": 1569,
+  "linkCount": 1571,
   "links": [
     {
       "source": "medtech:about.html",
@@ -16125,12 +16125,32 @@
       "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
       "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
       "sourceRepo": "orgportal",
+      "href": "/chat",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/chat"
+    },
+    {
+      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
+      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
+      "sourceRepo": "orgportal",
       "href": "/events",
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "events.html",
       "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
+      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/org-events",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/org-events"
     },
     {
       "source": "orgportal:src/ui/views/public/PublicContactPage.tsx",

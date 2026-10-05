@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {mergePortalEvidence,graphRelationships} from '../lib/portal-ecosystem.js'
+import {mergePortalEvidence,graphRelationships,financialNodeAmounts,financialNodeRadius} from '../lib/portal-ecosystem.js'
 const base={organizations:[{id:'org-funder',name:'Funder',website:'https://funder.test/',publicEmails:[]}],relationships:[],financing:[],dashboard:[]}
 const orgs=[{id:'org-funder',name:'Funder',slug:'funder',tags:[]},{id:'venture',name:'Venture',slug:'venture',tags:['LifeTech','Venture']}]
 const record={id:'support:one',record_id:'one',record_type:'organization_support',status:'reported',transaction_type:'acceleration',from_organization_id:'org-funder',to_organization_id:'venture',from_label:'Funder',to_label:'Venture',amount:null,source_url:'https://funder.test/cohort',description:'Cohort',notes:'',evidence:'Named participant'}
@@ -8,3 +8,13 @@ test('cohort relationships appear in full map and never become money',()=>{const
 test('refresh is idempotent and voided evidence is removed',()=>{const first=mergePortalEvidence(base,orgs,[record]);const second=mergePortalEvidence(first,orgs,[record]);assert.equal(second.relationships.length,1);assert.equal(mergePortalEvidence(second,orgs,[{...record,status:'voided'}]).relationships.length,0)})
 test('awards preserve reported status and amounts; capitalizations are opt-in',()=>{const data=mergePortalEvidence(base,orgs,[{...record,transaction_type:'transfer',amount:4000,currency:'USD'},{...record,id:'support:capital',record_id:'capital',transaction_type:'capitalization'}]);assert.equal(graphRelationships(data,{moneyOnly:true}).length,1);assert.equal(graphRelationships(data,{moneyOnly:true,includeCapitalization:true}).length,2);assert.equal(data.financing[0].status,'reported');assert.equal(data.financing[0].amount,4000)})
 test('imported workbook records are not duplicated and unsafe evidence is omitted',()=>{const data=mergePortalEvidence(base,orgs,[{...record,record_id:'bmoremedtech:existing'},{...record,source_url:'javascript:alert(1)'}]);assert.equal(data.relationships.length,1);assert.equal(data.relationships[0].sourceUrl,'')})
+
+test('financial sizing avoids overlap, unknown amounts and currency mixing',()=>{
+ const edge=(amount,currency='USD',kind='transfer')=>({source:'a',target:'b',amount,currency,kind})
+ const data={relationships:[edge(1000),edge(2000),edge(null),edge(10000,'EUR'),edge(100000,'USD','capitalization')]}
+ assert.equal(financialNodeAmounts(data).get('a'),2000)
+ assert.equal(financialNodeAmounts(data,{includeCapitalization:true}).get('b'),100000)
+ assert.equal(financialNodeAmounts({relationships:[{...edge(1000000),currency:undefined,amountLabel:'$1,000,000'}]}).get('a'),1000000)
+ assert.equal(financialNodeRadius(null),6)
+ assert(financialNodeRadius(100000000)>financialNodeRadius(2000))
+})

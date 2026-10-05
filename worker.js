@@ -304,6 +304,7 @@ function isPortalRoute(pathname) {
     || pathname === '/tools' || pathname.startsWith('/tools/')
 }
 
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url)

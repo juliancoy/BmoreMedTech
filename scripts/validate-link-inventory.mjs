@@ -45,7 +45,7 @@ const knownExternalOrigins = new Set([
   'https://lifetech.fyi',
 ])
 // Only the generated ecosystem pages may link to URLs present in their sanitized input.
-const ecosystemData = JSON.parse(await readFile(new URL('../assets/data/ecosystem.json', import.meta.url), 'utf8'))
+const ecosystemData = JSON.parse(await readFile(new URL('../assets/data/ecosystem-portal.json', import.meta.url), 'utf8').catch(() => readFile(new URL('../assets/data/ecosystem.json', import.meta.url), 'utf8')))
 const ecosystemLinks = new Set([
   ...ecosystemData.organizations.flatMap(o => [o.website, ...o.publicEmails.map(email => `mailto:${email}`)]),
   ...ecosystemData.relationships.map(r => r.sourceUrl),
@@ -62,7 +62,7 @@ const knownPortalRoutes = new Set([
   '/availability',
   '/governance/roberts',
   '/resources',
-  ...ecosystemData.organizations.filter(org => org.directory).map(org => `/orgs/${encodeURIComponent(org.id.replace(/^org-/, ''))}`),
+  ...ecosystemData.organizations.filter(org => org.directory).map(org => `/orgs/${encodeURIComponent(org.portalSlug || org.id.replace(/^org-/, ''))}`),
 ])
 const writeIndex = process.argv.indexOf('--write')
 const plannedOutputPath = writeIndex === -1 ? '' : process.argv[writeIndex + 1]

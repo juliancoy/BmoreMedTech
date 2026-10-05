@@ -54,8 +54,11 @@ one investor. Directory affiliation edges cite the relevant program website.
 D3 force/link/collision layout clusters nodes by class. Three.js renders spheres,
 curved funding tubes and directional arrows; OrbitControls handles pan, zoom and
 orbit, and raycasting implements pointer selection. Labels are real keyboard
-buttons, prioritized to avoid collisions. Proximity controls node size; a log
-scale controls disclosed funding width. Selection can isolate one-hop neighbors.
+buttons, prioritized to avoid collisions. The largest disclosed USD funding/award sent or received controls node size
+on a logarithmic scale; unknown amounts use a small baseline. Capitalization
+enters sizing only when enabled. Overlapping amounts are not summed, and
+program terms and portfolio aggregates do not control size. A log scale controls
+disclosed funding width. Selection can isolate one-hop neighbors.
 Capitalization is opt-in; aggregate/program scopes remain in the table.
 
 Search covers every organization, including labels hidden for readability.
@@ -96,3 +99,56 @@ Selenium dependencies. These limitations are not passing test results.
 
 A screenshot of the deployed fallback is in
 `artifacts/ecosystem-network-preview.jpg`.
+
+### Public OrgPortal evidence — October 5, 2026
+
+`npm run sync:portal-ecosystem` merges the workbook snapshot with the existing
+public OrgPortal organization and support interfaces, writing the separate
+`assets/data/ecosystem-portal.json` snapshot. CI refreshes both sources before
+rendering. Local builds use the saved snapshots. The network displays the saved
+snapshot immediately and refreshes public support evidence on opening; a failed
+refresh leaves the saved evidence usable. No browser credentials or new backend
+service are involved. Existing workbook imports are not counted twice.
+
+The map view selector offers all relationships or money only. Money only includes
+named funding/award relationships, with capitalization separately opt-in. Cohort,
+mentoring and other nonmonetary support remain in the full view. Unknown proximity
+and amounts remain unknown, and aggregate scopes remain outside the graph.
+
+The current snapshot has 144 organizations and 113 evidence relationships, of
+which 94 have supported graph types and named endpoints. The money view has 21
+links among 26 organizations. The full view includes the 56 researched cohort
+relationships. Twelve individually disclosed competition awards were recorded
+through existing OrgPortal support preview/apply interfaces. Their reported
+status and notes distinguish the announcing organization from a verified cash
+disburser. Payment remains unverified; undisclosed and shared prizes were not
+allocated to individual ventures, and amounts are never totaled.
+
+Both branded builds passed their existing validators and the 13 ecosystem tests.
+Headless local browser checks verified saved-evidence fallback, money-only table
+filtering and cohort details. Production was deployed to the existing site
+Workers, without deploying OrgPortal, CodeCollective, PIdP or chat:
+
+- MedTech: `ab378379-7541-46df-9c19-3eaf60930e25`.
+- LifeTech: `9fac0ca7-6c78-4ccd-9932-26e5808215ca`.
+
+Unauthenticated headless checks on both public domains confirmed HTTP 200, a
+successful live evidence refresh, the 26-organization/21-link money view,
+nonmonetary table exclusion and AidRx's Techstars cohort details. The view
+selector remained usable at a 390-pixel viewport. Screenshots are saved in
+`artifacts/lifetech-money-map.png` and `artifacts/medtech-money-map.png`.
+
+### Financial icon sizing — October 5, 2026
+
+Both maps now size icons by the largest named USD funding/award sent or received,
+rather than proximity. The fixed logarithmic scale preserves sizes across view
+filters. Organizations without a disclosed positive amount have a small baseline;
+capitalization is included only when enabled. Tooltips explain the amount and its
+unverified payment status. Fourteen ecosystem tests and both builds passed.
+
+MedTech version: `fb704d7b-71f5-42d8-92c3-04b7c4a0ba8f`.
+LifeTech version: `d17f3baa-fdf4-451c-8115-ef1d44c95363`.
+
+SVG fallback also defines colors for services, mentoring, venue and in-kind
+support. Browser checks force unavailable WebGL and an unavailable live API to
+verify financial sizing against the deployed saved snapshot.

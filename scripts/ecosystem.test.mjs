@@ -80,9 +80,10 @@ test('proximity chart ranks scores and distinguishes zero from missing with acce
 
 test('every directory organization has a direct first-class portal page link', async () => {
  const directory = await readFile(new URL('../ecosystem/index.html',import.meta.url),'utf8')
- for (const org of snapshot.organizations.filter(org => org.directory)) {
-  const path = `/orgs/${encodeURIComponent(org.id.replace(/^org-/, ''))}`
+ const enriched = JSON.parse(await readFile(new URL('../assets/data/ecosystem-portal.json',import.meta.url)))
+ for (const org of enriched.organizations.filter(org => org.directory)) {
+  const path = `/orgs/${encodeURIComponent(org.portalSlug || org.id.replace(/^org-/, ''))}`
   assert.ok(directory.includes(`href="${path}"`), `${org.name}: missing organization page`)
-  assert.ok(orgDetails(org,snapshot).includes(`href="${path}"`), `${org.name}: missing network detail page`)
+  assert.ok(orgDetails(org,enriched).includes(`href="${path}"`), `${org.name}: missing network detail page`)
  }
 })

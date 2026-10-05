@@ -1,20 +1,22 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { forceSimulation, forceLink, forceManyBody, forceCollide, forceX, forceY } from 'd3-force'
-import { orgDetails } from '../lib/ecosystem-view.js'
+import { orgDetails, relationshipTable } from '../lib/ecosystem-view.js'
+import { loadPortalEvidence, graphRelationships, financialNodeAmounts, financialNodeRadius } from '../lib/portal-ecosystem.js'
 const $ = s => document.querySelector(s)
 const colors = { ecosystem:0x16847d, company:0x357db7, health:0xc76e57, university:0x8564b3, funding:0xad7b26, general:0x77878c }
-const relationshipColors = { funding:0xad7b26, affiliation:0x8564b3, incubation:0x357db7, acceleration:0x357db7, collaboration:0x16847d }
+const relationshipColors = { funding:0xad7b26, affiliation:0x8564b3, incubation:0x357db7, acceleration:0x357db7, collaboration:0x16847d, services:0x16847d, mentoring:0x8564b3, venue:0x77878c, in_kind:0x77878c }
 const selectedCategories = () => new Set([...document.querySelectorAll('[name=node-category]:checked')].map(c=>c.value))
 const selectedRelationships = () => new Set([...document.querySelectorAll('[name=relationship]:checked')].map(c=>c.value))
 const host = $('#network-canvas'), labels = $('#network-labels'), status = $('#network-status')
 let data, selected = null, scene, camera, renderer, controls, group, nodes=[], edges=[], meshes=[], labelItems=[], frame=0
 let webgl = false, svg, svgView = { x: -400, y: -400, w: 800, h: 800 }
-const radius = n => 5 + (n.proximity ?? 35) / 12
+const radius = n => financialNodeRadius(n.financialAmount)
+const financialLabel = n => n.financialAmount ? `Largest disclosed funding/award: ${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n.financialAmount)}; payment unverified` : 'Funding amount undisclosed'
 function applyTable() {
  const scope = $('#table-scope').value
  document.querySelectorAll('.eco-table tbody tr').forEach(row => {
-  row.hidden = scope === 'selected' ? !selected || (row.dataset.source !== selected && row.dataset.target !== selected) : Boolean(scope && row.dataset.kind !== scope && row.dataset.relationship !== scope)
+  row.hidden = ($('#network-view').value==='money' && row.dataset.kind!=='transfer' && !($('#include-context').checked && row.dataset.kind==='capitalization')) || (scope === 'selected' ? !selected || (row.dataset.source !== selected && row.dataset.target !== selected) : Boolean(scope && row.dataset.kind !== scope && row.dataset.relationship !== scope))
  })
 }
 function select(id) {
@@ -41,12 +43,15 @@ function rebuild() {
  const cats=selectedCategories(), rels=selectedRelationships(), context=$('#include-context').checked
  let visible=data.organizations.filter(n=>cats.has(n.category))
  let visibleIds=new Set(visible.map(n=>n.id))
- edges=data.relationships.filter(e=>e.source && e.target && visibleIds.has(e.source) && visibleIds.has(e.target) && rels.has(e.relationship) && (!e.kind || e.kind==='transfer' || (context && e.kind==='capitalization')))
+ const moneyOnly=$('#network-view').value==='money'
+ edges=graphRelationships(data,{moneyOnly,includeCapitalization:context}).filter(e=>visibleIds.has(e.source) && visibleIds.has(e.target) && (moneyOnly || rels.has(e.relationship)))
+ if(moneyOnly){const connected=new Set(edges.flatMap(e=>[e.source,e.target]));visible=visible.filter(n=>connected.has(n.id));visibleIds=new Set(visible.map(n=>n.id))}
  if ($('#neighbors').checked && selected) {
   const neighbors=new Set([selected]); edges.forEach(e=>{if(e.source===selected)neighbors.add(e.target);if(e.target===selected)neighbors.add(e.source)})
   visible=visible.filter(n=>neighbors.has(n.id)); visibleIds=new Set(visible.map(n=>n.id)); edges=edges.filter(e=>visibleIds.has(e.source)&&visibleIds.has(e.target))
  }
- nodes=visible.map(n=>({...n})); edges=edges.map(e=>({...e}))
+ const amounts=financialNodeAmounts(data,{includeCapitalization:context})
+ nodes=visible.map(n=>({...n,financialAmount:amounts.get(n.id) ?? null})); edges=edges.map(e=>({...e}))
  status.textContent=`${nodes.length} organizations · ${edges.length} links${webgl ? '' : ' · SVG fallback'}`
  if(webgl) clearGraph()
  else { labels.replaceChildren(); labelItems=[]; svg.replaceChildren() }
@@ -60,7 +65,7 @@ function rebuild() {
  for(const n of nodes) {
   const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius(n),16,12),new THREE.MeshBasicMaterial({color:n.id===selected?0xe56d3c:colors[n.category]}))
   mesh.position.set(n.x,n.y,0);mesh.userData.node=n;group.add(mesh);meshes.push(mesh)
-  const button=document.createElement('button');button.type='button';button.textContent=n.name;button.title=n.name;button.setAttribute('aria-pressed',String(n.id===selected));button.addEventListener('click',()=>select(n.id));labels.append(button);labelItems.push({button,n})
+  const button=document.createElement('button');button.type='button';button.textContent=n.name;button.title=`${n.name} · ${financialLabel(n)}`;button.setAttribute('aria-pressed',String(n.id===selected));button.addEventListener('click',()=>select(n.id));labels.append(button);labelItems.push({button,n})
  }
  const parallel=new Map()
  for(const edge of edges) {
@@ -98,7 +103,7 @@ function render() {
  frame=0; if(webgl) renderer.render(scene,camera)
  else svg?.setAttribute('viewBox',`${svgView.x} ${svgView.y} ${svgView.w} ${svgView.h}`)
  const positions=[]
- const priority=[...labelItems].sort((a,b)=>(b.n.id===selected)-(a.n.id===selected)||(b.n.proximity??0)-(a.n.proximity??0))
+ const priority=[...labelItems].sort((a,b)=>(b.n.id===selected)-(a.n.id===selected)||(b.n.financialAmount??0)-(a.n.financialAmount??0))
  for(const item of priority) {
   const p=webgl?new THREE.Vector3(item.n.x,item.n.y,0).project(camera):new THREE.Vector3((item.n.x-svgView.x)/svgView.w*2-1,1-(item.n.y-svgView.y)/svgView.h*2,0),x=(p.x*.5+.5)*host.clientWidth,y=(-p.y*.5+.5)*host.clientHeight
   const width=Math.min(155,item.n.name.length*5.5+10)
@@ -145,8 +150,8 @@ function renderSvg() {
  }
  for(const n of nodes) {
   const circle=svgElement('circle',{cx:n.x,cy:n.y,r:radius(n),fill:`#${(n.id===selected?0xe56d3c:colors[n.category]).toString(16).padStart(6,'0')}`})
-  const title=svgElement('title');title.textContent=`${n.name} · ${n.proximity??'Unscored'}`;circle.append(title);circle.addEventListener('click',()=>select(n.id));svg.append(circle)
-  const button=document.createElement('button');button.type='button';button.textContent=n.name;button.title=n.name;button.setAttribute('aria-pressed',String(n.id===selected));button.addEventListener('click',()=>select(n.id));labels.append(button);labelItems.push({button,n})
+  const title=svgElement('title');title.textContent=`${n.name} · ${financialLabel(n)}`;circle.append(title);circle.addEventListener('click',()=>select(n.id));svg.append(circle)
+  const button=document.createElement('button');button.type='button';button.textContent=n.name;button.title=`${n.name} · ${financialLabel(n)}`;button.setAttribute('aria-pressed',String(n.id===selected));button.addEventListener('click',()=>select(n.id));labels.append(button);labelItems.push({button,n})
  }
 }
 function initWebgl() {
@@ -161,22 +166,23 @@ function initWebgl() {
   let down=null
   renderer.domElement.addEventListener('pointerdown',ev=>{down={x:ev.clientX,y:ev.clientY}})
   renderer.domElement.addEventListener('pointerup',ev=>{if(down&&Math.hypot(ev.clientX-down.x,ev.clientY-down.y)<6){const n=hit(ev);if(n)select(n.id)}down=null})
-  renderer.domElement.addEventListener('pointermove',ev=>{const n=hit(ev),tip=$('#network-tooltip');tip.hidden=!n;if(n)tip.textContent=`${n.name} · ${n.proximity==null?'Not scored':`${n.proximity}/100 proximity`}`;renderer.domElement.style.cursor=n?'pointer':'grab'})
+  renderer.domElement.addEventListener('pointermove',ev=>{const n=hit(ev),tip=$('#network-tooltip');tip.hidden=!n;if(n)tip.textContent=`${n.name} · ${financialLabel(n)}`;renderer.domElement.style.cursor=n?'pointer':'grab'})
   renderer.domElement.addEventListener('pointerleave',()=>{$('#network-tooltip').hidden=true})
   renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();webgl=false;labels.replaceChildren();status.textContent='Graphics unavailable. Use search, details and the relationship table below.'})
  } catch { webgl=false; initSvg() }
 }
 async function start(){
  try {
-  const response=await fetch('/ecosystem.json');if(!response.ok)throw new Error('Data unavailable');data=await response.json()
+  const response=await fetch('/ecosystem-portal.json');if(!response.ok)throw new Error('Data unavailable');data=await response.json()
   initWebgl();search()
   $('#network-search').addEventListener('input',search)
-  document.querySelectorAll('[name=node-category],[name=relationship],#include-context,#neighbors').forEach(el=>el.addEventListener('change',rebuild))
+  document.querySelectorAll('[name=node-category],[name=relationship],#include-context,#neighbors,#network-view').forEach(el=>el.addEventListener('change',()=>{applyTable();rebuild()}))
   $('#table-scope').addEventListener('change',applyTable)
   $('#network-fit').addEventListener('click',fit)
   for(const [id,factor] of [['#zoom-in',1.25],['#zoom-out',.8]]) $(id).addEventListener('click',()=>{if(!webgl){zoomSvg(factor);return}camera.zoom=Math.max(.35,Math.min(6,camera.zoom*factor));camera.updateProjectionMatrix();requestRender()})
-  $('#network-reset').addEventListener('click',()=>{selected=null;document.querySelectorAll('[name=node-category],[name=relationship]').forEach(c=>c.checked=true);$('#include-context').checked=false;$('#neighbors').checked=false;$('#neighbors').disabled=true;$('#network-search').value='';$('#table-scope').value='';$('#network-detail').innerHTML='<h2>Select an organization</h2><p>Search or select a graph label to explore its evidence.</p>';history.replaceState(null,'',location.pathname);search();applyTable();rebuild()})
+  $('#network-reset').addEventListener('click',()=>{selected=null;document.querySelectorAll('[name=node-category],[name=relationship]').forEach(c=>c.checked=true);$('#network-view').value='all';$('#include-context').checked=false;$('#neighbors').checked=false;$('#neighbors').disabled=true;$('#network-search').value='';$('#table-scope').value='';$('#network-detail').innerHTML='<h2>Select an organization</h2><p>Search or select a graph label to explore its evidence.</p>';history.replaceState(null,'',location.pathname);search();applyTable();rebuild()})
   const initial=new URL(location.href).searchParams.get('org');if(initial&&data.organizations.some(n=>n.id===initial)){select(initial)}else rebuild()
+  loadPortalEvidence(data).then(updated=>{data=updated;$('#network-table .eco-table-scroll').outerHTML=relationshipTable(data);search();applyTable();if(selected)select(selected);else rebuild();$('#network-source').textContent='Public relationship evidence updated '+new Date(data.portalUpdatedAt).toLocaleString()+'. Awards and commitments do not establish payment; amounts may overlap.'}).catch(()=>{$('#network-source').textContent='Showing saved public evidence. Live refresh is temporarily unavailable.'})
  }catch(error){status.textContent='Interactive data unavailable. The full relationship table and directory remain readable.';host.hidden=true;console.error(error)}
 }
 start()

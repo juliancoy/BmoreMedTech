@@ -25,9 +25,10 @@
     "test:clickthrough": "python3 scripts/selenium-clickthrough-smoke.py",
     "sync:ecosystem": "node scripts/sync-ecosystem.mjs",
     "build:ecosystem": "node scripts/build-ecosystem.mjs",
-    "test:ecosystem": "node --test scripts/ecosystem.test.mjs",
+    "test:ecosystem": "node --test scripts/ecosystem.test.mjs scripts/portal-ecosystem.test.mjs",
     "build:lifetech": "SITE_BRAND=lifetech vite build",
-    "deploy:lifetech": "wrangler deploy --env lifetech"
+    "deploy:lifetech": "wrangler deploy --env lifetech",
+    "sync:portal-ecosystem": "node scripts/sync-portal-ecosystem.mjs"
   },
   "devDependencies": {
     "@maplibre/maplibre-gl-style-spec": "^24.10.0",

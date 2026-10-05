@@ -1,7 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { forceSimulation, forceLink, forceManyBody, forceCollide, forceX, forceY } from 'd3-force'
-import { orgDetails } from '../lib/ecosystem-view.js'
+import { orgDetails, relationshipTable } from '../lib/ecosystem-view.js'
+import { loadPortalEvidence, graphRelationships } from '../lib/portal-ecosystem.js'
 const $ = s => document.querySelector(s)
 const colors = { ecosystem:0x16847d, company:0x357db7, health:0xc76e57, university:0x8564b3, funding:0xad7b26, general:0x77878c }
 const relationshipColors = { funding:0xad7b26, affiliation:0x8564b3, incubation:0x357db7, acceleration:0x357db7, collaboration:0x16847d }
@@ -14,7 +15,7 @@ const radius = n => 5 + (n.proximity ?? 35) / 12
 function applyTable() {
  const scope = $('#table-scope').value
  document.querySelectorAll('.eco-table tbody tr').forEach(row => {
-  row.hidden = scope === 'selected' ? !selected || (row.dataset.source !== selected && row.dataset.target !== selected) : Boolean(scope && row.dataset.kind !== scope && row.dataset.relationship !== scope)
+  row.hidden = ($('#network-view').value==='money' && row.dataset.kind!=='transfer' && !($('#include-context').checked && row.dataset.kind==='capitalization')) || (scope === 'selected' ? !selected || (row.dataset.source !== selected && row.dataset.target !== selected) : Boolean(scope && row.dataset.kind !== scope && row.dataset.relationship !== scope))
  })
 }
 function select(id) {
@@ -41,7 +42,9 @@ function rebuild() {
  const cats=selectedCategories(), rels=selectedRelationships(), context=$('#include-context').checked
  let visible=data.organizations.filter(n=>cats.has(n.category))
  let visibleIds=new Set(visible.map(n=>n.id))
- edges=data.relationships.filter(e=>e.source && e.target && visibleIds.has(e.source) && visibleIds.has(e.target) && rels.has(e.relationship) && (!e.kind || e.kind==='transfer' || (context && e.kind==='capitalization')))
+ const moneyOnly=$('#network-view').value==='money'
+ edges=graphRelationships(data,{moneyOnly,includeCapitalization:context}).filter(e=>visibleIds.has(e.source) && visibleIds.has(e.target) && (moneyOnly || rels.has(e.relationship)))
+ if(moneyOnly){const connected=new Set(edges.flatMap(e=>[e.source,e.target]));visible=visible.filter(n=>connected.has(n.id));visibleIds=new Set(visible.map(n=>n.id))}
  if ($('#neighbors').checked && selected) {
   const neighbors=new Set([selected]); edges.forEach(e=>{if(e.source===selected)neighbors.add(e.target);if(e.target===selected)neighbors.add(e.source)})
   visible=visible.filter(n=>neighbors.has(n.id)); visibleIds=new Set(visible.map(n=>n.id)); edges=edges.filter(e=>visibleIds.has(e.source)&&visibleIds.has(e.target))
@@ -168,15 +171,16 @@ function initWebgl() {
 }
 async function start(){
  try {
-  const response=await fetch('/ecosystem.json');if(!response.ok)throw new Error('Data unavailable');data=await response.json()
+  const response=await fetch('/ecosystem-portal.json');if(!response.ok)throw new Error('Data unavailable');data=await response.json()
   initWebgl();search()
   $('#network-search').addEventListener('input',search)
-  document.querySelectorAll('[name=node-category],[name=relationship],#include-context,#neighbors').forEach(el=>el.addEventListener('change',rebuild))
+  document.querySelectorAll('[name=node-category],[name=relationship],#include-context,#neighbors,#network-view').forEach(el=>el.addEventListener('change',()=>{applyTable();rebuild()}))
   $('#table-scope').addEventListener('change',applyTable)
   $('#network-fit').addEventListener('click',fit)
   for(const [id,factor] of [['#zoom-in',1.25],['#zoom-out',.8]]) $(id).addEventListener('click',()=>{if(!webgl){zoomSvg(factor);return}camera.zoom=Math.max(.35,Math.min(6,camera.zoom*factor));camera.updateProjectionMatrix();requestRender()})
-  $('#network-reset').addEventListener('click',()=>{selected=null;document.querySelectorAll('[name=node-category],[name=relationship]').forEach(c=>c.checked=true);$('#include-context').checked=false;$('#neighbors').checked=false;$('#neighbors').disabled=true;$('#network-search').value='';$('#table-scope').value='';$('#network-detail').innerHTML='<h2>Select an organization</h2><p>Search or select a graph label to explore its evidence.</p>';history.replaceState(null,'',location.pathname);search();applyTable();rebuild()})
+  $('#network-reset').addEventListener('click',()=>{selected=null;document.querySelectorAll('[name=node-category],[name=relationship]').forEach(c=>c.checked=true);$('#network-view').value='all';$('#include-context').checked=false;$('#neighbors').checked=false;$('#neighbors').disabled=true;$('#network-search').value='';$('#table-scope').value='';$('#network-detail').innerHTML='<h2>Select an organization</h2><p>Search or select a graph label to explore its evidence.</p>';history.replaceState(null,'',location.pathname);search();applyTable();rebuild()})
   const initial=new URL(location.href).searchParams.get('org');if(initial&&data.organizations.some(n=>n.id===initial)){select(initial)}else rebuild()
+  loadPortalEvidence(data).then(updated=>{data=updated;$('#network-table .eco-table-scroll').outerHTML=relationshipTable(data);search();applyTable();if(selected)select(selected);else rebuild();$('#network-source').textContent='Public relationship evidence updated '+new Date(data.portalUpdatedAt).toLocaleString()+'. Awards and commitments do not establish payment; amounts may overlap.'}).catch(()=>{$('#network-source').textContent='Showing saved public evidence. Live refresh is temporarily unavailable.'})
  }catch(error){status.textContent='Interactive data unavailable. The full relationship table and directory remain readable.';host.hidden=true;console.error(error)}
 }
 start()

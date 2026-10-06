@@ -1,6 +1,6 @@
 import { deploymentResponse, deploymentCachePolicy, isDeploymentAssetRequest } from '../OrgPortal/web/deployment.mjs'
 import { importantPages, sitePageSeo } from './lib/site-seo.js'
-import { isPortalPagePath, notFoundResponse } from '../OrgPortal/web/portalRoutes.mjs'
+import { isPortalPagePath, notFoundResponse, missingPortalResource } from '../OrgPortal/web/portalRoutes.mjs'
 import { applySeo, canonicalPath, buildSitemap } from '../OrgPortal/web/seo.mjs'
 import { handleDatasetApi } from './worker/datasets.js'
 import { siteBrand } from './lib/site-brand.js'
@@ -390,6 +390,8 @@ const productionWorker = {
 
 export default {
   async fetch(request, env) {
+    const missing = await missingPortalResource(request, new URL(request.url).pathname, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN)
+    if (missing) return missing
     const selected = await deploymentResponse(request, env, { enabled: env.SITE_BRAND === 'lifetech', mount: 'lifetech' })
     if (selected) return selected
     const response = await productionWorker.fetch(request, env)

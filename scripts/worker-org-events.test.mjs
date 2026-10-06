@@ -24,7 +24,8 @@ test('LifeTech Worker proxies public OrgPortal event feeds through the same orig
 
 test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', async (t) => {
   const seen = []
-  t.mock.method(globalThis, 'fetch', async (request) => {
+  t.mock.method(globalThis, 'fetch', async (request, options) => {
+    if (typeof request === 'string') request = new Request(request, options)
     seen.push({ url: request.url, method: request.method, headers: request.headers })
     if (request.url === 'https://portal.example/__portal_root/') {
       const headers = new Headers()
@@ -228,6 +229,7 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
 
 test('LifeTech availability polls use the existing tenant portal mount', async (t) => {
  t.mock.method(globalThis,'fetch',async request=>{
+  if(typeof request==='string' && request.includes('/api/network/orgs/public/')) return Response.json({slug:'lifetech'})
   assert.equal(new URL(request.url).pathname,'/__portal_root/')
   assert.equal(request.headers.get('x-forwarded-host'),'lifetech.fyi')
   return new Response('portal',{headers:{'content-type':'text/html'}})

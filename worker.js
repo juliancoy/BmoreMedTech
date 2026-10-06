@@ -295,6 +295,12 @@ const productionWorker = {
       return new Response(request.method === 'HEAD' ? null : body, { headers: { 'content-type': sitemap ? 'application/xml; charset=utf-8' : 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } })
     }
 
+    if (env.SITE_BRAND === 'lifetech' && ['/portals/lifetech', '/portals/lifetech/'].includes(url.pathname)) {
+      if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } })
+      url.pathname = '/'
+      return Response.redirect(url.toString(), 301)
+    }
+
     if (url.pathname === '/community' || url.pathname.startsWith('/community/')) {
       return Response.redirect(`${url.origin}/`, 301)
     }

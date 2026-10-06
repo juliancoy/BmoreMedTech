@@ -328,3 +328,17 @@ test('LifeTech preserves the upstream chat WebSocket and its authentication prot
   assert.equal(result, upstream)
   assert.equal(result.webSocket, socket)
 })
+
+
+test('LifeTech slug homepage redirects signed-in and public navigation to the domain root', async () => {
+  const env = { SITE_BRAND: 'lifetech', ASSETS: { fetch: async () => new Response('not found', { status: 404 }) } };
+  for (const cookie of ['', 'pidp_session=fixture']) {
+    for (const method of ['GET', 'HEAD']) {
+      const response = await worker.fetch(new Request('https://lifetech.fyi/portals/lifetech/?source=logo', { method, headers: { cookie } }), env);
+      assert.equal(response.status, 301);
+      assert.equal(response.headers.get('location'), 'https://lifetech.fyi/?source=logo');
+    }
+  }
+  const post = await worker.fetch(new Request('https://lifetech.fyi/portals/lifetech', { method: 'POST' }), env);
+  assert.equal(post.status, 405);
+});

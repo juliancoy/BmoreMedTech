@@ -9,7 +9,7 @@ APIs, roles, sessions and deployments are unchanged.
 `npm run sync:ecosystem` reads the four fixed public LifeTech Associates tabs
 on the build machine using Google CSV exports. The export preserves blank rows
 so evidence row numbers match the source. It validates expected headers and
-writes only normalized allowlisted fields to `assets/data/ecosystem.json`.
+writes only normalized allowlisted fields to `../OrgPortal/web/public/ecosystem-data/ecosystem.json`.
 No Google credentials are required or shipped. There is no browser-to-Google
 request, generic sheet proxy, source-workbook download or client-selectable URL.
 Do not commit raw exports: they include personal contacts and relationship status.
@@ -28,7 +28,7 @@ Do not broaden publication automatically when the sheet gains new columns.
 
 ## Identity and financing
 
-`lib/ecosystem-registry.json` is the persistent identity/alias registry. Keep IDs
+`../OrgPortal/web/src/features/ecosystem/ecosystem-registry.json` is the persistent identity/alias registry. Keep IDs
 when labels change; add aliases there. Distinct funds, programs and their parent
 institutions retain distinct IDs. In particular, JHTV, FastForward, Pava and
 Hexcite are not merged; UMB/UM Ventures has one explicit directory identity while
@@ -104,8 +104,7 @@ A screenshot of the deployed fallback is in
 
 `npm run sync:portal-ecosystem` merges the workbook snapshot with the existing
 public OrgPortal organization and support interfaces, writing the separate
-`assets/data/ecosystem-portal.json` snapshot. CI refreshes both sources before
-rendering. Local builds use the saved snapshots. The network displays the saved
+`../OrgPortal/web/public/ecosystem-data/ecosystem-portal.json` snapshot. Refresh runs in OrgPortal; LifeTech directory builds consume the saved shared snapshots. The network displays the saved
 snapshot immediately and refreshes public support evidence on opening; a failed
 refresh leaves the saved evidence usable. No browser credentials or new backend
 service are involved. Existing workbook imports are not counted twice.
@@ -169,3 +168,5 @@ no continuous animation or background simulation. Tests cover stronger attractio
 duplicate evidence, a coincident 100-node extreme-funding hub and the public
 snapshot. D3's collision constraint is documented at
 https://d3js.org/d3-force/collide.
+
+The graph renderer and evidence pipeline now belong to OrgPortal. LifeTech builds only the static directory from the shared snapshot; `/ecosystem/network` is served by the portal. Refresh shared evidence from `../OrgPortal/web` using `npm run sync:ecosystem`.

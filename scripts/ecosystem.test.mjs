@@ -1,10 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { normalizeWorkbook, financeKind, parseCsv, safeUrl } from '../lib/ecosystem.js'
-import { orgDetails, relationshipTable } from '../lib/ecosystem-view.js'
+import { normalizeWorkbook, financeKind, parseCsv, safeUrl } from '../../OrgPortal/web/src/features/ecosystem/ecosystem.js'
+import { orgDetails, relationshipTable } from '../../OrgPortal/web/src/features/ecosystem/ecosystem-view.js'
 import worker from '../worker.js'
-const snapshot = JSON.parse(await readFile(new URL('../assets/data/ecosystem.json', import.meta.url)))
+const snapshot = JSON.parse(await readFile(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem.json', import.meta.url)))
 function fixture() { return {
  Sheet1:[['LifeTech / MedTech Ecosystem','Point of Contact'],['Example','Private Person','private@example.org; info@example.org; info@other.org','https://example.org','MedTech network','Core','90'],['Example alias','Private Person','private@example.org','https://example.org','MedTech network','Core','90']],
  Dashboard:[['Title'],['Organization','Proximity Score','Category','Primary Contribution'],['Example','90','Ecosystem','Founder support','PRIVATE STATUS']],
@@ -49,7 +49,7 @@ test('real snapshot retains separate programs, stable edges and aggregate scopes
  for(const kind of ['transfer','terms','capitalization','portfolio','coinvestment'])assert.ok(snapshot.financing.some(f=>f.kind===kind))
 })
 test('ecosystem routes use static assets and preserve HEAD, query and 404 behavior',async()=>{
- for(const path of ['/ecosystem','/ecosystem/','/ecosystem/network','/ecosystem/network/']) for(const method of ['GET','HEAD']) {
+ for(const path of ['/ecosystem','/ecosystem/']) for(const method of ['GET','HEAD']) {
   let seen
   const response=await worker.fetch(new Request(`https://lifetech.fyi${path}?org=example`,{method}),{ASSETS:{fetch:async req=>{seen=req;return new Response(method==='HEAD'?null:'readable',{headers:{'content-type':'text/html'}})}}})
   assert.equal(response.status,200);assert.equal(seen.method,method);assert.equal(new URL(seen.url).pathname,path.includes('network')?'/ecosystem/network':'/ecosystem/');assert.equal(new URL(seen.url).search,'?org=example')
@@ -58,13 +58,13 @@ test('ecosystem routes use static assets and preserve HEAD, query and 404 behavi
  const post=await worker.fetch(new Request('https://lifetech.fyi/ecosystem',{method:'POST'}),{});assert.equal(post.status,405)
 })
 test('generated pages contain useful content without scripts',async()=>{
- const directory=await readFile(new URL('../ecosystem/index.html',import.meta.url),'utf8'),network=await readFile(new URL('../ecosystem/network.html',import.meta.url),'utf8')
- assert.match(directory,/Amplify MedTech/);assert.match(directory,/LifeTech proximity/);assert.match(network,/<table/);assert.match(network,/Stephen &amp; Renee Bisciotti Foundation/)
- for(const html of [directory,network])assert.doesNotMatch(html,/docs\.google\.com\/spreadsheets|oauth_token|private@example/)
+ const directory=await readFile(new URL('../ecosystem/index.html',import.meta.url),'utf8')
+ assert.match(directory,/Amplify MedTech/);assert.match(directory,/LifeTech proximity/)
+ for(const html of [directory])assert.doesNotMatch(html,/docs\.google\.com\/spreadsheets|oauth_token|private@example/)
 })
 
 test('proximity chart ranks scores and distinguishes zero from missing with accessible detail links', async()=>{
- const { proximityChart } = await import('../lib/ecosystem-view.js')
+ const { proximityChart } = await import('../../OrgPortal/web/src/features/ecosystem/ecosystem-view.js')
  const html = proximityChart([
   {id:'missing',name:'Unknown',category:'general',proximity:null},
   {id:'zero',name:'Zero',category:'general',proximity:0},
@@ -80,10 +80,23 @@ test('proximity chart ranks scores and distinguishes zero from missing with acce
 
 test('every directory organization has a direct first-class portal page link', async () => {
  const directory = await readFile(new URL('../ecosystem/index.html',import.meta.url),'utf8')
- const enriched = JSON.parse(await readFile(new URL('../assets/data/ecosystem-portal.json',import.meta.url)))
+ const enriched = JSON.parse(await readFile(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem-portal.json',import.meta.url)))
  for (const org of enriched.organizations.filter(org => org.directory)) {
   const path = `/orgs/${encodeURIComponent(org.portalSlug || org.id.replace(/^org-/, ''))}`
   assert.ok(directory.includes(`href="${path}"`), `${org.name}: missing organization page`)
   assert.ok(orgDetails(org,enriched).includes(`href="${path}"`), `${org.name}: missing network detail page`)
  }
+})
+
+test('network graph and its evidence are served by the shared portal',async()=>{
+ const original=globalThis.fetch;const calls=[]
+ globalThis.fetch=async request=>{calls.push(new URL(request.url));return new Response('shared portal',{headers:{'content-type':'text/html'}})}
+ try{
+  for(const path of ['/ecosystem/network','/ecosystem/network/','/ecosystem-data/ecosystem-history.json']){
+   const response=await worker.fetch(new Request('https://lifetech.fyi'+path+'?org=example'),{})
+   assert.equal(response.status,200)
+  }
+  assert.equal(calls[0].pathname,'/__portal_root/');assert.equal(calls[0].search,'?org=example')
+  assert.equal(calls[2].pathname,'/__portal_root/ecosystem-data/ecosystem-history.json')
+ }finally{globalThis.fetch=original}
 })

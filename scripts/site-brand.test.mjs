@@ -46,7 +46,7 @@ test('medical technology showcase belongs only to MedTech', () => {
 
 test('MedTech showcase preserves image provenance and local index connections', () => {
   const showcase = JSON.parse(readFileSync(new URL('../lib/medtech-showcase.json', import.meta.url)))
-  const organizations = JSON.parse(readFileSync(new URL('../assets/data/ecosystem.json', import.meta.url))).organizations
+  const organizations = JSON.parse(readFileSync(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem.json', import.meta.url))).organizations
   const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
   const medtech = renderSiteBrand(template, siteBrand('medtech'))
   const lifetech = renderSiteBrand(template, siteBrand('lifetech'))

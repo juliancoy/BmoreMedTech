@@ -9,7 +9,7 @@ Credits link to the original publication. These are publisher photographs and
 one explicitly labeled conceptual illustration, not generated product photos.
 
 Selection began with the checked-in local organization index at
-`assets/data/ecosystem.json`:
+`../OrgPortal/web/public/ecosystem-data/ecosystem.json`:
 
 - Harbor Designs & Manufacturing: Hemafuse manufacturing components, from its
   own medical-device portfolio. Selected for a clear close-up of actual parts.
@@ -37,3 +37,5 @@ are credited publishers, not new organizations added to the workbook.
 Source attribution records provenance; it does not assert an open image license,
 company endorsement, or a partnership with Baltimore MedTech. The original
 source URLs and credits stay with the images when the gallery is changed.
+
+The graph renderer and evidence pipeline now belong to OrgPortal. LifeTech builds only the static directory from the shared snapshot; `/ecosystem/network` is served by the portal. Refresh shared evidence from `../OrgPortal/web` using `npm run sync:ecosystem`.

@@ -70,7 +70,6 @@ export default defineConfig({
         main: 'index.html',
         about: 'about.html',
         ecosystem: 'ecosystem/index.html',
-        ecosystemNetwork: 'ecosystem/network.html',
         start: 'start.html',
         calendar: 'calendar.html',
         map: 'map.html',

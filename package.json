@@ -23,12 +23,12 @@
     "deploy:dry-run": "wrangler deploy --env=\"\" --dry-run",
     "test:selenium": "scripts/run-selenium-regression.sh",
     "test:clickthrough": "python3 scripts/selenium-clickthrough-smoke.py",
-    "sync:ecosystem": "node scripts/sync-ecosystem.mjs",
+    "sync:ecosystem": "npm --prefix ../OrgPortal/web run sync:ecosystem",
     "build:ecosystem": "node scripts/build-ecosystem.mjs",
-    "test:ecosystem": "node --test scripts/ecosystem.test.mjs scripts/portal-ecosystem.test.mjs scripts/ecosystem-physics.test.mjs scripts/network-history.test.mjs",
+    "test:ecosystem": "node --test scripts/ecosystem.test.mjs && npm --prefix ../OrgPortal/web run test:ecosystem",
     "build:lifetech": "SITE_BRAND=lifetech vite build",
     "deploy:lifetech": "wrangler deploy --env lifetech",
-    "sync:portal-ecosystem": "node scripts/sync-portal-ecosystem.mjs"
+    "sync:portal-ecosystem": "node ../OrgPortal/web/scripts/sync-portal-ecosystem.mjs"
   },
   "devDependencies": {
     "@maplibre/maplibre-gl-style-spec": "^24.10.0",
@@ -37,9 +37,7 @@
     "wrangler": "^4.146.0"
   },
   "dependencies": {
-    "d3-force": "^3.0.0",
     "lucide": "^1.47.0",
-    "maplibre-gl": "^5.24.0",
-    "three": "^0.186.1"
+    "maplibre-gl": "^5.24.0"
   }
 }

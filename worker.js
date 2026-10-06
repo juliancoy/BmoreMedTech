@@ -260,7 +260,7 @@ function isPortalDevAssetPath(pathname) {
 }
 
 function isPortalRoute(pathname) {
-  return pathname === '/onboarding' || pathname === '/availability' || pathname.startsWith('/availability/')
+  return pathname === '/ecosystem/network' || pathname === '/ecosystem/network/' || pathname === '/onboarding' || pathname === '/availability' || pathname.startsWith('/availability/')
     || pathname === '/governance' || pathname.startsWith('/governance/')
     || pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
@@ -313,6 +313,8 @@ const productionWorker = {
       return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, url, { rewriteCookieDomain: true })
     }
 
+    if (url.pathname.startsWith('/ecosystem-data/')) return portalRootAssetProxyResponse(request, env, url)
+
     if (url.pathname === '/specialty' || url.pathname.startsWith('/specialty/')) {
       return portalRootAssetProxyResponse(request, env, url)
     }
@@ -363,7 +365,7 @@ const productionWorker = {
     }
 
     // LifeTech-owned static routes; never route these through the shared portal.
-    const ecosystemAssets = { '/ecosystem': '/ecosystem/', '/ecosystem/': '/ecosystem/', '/ecosystem/network': '/ecosystem/network', '/ecosystem/network/': '/ecosystem/network' }
+    const ecosystemAssets = { '/ecosystem': '/ecosystem/', '/ecosystem/': '/ecosystem/' }
     if (ecosystemAssets[url.pathname]) {
       if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } })
       const assetUrl = new URL(request.url)

@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { forceSimulation, forceLink, forceManyBody, forceCollide, forceX, forceY } from 'd3-force'
+import { layoutNetwork } from '../lib/ecosystem-physics.js'
 import { orgDetails, relationshipTable } from '../lib/ecosystem-view.js'
 import { loadPortalEvidence, graphRelationships, financialNodeAmounts, financialNodeRadius } from '../lib/portal-ecosystem.js'
 const $ = s => document.querySelector(s)
@@ -57,10 +57,7 @@ function rebuild() {
  else { labels.replaceChildren(); labelItems=[]; svg.replaceChildren() }
  const classKeys=Object.keys(colors), clusters=classKeys.length, spread=230
  const center=n=>{const i=classKeys.indexOf(n.category),a=i/clusters*Math.PI*2;return {x:Math.cos(a)*spread,y:Math.sin(a)*spread}}
- const sim=forceSimulation(nodes).force('link',forceLink(edges).id(n=>n.id).distance(110).strength(.12))
-  .force('charge',forceManyBody().strength(-220)).force('collision',forceCollide(n=>radius(n)+20).iterations(3))
-  .force('x',forceX(n=>center(n).x).strength(.15)).force('y',forceY(n=>center(n).y).strength(.15)).stop()
- for(let i=0;i<250;i++) sim.tick()
+ layoutNetwork(nodes,edges,radius,center)
  if(!webgl) { renderSvg(); fit(); requestRender(); return }
  for(const n of nodes) {
   const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius(n),16,12),new THREE.MeshBasicMaterial({color:n.id===selected?0xe56d3c:colors[n.category]}))

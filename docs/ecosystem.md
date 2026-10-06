@@ -152,3 +152,20 @@ LifeTech version: `d17f3baa-fdf4-451c-8115-ef1d44c95363`.
 SVG fallback also defines colors for services, mentoring, venue and in-kind
 support. Browser checks force unavailable WebGL and an unavailable live API to
 verify financial sizing against the deployed saved snapshot.
+
+The network uses a cooled D3 particle simulation with amount-weighted links and
+softened inverse-square attraction between documented USD funding counterparties.
+Larger awards strengthen attraction and shorten the equilibrium gap on a fixed
+logarithmic scale. Parallel records use the largest amount per organization pair,
+not an additive total. Undisclosed amounts, other currencies and capitalization
+context retain ordinary relationship forces. This visual pull is not a claim of
+verified cash settlement.
+
+Fixed integration steps, velocity damping, minimum-distance repulsion and six
+collision iterations keep the solver stable. A final position constraint enforces
+a 12-unit gap between circles; existing screen-space label culling prevents
+label overlap. Both WebGL and SVG use the same settled particle positions, with
+no continuous animation or background simulation. Tests cover stronger attraction,
+duplicate evidence, a coincident 100-node extreme-funding hub and the public
+snapshot. D3's collision constraint is documented at
+https://d3js.org/d3-force/collide.

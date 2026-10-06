@@ -105,3 +105,6 @@
 .eco-card:target { outline:2px solid var(--teal); outline-offset:3px }
 .eco-bars li[hidden] { display:none }
 @media(max-width:700px) { .eco-proximity { padding:18px 12px }.eco-bar-row { grid-template-columns:minmax(0,1fr) 65px; gap:8px; padding:14px 4px }.eco-bar-name { grid-column:1/-1 }.eco-bar-axis { margin-left:4px; margin-right:81px }.eco-bar-track { height:20px } }
+
+[data-class=federal-government] { --node-color:#234c8c }
+[data-class=state-government] { --node-color:#a54161 }

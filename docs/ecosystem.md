@@ -170,3 +170,27 @@ snapshot. D3's collision constraint is documented at
 https://d3js.org/d3-force/collide.
 
 The graph renderer and evidence pipeline now belong to OrgPortal. LifeTech builds only the static directory from the shared snapshot; `/ecosystem/network` is served by the portal. Refresh shared evidence from `../OrgPortal/web` using `npm run sync:ecosystem`.
+
+### Government organization classes — October 6, 2026
+
+The shared OrgPortal taxonomy now includes `federal-government` and
+`state-government`, with distinct map colors and filter controls. Classification
+uses explicit government types/tags and known agency identities/domains, rather
+than treating every funder or organization with “Maryland” in its name as a
+state agency. Public universities retain the university class; city and county
+bodies retain their existing classes. TEDCO and its fund programs use the state
+class. Taxonomy applies to workbook normalization, snapshots, archived evidence
+and public live refreshes. Financial icon sizing continues unchanged.
+
+Jurisdiction references: https://www.eda.gov/about,
+https://www.nih.gov/about-nih,
+https://msa.maryland.gov/msa/mdmanual/25ind/html/71techf.html.
+
+Fifteen shared ecosystem tests and both branded builds passed. Shared frontend
+version: `cbf5dbb0-9dbd-48ae-b4c3-a3f4b6430a97`.
+MedTech version: `fdd92b3a-bbc2-4815-84f0-3b6fd9118730`.
+LifeTech version: `a52927f7-94c1-41a7-8c3c-4d16bd0a8083`.
+The shared frontend deploy succeeded; its post-deploy shell verification stopped
+on a malformed command in the concurrently modified deploy script. Separate public browser checks passed on both domains: directory selectors were
+present, the 570-organization map loaded, and excluding the federal class reduced
+it to 553 organizations. State controls also remained usable.

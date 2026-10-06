@@ -152,7 +152,7 @@ assert(sheetJs.includes("elements.csvLink.textContent = 'CSV page'"), 'CSV scope
 assert(styles.includes('.dataset-grid-table'), 'Spreadsheet table styling is required')
 assert(workerRoot.includes("import { handleDatasetApi } from './worker/datasets.js'"), 'Root Worker must load the dataset gateway')
 assert(workerRoot.includes("url.pathname.startsWith('/api/datasets/')"), 'Root Worker must route dataset requests')
-assert(theme.includes("link.href = '/datasets.html'"), 'Shared navigation must expose the data workbook')
+assert(theme.includes("['/datasets', 'Datasets']"), 'Shared navigation must expose the data workbook')
 assert(pkg.scripts['dev:worker'] === 'wrangler dev', 'A Worker-backed local development command is required')
 assert(pkg.scripts['test:datasets'] === 'node scripts/validate-dataset-workbook.mjs', 'Dataset validator must be wired into package scripts')
 assert(pkg.scripts['test:data'].includes('npm run test:field-atlas'), 'Field Atlas validation must run during the build')

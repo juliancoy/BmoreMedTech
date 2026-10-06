@@ -55,7 +55,7 @@ placeholder links. The generated visualization also includes bounded link
 surfaces from the sibling OrgPortal and PIdP checkouts. Run the site and open
 `/clickthrough.html` to visualize `/link-inventory.json` as a source-page graph.
 
-The static site builds independently of OrgPortal's services. Shared portal work
+The static site builds independently of OrgPortal's services. Both static builds and the MedTech/LifeTech Worker import the shared SEO renderer from `../OrgPortal/web/seo.mjs`; the sibling checkout must be present to build or bundle the Worker. Shared portal work
 belongs in `../OrgPortal`, and production
 portal deployment is handled through the CodeCollective deployment flow.
 
@@ -112,3 +112,5 @@ changes. Deploy MedTech with `npm run deploy`, and LifeTech with
 
 A separate LifeTech repository is unnecessary unless the sites need independent
 code ownership or release workflows. Their deployments are already separate.
+
+LifeTech SEO copy for its principal public pages is configured in `lib/site-seo.js`. The shared OrgPortal SEO module renders metadata, canonical paths, and structured data. LifeTech serves `/robots.txt` and `/sitemap.xml` from the Worker; the sitemap includes only the configured public pages. Login, account, search, chat, and onboarding pages are marked `noindex`, and missing static pages return HTTP 404.

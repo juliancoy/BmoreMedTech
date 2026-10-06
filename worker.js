@@ -1,3 +1,6 @@
+import { deploymentResponse, deploymentCachePolicy, isDeploymentAssetRequest } from '../OrgPortal/web/deployment.mjs'
+import { importantPages, sitePageSeo } from './lib/site-seo.js'
+import { applySeo, canonicalPath, buildSitemap } from '../OrgPortal/web/seo.mjs'
 import { handleDatasetApi } from './worker/datasets.js'
 import { siteBrand } from './lib/site-brand.js'
 
@@ -83,16 +86,6 @@ function prefixProxyLocation(location, prefix) {
   return `${prefix}${location}`
 }
 
-function escapeHtml(value) {
-  return String(value || '').replace(/[&<>"']/g, (char) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  })[char])
-}
-
 function tenantPortalPageTitle(pathname, brand) {
   if (pathname === '/branding') return `Brand Guide | ${brand.name}`
   if (pathname === '/org-events' || pathname.startsWith('/org-events/')) return `Events | ${brand.name}`
@@ -104,16 +97,23 @@ function tenantPortalPageTitle(pathname, brand) {
 }
 
 function tenantPortalMetadata(url, brand) {
-  const image = new URL(brand.logo, url.origin).toString()
-  const canonical = new URL(url.pathname + url.search, url.origin).toString()
+  const image = new URL(brand.social, url.origin).toString()
+  const canonical = new URL(canonicalPath(url.pathname), url.origin).toString()
   const title = tenantPortalPageTitle(url.pathname, brand)
   return {
     title,
-    description: 'Find your next conversation, connection, or local event across health, medicine, and biotech.',
-    canonical,
-    image,
-    imageAlt: `${brand.name} logo`,
+    description: brand.home.description,
+    canonicalUrl: canonical,
+    imageUrl: image,
+    imageWidth: brand.socialWidth,
+    imageHeight: brand.socialHeight,
+    imageType: 'image/png',
+    iconUrl: new URL(brand.logo, url.origin).toString(),
+    themeColor: '#061a26',
+    robots: /^(?:\/(?:users|chat|onboarding|availability|auth|admin|email|create|people|search|profile|settings|tools))(?:\/|$)/.test(url.pathname) ? 'noindex,follow' : 'index,follow,max-image-preview:large',
+    imageAlt: `${brand.name} — Health × Medicine × Biotech`,
     siteName: brand.name,
+    ...(sitePageSeo(url.pathname, brand) || {}),
   }
 }
 
@@ -124,37 +124,7 @@ async function applyTenantPortalMetadata(request, response, url, env) {
   if (!contentType.includes('text/html')) return response
 
   const metadata = tenantPortalMetadata(url, brand)
-  let html = await response.text()
-  const tags = [
-    `<title>${escapeHtml(metadata.title)}</title>`,
-    `<link rel="canonical" href="${escapeHtml(metadata.canonical)}" />`,
-    `<link rel="icon" type="image/png" href="${escapeHtml(brand.logo)}" />`,
-    `<link rel="apple-touch-icon" href="${escapeHtml(brand.logo)}" />`,
-    `<meta name="theme-color" content="${escapeHtml('#061a26')}" />`,
-    `<meta name="description" content="${escapeHtml(metadata.description)}" />`,
-    `<meta name="robots" content="index,follow,max-image-preview:large" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:locale" content="en_US" />`,
-    `<meta property="og:site_name" content="${escapeHtml(metadata.siteName)}" />`,
-    `<meta property="og:title" content="${escapeHtml(metadata.title)}" />`,
-    `<meta property="og:description" content="${escapeHtml(metadata.description)}" />`,
-    `<meta property="og:url" content="${escapeHtml(metadata.canonical)}" />`,
-    `<meta property="og:image" content="${escapeHtml(metadata.image)}" />`,
-    `<meta property="og:image:secure_url" content="${escapeHtml(metadata.image)}" />`,
-    `<meta property="og:image:type" content="image/png" />`,
-    `<meta property="og:image:alt" content="${escapeHtml(metadata.imageAlt)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`,
-    `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`,
-    `<meta name="twitter:image" content="${escapeHtml(metadata.image)}" />`,
-    `<meta name="twitter:image:alt" content="${escapeHtml(metadata.imageAlt)}" />`,
-  ]
-  html = html
-    .replace(/<title>[\s\S]*?<\/title>/i, '')
-    .replace(/<link\s+rel=["'](?:canonical|icon|apple-touch-icon|manifest)["'][^>]*>/gi, '')
-    .replace(/<meta\s+name=["'](?:description|robots|theme-color|twitter:[^"']+)["'][^>]*>/gi, '')
-    .replace(/<meta\s+property=["']og:[^"']+["'][^>]*>/gi, '')
-  html = html.replace('</head>', `${tags.join('\n    ')}\n  </head>`)
+  const html = applySeo(await response.text(), metadata)
 
   const headers = new Headers(response.headers)
   headers.set('content-type', 'text/html; charset=utf-8')
@@ -202,7 +172,11 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
       if (cookies.length) {
         stripCookieDomains(responseHeaders, cookies)
       }
-      responseHeaders.set('cache-control', 'no-store')
+      const publicAvatar = /^\/avatars\//.test(targetUrl.pathname)
+        && ['GET', 'HEAD'].includes(request.method)
+        && [200, 304].includes(response.status)
+        && !cookies.length
+      if (!publicAvatar) responseHeaders.set('cache-control', 'no-store')
       responseHeaders.set('referrer-policy', 'no-referrer')
     }
     return new Response(response.body, {
@@ -297,7 +271,7 @@ function isPortalRoute(pathname) {
     || pathname === '/email' || pathname.startsWith('/email/')
     || pathname === '/admin' || pathname.startsWith('/admin/')
     || pathname === '/profile'
-    || pathname === '/settings'
+    || pathname === '/settings' || pathname.startsWith('/settings/')
     || pathname === '/search'
     || pathname === '/branding'
     || pathname === '/resources' || pathname.startsWith('/resources/')
@@ -305,10 +279,18 @@ function isPortalRoute(pathname) {
 }
 
 
-export default {
+const productionWorker = {
   async fetch(request, env) {
     const url = new URL(request.url)
     if (request.method === 'OPTIONS') return preflightResponse(request)
+
+    if (env.SITE_BRAND === 'lifetech' && ['/robots.txt', '/sitemap.xml'].includes(url.pathname)) {
+      if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } })
+      const brand = siteBrand(env.SITE_BRAND)
+      const sitemap = url.pathname === '/sitemap.xml'
+      const body = sitemap ? buildSitemap(brand.origin, Object.keys(importantPages)) : `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /pidp/\nSitemap: ${brand.origin}/sitemap.xml\n`
+      return new Response(request.method === 'HEAD' ? null : body, { headers: { 'content-type': sitemap ? 'application/xml; charset=utf-8' : 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } })
+    }
 
     if (url.pathname === '/community' || url.pathname.startsWith('/community/')) {
       return Response.redirect(`${url.origin}/`, 301)
@@ -396,9 +378,20 @@ export default {
 
     if (isHtmlNavigation(request)) {
       const fallback = await env.ASSETS.fetch(new Request(`${url.origin}/index.html`, request))
-      return applyStaticHeaders(request, '/index.html', fallback)
+      const headers = new Headers(fallback.headers)
+      headers.set('x-robots-tag', 'noindex')
+      return applyStaticHeaders(request, '/index.html', new Response(fallback.body, { status: 404, headers }))
     }
 
     return response
+  },
+}
+
+export default {
+  async fetch(request, env) {
+    const selected = await deploymentResponse(request, env, { enabled: env.SITE_BRAND === 'lifetech', mount: 'lifetech' })
+    if (selected) return selected
+    const response = await productionWorker.fetch(request, env)
+    return isDeploymentAssetRequest(request) ? deploymentCachePolicy(response, env) : response
   },
 }

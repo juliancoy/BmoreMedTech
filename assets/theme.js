@@ -1,4 +1,5 @@
-import { createElement, Menu, MessageCircle, UserRound } from 'lucide';
+import { createDeploymentMenu } from '../../OrgPortal/web/src/ui/components/deploymentMenu.ts'
+import { createElement, MessageCircle, UserRound } from 'lucide';
 
 
 let siteAccount = { user: null, token: null, pending: true }
@@ -108,29 +109,28 @@ function organizeNavigation() {
   if (!nav) return
   const destinations = [
     ['/org-events', 'Events'],
-    ['/calendar.html', 'Calendar'],
-    ['/map.html', 'Event map'],
-    ['/taxonomy.html', 'Medical atlas'],
-    ['/datasets.html', 'Datasets'],
+    ['/calendar', 'Calendar'],
+    ['/map', 'Event map'],
+    ['/taxonomy', 'Medical atlas'],
+    ['/datasets', 'Datasets'],
     ['/branding', 'Brand guide'],
-    ['/start.html', 'Get involved'],
+    ['/start', 'Get involved'],
     ['/ecosystem', 'LifeTech ecosystem'],
     ['/ecosystem/network', 'Relationship network'],
     ['/availability', 'Find a group meeting time'],
-    ['/about.html', 'About Us'],
+    ['/about', 'About Us'],
     ['/governance/roberts', "Robert’s Rules of Order"],
   ]
   const links = destinations.map(([path, label]) => {
     const matches = [...header.querySelectorAll('a[href]')]
-      .filter((link) => new URL(link.href).pathname === path)
+      .filter((link) => new URL(link.href).pathname.replace(/\.html$/, '') === path)
     const link = matches.shift() || document.createElement('a')
     matches.forEach((duplicate) => duplicate.remove())
-    if (path === '/datasets.html') link.href = '/datasets.html'
-    else link.href = path
+    link.href = path
     link.textContent = label
     link.removeAttribute('aria-current')
-    const cleanPath = path.endsWith('.html') ? path.slice(0, -5) : path
-    if (location.pathname === path || location.pathname.replace(/\/$/, '').replace(/\/index\.html$/, '') === cleanPath || (path === '/datasets.html' && location.pathname.startsWith('/datasets/'))) {
+    const cleanPath = path
+    if (location.pathname === path || location.pathname.replace(/\/index\.html$/, '').replace(/\.html$/, '').replace(/\/$/, '') === cleanPath || (path === '/datasets' && location.pathname.startsWith('/datasets/'))) {
       link.setAttribute('aria-current', 'page')
     }
     return link
@@ -283,10 +283,9 @@ async function setupAuthNavigation() {
     renderedUserId = user.id
     const name = user.identity_data?.display_name || user.full_name || user.email
     const icon = (node) => createElement(node, { width: 20, height: 20, 'aria-hidden': 'true' })
-    const profile = document.createElement('a')
-    profile.href = '/profile'
+    const profile = document.createElement('summary')
     profile.className = 'account-icon account-avatar'
-    profile.title = `Profile: ${name}`
+    profile.title = `Account menu: ${name}`
     profile.setAttribute('aria-label', profile.title)
     profile.append(icon(UserRound))
     const avatar = user.identity_data?.avatar_url || user.avatar_url
@@ -309,11 +308,7 @@ async function setupAuthNavigation() {
     messages.append(icon(MessageCircle))
     const menu = document.createElement('details')
     menu.className = 'account-menu'
-    const summary = document.createElement('summary')
-    summary.className = 'account-icon'
-    summary.title = 'Account menu'
-    summary.setAttribute('aria-label', 'Account menu')
-    summary.append(icon(Menu))
+    const summary = profile
     const items = document.createElement('div')
     items.className = 'account-menu-items'
     const mobileLinks = document.createElement('div')
@@ -322,6 +317,7 @@ async function setupAuthNavigation() {
       mobileLinks.append(link.cloneNode(true))
     }
     items.append(mobileLinks)
+    void createDeploymentMenu().then(chooser => { if (chooser) items.insertBefore(chooser, mobileLinks) })
     for (const [label, href] of [['My profile', '/profile'], ['Dashboard', '/users/dashboard']]) {
       const link = document.createElement('a')
       link.textContent = label
@@ -351,7 +347,8 @@ async function setupAuthNavigation() {
     })
     items.append(logout, error)
     menu.append(summary, items)
-    controls.replaceChildren(profile, messages, menu)
+    controls.replaceChildren(messages, menu)
+    setupOrganizationViews()
     header.classList.add('has-account')
     updateEntryLinks(true)
     document.addEventListener('click', (event) => {
@@ -395,13 +392,23 @@ if (document.querySelector('.taxonomy-page')) {
 // The public LifeTech landing page shares the portal's live group access boundary.
 function setupOrganizationViews() {
   if (document.querySelector('.brand strong')?.textContent.trim() !== 'LifeTech') return
-  const nav = document.querySelector('#primary-nav')
-  if (!nav) return
+  const items = document.querySelector('.account-menu-items')
+  if (!items) return
+  const storageKey = 'orgportal.organizationView.lifetech'
+  const views = ['public', 'attendees', 'volunteers', 'members', 'organizers']
+  const explicit = new URLSearchParams(location.search).get('view')
+  let saved = null
+  try {
+    saved = localStorage.getItem(storageKey)
+    if (views.includes(explicit)) { saved = explicit; localStorage.setItem(storageKey, explicit) }
+  } catch { /* Storage may be unavailable. */ }
+  const requested = views.includes(saved) ? saved : null
   const label = document.createElement('label')
+  label.className = 'organization-view-switcher'
   label.textContent = 'View as '
   const select = document.createElement('select')
   select.setAttribute('aria-label', 'Organization view')
-  for (const value of ['public', 'attendees', 'volunteers', 'members', 'organizers']) {
+  for (const value of views) {
     const option = document.createElement('option')
     option.value = value
     option.textContent = value[0].toUpperCase() + value.slice(1)
@@ -409,14 +416,26 @@ function setupOrganizationViews() {
     select.append(option)
   }
   label.append(select)
-  nav.append(label)
+  items.prepend(label)
+  const indicator = document.createElement('span')
+  indicator.className = 'organization-view-indicator'
+  indicator.setAttribute('role', 'status')
+  document.querySelector('.account-controls').prepend(indicator)
+  function indicateView() {
+    const view = select.value
+    indicator.textContent = `View: ${view[0].toUpperCase() + view.slice(1)}`
+    indicator.setAttribute('aria-label', `Active organization view: ${view}`)
+  }
   select.addEventListener('change', () => {
+    indicateView()
+    try { localStorage.setItem(storageKey, select.value) } catch { /* Storage may be unavailable. */ }
     window.location.assign(select.value === 'public' ? '/?view=public' : `/orgs/lifetech?view=${select.value}`)
   })
   let sequence = 0
   async function refresh() {
     const current = ++sequence
-    select.value = 'public'
+    select.value = ['public', 'attendees', 'volunteers'].includes(requested) ? requested : 'public'
+    indicateView()
     select.querySelector('[value="members"]').disabled = true
     select.querySelector('[value="organizers"]').disabled = true
     const { token } = getSiteAccount()
@@ -432,10 +451,14 @@ function setupOrganizationViews() {
       const organizer = ['owner', 'administrator'].includes(membership.role)
       select.querySelector('[value="members"]').disabled = false
       select.querySelector('[value="organizers"]').disabled = !organizer
-      if (organizer && window.location.pathname === '/' && new URLSearchParams(window.location.search).get('view') !== 'public') window.location.replace('/orgs/lifetech?view=organizers')
+      select.value = requested === 'organizers' && organizer ? 'organizers'
+        : requested === 'members' ? 'members'
+        : ['public', 'attendees', 'volunteers'].includes(requested) ? requested
+        : organizer ? 'organizers' : 'members'
+      indicateView()
+      if (window.location.pathname === '/' && select.value !== 'public') window.location.replace(`/orgs/lifetech?view=${select.value}`)
     } catch { /* Keep public navigation available when membership cannot be checked. */ }
   }
   window.addEventListener('site-account-change', () => void refresh())
   void accountReady.then(refresh)
 }
-setupOrganizationViews()

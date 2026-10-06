@@ -101,6 +101,10 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
   assert.match(tenantBrandingHtml, /property="og:title" content="Brand Guide \| LifeTech"/)
   assert.match(tenantBrandingHtml, /property="og:site_name" content="LifeTech"/)
   assert.doesNotMatch(tenantBrandingHtml, /Code Collective Portal|codecollective_logo\.png/)
+  assert.match(tenantBrandingHtml, /property="og:image" content="https:\/\/lifetech.fyi\/assets\/images\/lifetech-social-preview-v2.png"/)
+  assert.match(tenantBrandingHtml, /name="twitter:card" content="summary_large_image"/)
+  assert.match(tenantBrandingHtml, /property="og:image:width" content="1733"/)
+  assert.match(tenantBrandingHtml, /property="og:image:height" content="907"/)
 
   const oldTenantBranding = await worker.fetch(new Request('https://lifetech.fyi/branding.html?from=old'), env)
   assert.equal(oldTenantBranding.status, 301)
@@ -228,7 +232,7 @@ test('LifeTech availability polls use the existing tenant portal mount', async (
   assert.equal(request.headers.get('x-forwarded-host'),'lifetech.fyi')
   return new Response('portal',{headers:{'content-type':'text/html'}})
  })
- for(const path of ['/onboarding','/availability','/availability/poll-123','/admin','/admin/nametags','/orgs/lifetech']){
+ for(const path of ['/onboarding','/availability','/availability/poll-123','/admin','/admin/nametags','/orgs/lifetech','/settings/notifications']){
   const response=await worker.fetch(new Request(`https://lifetech.fyi${path}`),{PORTAL_SITE_ORIGIN:'https://portal.example',ASSETS:{fetch:async()=>new Response('missing',{status:404})}})
   assert.equal(response.status,200);assert.equal(await response.text(),'portal')
  }
@@ -281,4 +285,27 @@ test('organization pages stay on each tenant and keep authenticated requests int
       assert.equal(seen.at(-1).headers.get('cookie'), 'session=fixture')
     }
   }
+})
+
+test('PIdP avatar cache headers survive the tenant proxy while session responses remain uncached', async t => {
+  const originalFetch = globalThis.fetch
+  globalThis.fetch = async request => {
+    const headers = new Headers({ 'content-type': 'image/jpeg', 'cache-control': 'public, max-age=31536000, immutable', etag: '"avatar-v1"' })
+    if (request.url.includes('/session')) headers.append('set-cookie', 'session=fixture; Domain=id.example; Secure; HttpOnly')
+    const conditional = request.headers.has('if-none-match')
+    return new Response(conditional ? null : 'avatar-bytes', { status: conditional ? 304 : 200, headers })
+  }
+  t.after(() => { globalThis.fetch = originalFetch })
+  const env = { SITE_BRAND: 'lifetech', PIDP_PROXY_ORIGIN: 'https://id.example' }
+  const image = await worker.fetch(new Request('https://lifetech.fyi/pidp/avatars/member/photo.jpg'), env)
+  assert.equal(image.headers.get('cache-control'), 'public, max-age=31536000, immutable')
+  assert.equal(image.headers.get('etag'), '"avatar-v1"')
+  const conditional = await worker.fetch(new Request('https://lifetech.fyi/pidp/avatars/member/photo.jpg', { headers: { 'if-none-match': '"avatar-v1"' } }), env)
+  assert.equal(conditional.status, 304)
+  assert.equal(conditional.headers.get('cache-control'), 'public, max-age=31536000, immutable')
+  const session = await worker.fetch(new Request('https://lifetech.fyi/pidp/auth/session'), env)
+  assert.equal(session.headers.get('cache-control'), 'no-store')
+  assert.match(session.headers.get('set-cookie'), /session=fixture/)
+  const withCookie = await worker.fetch(new Request('https://lifetech.fyi/pidp/avatars/member/session.jpg'), env)
+  assert.equal(withCookie.headers.get('cache-control'), 'no-store')
 })

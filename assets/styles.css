@@ -3805,3 +3805,13 @@ h2 {
 .community-photo-tags img{display:block;max-width:100%;max-height:40vh;object-fit:contain;margin:12px auto}
 .community-photo-tags label{display:grid;gap:8px}.community-photo-tags textarea{width:100%;font:inherit;color:inherit;background:var(--surface-raised);border:1px solid var(--line)}
 .community-photo-tags button{margin:8px 8px 0 0;font:inherit;color:inherit;background:var(--surface-raised);border:1px solid var(--line);padding:8px 12px;border-radius:6px;cursor:pointer}
+
+.account-menu-items .organization-view-switcher { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; font-size: 14px; }
+.account-menu-items .organization-view-switcher select { min-width: 0; max-width: 150px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 5px; }
+
+.organization-view-indicator { font-size: 12px; white-space: nowrap; color: var(--muted); }
+
+.account-menu-items .portal-deployment-switcher { padding: 8px 0; border-block: 1px solid var(--line); }
+.account-menu-items .portal-deployment-label { display: block; padding: 4px 12px; font-size: 12px; opacity: .75; }
+.account-menu-items .portal-deployment-switcher button { width: 100%; min-height: 44px; text-align: left; }
+.account-menu-items .portal-deployment-error { padding: 0 12px; font-size: 13px; color: var(--danger, #b42318); }

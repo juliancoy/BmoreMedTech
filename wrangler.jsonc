@@ -35,7 +35,8 @@
       },
       "vars": {
         "SITE_BRAND": "lifetech"
-      }
+      },
+      "services": [{ "binding": "DEV_ASSETS", "service": "codecollective-site-preview" }]
     }
   }
 }

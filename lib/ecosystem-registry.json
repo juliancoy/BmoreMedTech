@@ -497,5 +497,20 @@
     "category": "funding",
     "supplemental": true,
     "website": ""
+  },
+  {
+    "id": "org-city-garage",
+    "name": "City Garage",
+    "aliases": [
+      "City Garage Science & Technology Center"
+    ],
+    "category": "ecosystem",
+    "supplemental": true,
+    "directory": true,
+    "type": "Life-science lab & manufacturing space",
+    "website": "https://citygaragestc.com/",
+    "relevance": "Very high \u2014 Baltimore life-science R&D, laboratory and manufacturing hub housing LaunchPort at 101 W. Dickman Street. Proximity: mission alignment 38/40, functional complement 23/25, Baltimore connectivity 20/20, community accessibility 9/15; access through leasing or resident programs.",
+    "proximity": 90,
+    "sourceCategory": "LifeTech curated addition"
   }
 ]

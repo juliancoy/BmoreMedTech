@@ -43,9 +43,9 @@
     "origin": "https://lifetech.fyi",
     "logo": "/assets/images/lifetech-logo.png",
     "hero": "/assets/images/lifetech-hero.png",
-    "social": "/assets/images/lifetech-social-preview.png",
+    "social": "/assets/images/lifetech-social-preview-v2.png",
     "socialWidth": "1733",
-    "socialHeight": "908",
+    "socialHeight": "907",
     "themeKey": "lifetech.theme",
     "home": {
       "title": "Better care starts with a better-connected city.",

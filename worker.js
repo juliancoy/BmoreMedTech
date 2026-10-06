@@ -163,6 +163,7 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
   if (proxiedInit.body) proxiedInit.duplex = 'half'
 
   return fetch(new Request(targetUrl.toString(), proxiedInit)).then((response) => {
+    if (response.status === 101) return response
     const responseHeaders = new Headers(response.headers)
     if (forwardedPrefix && responseHeaders.has('location')) {
       responseHeaders.set('location', prefixProxyLocation(responseHeaders.get('location') || '', forwardedPrefix))
@@ -201,6 +202,7 @@ function portalRootNavigationProxyResponse(request, env, url) {
 }
 
 function applyApiHeaders(request, response) {
+  if (response.status === 101) return response
   const headers = applyCorsHeaders(request, new Headers(response.headers))
   headers.set('x-content-type-options', 'nosniff')
   return new Response(response.body, {

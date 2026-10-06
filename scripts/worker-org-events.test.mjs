@@ -309,3 +309,20 @@ test('PIdP avatar cache headers survive the tenant proxy while session responses
   const withCookie = await worker.fetch(new Request('https://lifetech.fyi/pidp/avatars/member/session.jpg'), env)
   assert.equal(withCookie.headers.get('cache-control'), 'no-store')
 })
+
+test('LifeTech preserves the upstream chat WebSocket and its authentication protocol', async t => {
+  const socket = { fixture: 'accepted-chat-socket' }
+  const upstream = { status: 101, webSocket: socket, headers: new Headers({ 'sec-websocket-protocol': 'pidp.local-fixture' }) }
+  t.mock.method(globalThis, 'fetch', async request => {
+    assert.equal(request.url, 'https://chat.example/api/network/chat/conversations/local-room/socket')
+    assert.equal(request.headers.get('upgrade'), 'websocket')
+    assert.equal(request.headers.get('sec-websocket-protocol'), 'pidp.local-fixture')
+    assert.equal(request.headers.get('x-forwarded-host'), 'lifetech.fyi')
+    return upstream
+  })
+  const result = await worker.fetch(new Request('https://lifetech.fyi/api/chat/api/network/chat/conversations/local-room/socket', {
+    headers: { upgrade: 'websocket', 'sec-websocket-protocol': 'pidp.local-fixture' },
+  }), { CHAT_API_ORIGIN: 'https://chat.example' })
+  assert.equal(result, upstream)
+  assert.equal(result.webSocket, socket)
+})

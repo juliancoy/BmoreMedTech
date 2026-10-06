@@ -1,3 +1,4 @@
+import {mergeNetworkHistory} from '../lib/network-history.js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { layoutNetwork } from '../lib/ecosystem-physics.js'
@@ -24,7 +25,19 @@ function select(id) {
  selected = id; $('#neighbors').disabled=false
  $('#network-detail').innerHTML = orgDetails(org,data)
  const u = new URL(location.href); u.searchParams.set('org',id); history.replaceState(null,'',u)
- applyTable(); rebuild()
+ renderEvents(); applyTable(); rebuild()
+}
+let eventLimit=100
+function renderEvents(){
+ const section=$('#network-events');if(!section)return
+ const query=$('#event-search').value.trim().toLowerCase(),scope=$('#event-org-only').checked?selected:null
+ const events=(data.events || []).filter(event=>(!scope || event.organizationId===scope) && (!query || `${event.title} ${event.organizationName} ${event.location} ${event.date}`.toLowerCase().includes(query)))
+ $('#event-count').textContent=`${events.length} events · showing ${Math.min(eventLimit,events.length)}`
+ const list=$('#event-results');list.replaceChildren()
+ for(const event of events.slice(0,eventLimit)){
+  const li=document.createElement('li'),a=document.createElement('a');a.href=event.sourceUrl;a.textContent=event.title;a.target='_blank';a.rel='noopener noreferrer';li.append(a,document.createTextNode(` · ${event.date || 'Date not supplied'} · ${event.organizationName || 'Organization not supplied'}${event.location?' · '+event.location:''}`));list.append(li)
+ }
+ $('#event-more').hidden=events.length<=eventLimit
 }
 function search() {
  const q = $('#network-search').value.trim().toLowerCase()
@@ -171,15 +184,17 @@ function initWebgl() {
 async function start(){
  try {
   const response=await fetch('/ecosystem-portal.json');if(!response.ok)throw new Error('Data unavailable');data=await response.json()
+  const historyResponse=await fetch('/ecosystem-history.json');if(!historyResponse.ok)throw new Error('Event history unavailable');const historyData=await historyResponse.json();data=mergeNetworkHistory(data,historyData)
+  $('#event-search').addEventListener('input',()=>{eventLimit=100;renderEvents()});$('#event-org-only').addEventListener('change',()=>{eventLimit=100;renderEvents()});$('#event-more').addEventListener('click',()=>{eventLimit+=100;renderEvents()});renderEvents()
   initWebgl();search()
   $('#network-search').addEventListener('input',search)
   document.querySelectorAll('[name=node-category],[name=relationship],#include-context,#neighbors,#network-view').forEach(el=>el.addEventListener('change',()=>{applyTable();rebuild()}))
   $('#table-scope').addEventListener('change',applyTable)
   $('#network-fit').addEventListener('click',fit)
   for(const [id,factor] of [['#zoom-in',1.25],['#zoom-out',.8]]) $(id).addEventListener('click',()=>{if(!webgl){zoomSvg(factor);return}camera.zoom=Math.max(.35,Math.min(6,camera.zoom*factor));camera.updateProjectionMatrix();requestRender()})
-  $('#network-reset').addEventListener('click',()=>{selected=null;document.querySelectorAll('[name=node-category],[name=relationship]').forEach(c=>c.checked=true);$('#network-view').value='all';$('#include-context').checked=false;$('#neighbors').checked=false;$('#neighbors').disabled=true;$('#network-search').value='';$('#table-scope').value='';$('#network-detail').innerHTML='<h2>Select an organization</h2><p>Search or select a graph label to explore its evidence.</p>';history.replaceState(null,'',location.pathname);search();applyTable();rebuild()})
+  $('#network-reset').addEventListener('click',()=>{selected=null;document.querySelectorAll('[name=node-category],[name=relationship]').forEach(c=>c.checked=true);$('#network-view').value='all';$('#include-context').checked=false;$('#neighbors').checked=false;$('#neighbors').disabled=true;$('#network-search').value='';$('#table-scope').value='';$('#network-detail').innerHTML='<h2>Select an organization</h2><p>Search or select a graph label to explore its evidence.</p>';history.replaceState(null,'',location.pathname);renderEvents();search();applyTable();rebuild()})
   const initial=new URL(location.href).searchParams.get('org');if(initial&&data.organizations.some(n=>n.id===initial)){select(initial)}else rebuild()
-  loadPortalEvidence(data).then(updated=>{data=updated;$('#network-table .eco-table-scroll').outerHTML=relationshipTable(data);search();applyTable();if(selected)select(selected);else rebuild();$('#network-source').textContent='Public relationship evidence updated '+new Date(data.portalUpdatedAt).toLocaleString()+'. Awards and commitments do not establish payment; amounts may overlap.'}).catch(()=>{$('#network-source').textContent='Showing saved public evidence. Live refresh is temporarily unavailable.'})
+  loadPortalEvidence(data).then(updated=>{data=mergeNetworkHistory(updated,historyData);renderEvents();$('#network-table .eco-table-scroll').outerHTML=relationshipTable(data);search();applyTable();if(selected)select(selected);else rebuild();$('#network-source').textContent='Public relationship evidence updated '+new Date(data.portalUpdatedAt).toLocaleString()+'. Awards and commitments do not establish payment; amounts may overlap.'}).catch(()=>{$('#network-source').textContent='Showing saved public evidence. Live refresh is temporarily unavailable.'})
  }catch(error){status.textContent='Interactive data unavailable. The full relationship table and directory remain readable.';host.hidden=true;console.error(error)}
 }
 start()

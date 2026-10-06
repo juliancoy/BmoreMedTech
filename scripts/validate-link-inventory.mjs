@@ -1,3 +1,4 @@
+import { mergeNetworkHistory } from '../lib/network-history.js'
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { basename, relative } from 'node:path'
@@ -45,11 +46,14 @@ const knownExternalOrigins = new Set([
   'https://lifetech.fyi',
 ])
 // Only the generated ecosystem pages may link to URLs present in their sanitized input.
-const ecosystemData = JSON.parse(await readFile(new URL('../assets/data/ecosystem-portal.json', import.meta.url), 'utf8').catch(() => readFile(new URL('../assets/data/ecosystem.json', import.meta.url), 'utf8')))
+const portalEcosystemData = JSON.parse(await readFile(new URL('../assets/data/ecosystem-portal.json', import.meta.url), 'utf8').catch(() => readFile(new URL('../assets/data/ecosystem.json', import.meta.url), 'utf8')))
+const ecosystemHistory = JSON.parse(await readFile(new URL('../assets/data/ecosystem-history.json', import.meta.url), 'utf8'))
+const ecosystemData = mergeNetworkHistory(portalEcosystemData, ecosystemHistory)
 const ecosystemLinks = new Set([
   ...ecosystemData.organizations.flatMap(o => [o.website, ...o.publicEmails.map(email => `mailto:${email}`)]),
   ...ecosystemData.relationships.map(r => r.sourceUrl),
   ...ecosystemData.financing.map(f => f.sourceUrl),
+  ...(ecosystemData.events || []).map(event => event.sourceUrl),
 ].filter(Boolean))
 const knownPortalRoutes = new Set([
   '/users/login',

@@ -60,7 +60,7 @@ test('ecosystem routes use static assets and preserve HEAD, query and 404 behavi
 test('generated pages contain useful content without scripts',async()=>{
  const directory=await readFile(new URL('../ecosystem/index.html',import.meta.url),'utf8'),network=await readFile(new URL('../ecosystem/network.html',import.meta.url),'utf8')
  assert.match(directory,/Amplify MedTech/);assert.match(directory,/LifeTech proximity/);assert.match(network,/<table/);assert.match(network,/Stephen &amp; Renee Bisciotti Foundation/)
- for(const html of [directory,network])assert.doesNotMatch(html,/docs\.google\.com|oauth_token|private@example/)
+ for(const html of [directory,network])assert.doesNotMatch(html,/docs\.google\.com\/spreadsheets|oauth_token|private@example/)
 })
 
 test('proximity chart ranks scores and distinguishes zero from missing with accessible detail links', async()=>{

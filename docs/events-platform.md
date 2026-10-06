@@ -24,11 +24,10 @@ which MCP features are enabled in the live deployment.
 
 ## Directing an AI agent
 
-Signed-in homepage visitors can use **Upload photos with your AI** beside the
-community carousel. **Copy request for my AI** supplies the current site's MCP
-resource, OAuth discovery URL, organization ID, upload endpoints, supported
-formats, and required preview/approval flow. The expanded instructions remain
-selectable if clipboard access is blocked. No account tokens are included.
+OrgPortal's **Developer Tools → AI agents & MCP** section lists platform
+capabilities, the current site's connection and discovery URLs, and a copyable
+request for account-authorized gallery uploads. The homepage carousel stays
+focused on community photos. No account tokens are included.
 
 Agents authorize using the same portal account through PIdP. Organization
 permissions still apply; sign-in alone does not grant upload access. Uploads

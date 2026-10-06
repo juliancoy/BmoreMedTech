@@ -1,5 +1,6 @@
 import { deploymentResponse, deploymentCachePolicy, isDeploymentAssetRequest } from '../OrgPortal/web/deployment.mjs'
 import { importantPages, sitePageSeo } from './lib/site-seo.js'
+import { isPortalPagePath, notFoundResponse } from '../OrgPortal/web/portalRoutes.mjs'
 import { applySeo, canonicalPath, buildSitemap } from '../OrgPortal/web/seo.mjs'
 import { handleDatasetApi } from './worker/datasets.js'
 import { siteBrand } from './lib/site-brand.js'
@@ -372,6 +373,7 @@ const productionWorker = {
     }
 
     if (isPortalRoute(url.pathname)) {
+      if (!isPortalPagePath(url.pathname)) return notFoundResponse(request)
       return portalRootNavigationProxyResponse(request, env, url)
     }
 
@@ -379,10 +381,7 @@ const productionWorker = {
     if (response.status !== 404) return applyStaticHeaders(request, url.pathname, response)
 
     if (isHtmlNavigation(request)) {
-      const fallback = await env.ASSETS.fetch(new Request(`${url.origin}/index.html`, request))
-      const headers = new Headers(fallback.headers)
-      headers.set('x-robots-tag', 'noindex')
-      return applyStaticHeaders(request, '/index.html', new Response(fallback.body, { status: 404, headers }))
+      return notFoundResponse(request)
     }
 
     return response

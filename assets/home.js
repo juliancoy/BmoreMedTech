@@ -49,15 +49,34 @@ function progressiveImageMarkup(image, attrs = '') {
 
 async function showNextLifeTechEvent() {
   if (!nextEventEl && !eventMediaSection) return
+  if (nextEventEl) {
+    nextEventEl.hidden = false
+    nextEventEl.innerHTML = '<p role="status">Loading LifeTech events…</p>'
+  }
   try {
-    const response = await fetch(MEDTECH_ORG_EVENTS_SOURCE_URL, { cache: 'no-store' })
+    let response
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        response = await fetch(MEDTECH_ORG_EVENTS_SOURCE_URL, { cache: 'no-store', signal: AbortSignal.timeout(10000) })
+        if (response.ok) break
+        if (response.status < 500) break
+      } catch (error) {
+        if (attempt === 1) throw error
+      }
+    }
     if (!response.ok) throw new Error(`LifeTech events returned ${response.status}`)
     const events = await response.json()
     const now = new Date()
     const next = (Array.isArray(events) ? events : [])
       .map(normalizeLifeTechPortalEvent)
       .map((event) => ({ event, date: parseEventDate(event) }))
-      .filter((item) => item.date && item.date >= now)
+      .filter((item) => {
+        if (!item.date) return false
+        const end = item.event.endTime ? new Date(item.event.endTime) : item.date
+        // Date-only events stay visible throughout their calendar day.
+        if (/^\d{4}-\d{2}-\d{2}$/.test(item.event.startDate) && !item.event.endTime) end.setHours(23, 59, 59, 999)
+        return !Number.isNaN(end.getTime()) && end >= now
+      })
       .sort((a, b) => a.date.getTime() - b.date.getTime())[0]
     const medtechInHut = (Array.isArray(events) ? events : [])
       .map(normalizeLifeTechPortalEvent)
@@ -75,7 +94,11 @@ async function showNextLifeTechEvent() {
         window.dispatchEvent(new Event('bmoremedtech:progressive-images'))
       }
     }
-    if (!next || !nextEventEl) return
+    if (!nextEventEl) return
+    if (!next) {
+      nextEventEl.innerHTML = '<p>No upcoming LifeTech events are published yet. <a href="/org-events">Browse events</a></p>'
+      return
+    }
 
     const imageUrl = eventImageUrl(next.event)
     const location = typeof next.event.location === 'object'
@@ -100,6 +123,10 @@ async function showNextLifeTechEvent() {
     }, { once: true })
   } catch (error) {
     console.warn('Next LifeTech event could not be loaded for the hero.', error)
+    if (nextEventEl) {
+      nextEventEl.innerHTML = '<p role="status">LifeTech events could not be loaded.</p><button type="button" class="button">Retry</button> <a href="/org-events">Browse events</a>'
+      nextEventEl.querySelector('button').addEventListener('click', showNextLifeTechEvent, { once: true })
+    }
   }
 }
 

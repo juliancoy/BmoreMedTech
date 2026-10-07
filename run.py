@@ -377,6 +377,7 @@ def build_site(args: argparse.Namespace) -> None:
             "working_dir": WORKSPACE,
             "volumes": {
                 str(root): {"bind": WORKSPACE, "mode": "rw"},
+                str(Path(args.orgportal_dir).resolve()): {"bind": "/OrgPortal", "mode": "ro"},
                 f"{PREFIX}node-modules": {"bind": f"{WORKSPACE}/node_modules", "mode": "rw"},
             },
             "environment": {

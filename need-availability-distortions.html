@@ -6,7 +6,7 @@
   <link rel="icon" type="image/png" href="/assets/images/lifetech-logo-v2.png" />
   <title>Need–Availability Distortions | LifeTech</title>
   <meta name="description" content="Compare where patient need and service demand appear to outrun physician capacity, then inspect a separate allied-care-team workforce lens." />
-  <script>(()=>{const k='lifetech.theme',s=(()=>{try{return localStorage.getItem(k)}catch{return null}})(),m=s==='light'||s==='dark'?s:'system',r=m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':m==='dark'?'dark':'light';document.documentElement.dataset.themeMode=m;document.documentElement.dataset.theme=r})()</script>
+  <script>(()=>{const k='lifetech.theme',s=(()=>{try{return localStorage.getItem(k)}catch{return null}})(),m=s==='light'||s==='dark'?s:k.startsWith('lifetech.')?'dark':'system',r=m==='system'&&(k.startsWith('lifetech.')||matchMedia('(prefers-color-scheme: dark)').matches)?'dark':m==='dark'?'dark':'light';document.documentElement.dataset.themeMode=m;document.documentElement.dataset.theme=r})()</script>
   <link rel="stylesheet" href="/assets/styles.css" />
   <link rel="stylesheet" href="/assets/need-availability-page.css" />
   <script type="module" src="/assets/theme.js"></script>

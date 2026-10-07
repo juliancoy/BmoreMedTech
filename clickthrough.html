@@ -14,8 +14,8 @@
       (() => {
         const key = 'lifetech.theme';
         const stored = (() => { try { return localStorage.getItem(key); } catch { return null; } })();
-        const mode = stored === 'light' || stored === 'dark' ? stored : 'system';
-        const resolved = mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : mode === 'dark' ? 'dark' : 'light';
+        const mode = stored === 'light' || stored === 'dark' ? stored : key.startsWith('lifetech.') ? 'dark' : 'system';
+        const resolved = mode === 'system' && (key.startsWith('lifetech.') || matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : mode === 'dark' ? 'dark' : 'light';
         document.documentElement.dataset.themeMode = mode;
         document.documentElement.dataset.theme = resolved;
       })();

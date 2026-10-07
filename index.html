@@ -32,8 +32,8 @@
       (() => {
         const key = 'lifetech.theme';
         const stored = (() => { try { return localStorage.getItem(key); } catch { return null; } })();
-        const mode = stored === 'light' || stored === 'dark' ? stored : 'system';
-        const resolved = mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : mode === 'dark' ? 'dark' : 'light';
+        const mode = stored === 'light' || stored === 'dark' ? stored : key.startsWith('lifetech.') ? 'dark' : 'system';
+        const resolved = mode === 'system' && (key.startsWith('lifetech.') || matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : mode === 'dark' ? 'dark' : 'light';
         document.documentElement.dataset.themeMode = mode;
         document.documentElement.dataset.theme = resolved;
       })();
@@ -92,7 +92,6 @@
         <img
           class="hero-image progressive-image"
           src="/assets/images/lifetech-hero.png"
-          data-full-src="/assets/images/lifetech-hero.png"
           fetchpriority="high"
           decoding="async"
           width="1600"
@@ -107,7 +106,7 @@
               {{home.intro}}
             </p>
             {{home.amplifyLink}}
-            <article id="next-medtech-event" class="hero-event" aria-live="polite" hidden></article>
+            <article id="next-medtech-event" class="hero-event" aria-live="polite"><p><a href="/org-events">Browse LifeTech events</a></p></article>
             <div class="hero-actions">
               <a class="button primary" href="/org-events">LifeTech Events <span aria-hidden="true">&rarr;</span></a>
               <a class="button secondary" href="/about.html#ways-in">Explore the community</a>

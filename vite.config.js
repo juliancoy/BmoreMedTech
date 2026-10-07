@@ -1,7 +1,7 @@
 import { sitePageSeo } from './lib/site-seo.js'
 import { applySeo, canonicalPath } from '../OrgPortal/web/seo.mjs'
 import { defineConfig } from 'vite'
-import { cpSync, existsSync } from 'node:fs'
+import { prepareBuildAssets } from './scripts/prepare-build-assets.mjs'
 import { siteBrand, renderSiteBrand } from './lib/site-brand.js'
 
 const brandId = process.env.SITE_BRAND || 'medtech'
@@ -56,11 +56,9 @@ export default defineConfig({
       }
     },
   }, {
-    name: 'copy-medtech-static-images',
+    name: 'prepare-site-public-assets',
     closeBundle() {
-      if (existsSync('assets/images')) {
-        cpSync('assets/images', `${outputDirectory}/assets/images`, { recursive: true })
-      }
+      prepareBuildAssets(outputDirectory, brand)
     },
   }],
   build: {

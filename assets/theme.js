@@ -17,19 +17,20 @@ const THEME_STORAGE_KEY = 'lifetech.theme';
 const VALID_MODES = new Set(['system', 'light', 'dark']);
 
 function normalizeThemeMode(value) {
-  return VALID_MODES.has(value) ? value : 'system';
+  return VALID_MODES.has(value) ? value : THEME_STORAGE_KEY.startsWith('lifetech.') ? 'dark' : 'system';
 }
 
 function readThemeMode() {
   try {
     return normalizeThemeMode(localStorage.getItem(THEME_STORAGE_KEY));
   } catch {
-    return 'system';
+    return normalizeThemeMode(null);
   }
 }
 
 function resolveTheme(mode) {
   if (mode === 'light' || mode === 'dark') return mode;
+  if (THEME_STORAGE_KEY.startsWith('lifetech.')) return 'dark';
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 

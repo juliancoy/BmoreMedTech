@@ -5,7 +5,7 @@ import worker from '../worker.js'
 test('LifeTech Worker proxies public OrgPortal event feeds through the same origin', async (t) => {
   t.mock.method(globalThis, 'fetch', async (request) => {
     const url = new URL(request.url)
-    assert.equal(url.href, 'https://org.example/api/network/orgs/public/baltimore-medtech/events?upcoming_only=true&limit=120')
+    assert.equal(url.href, 'https://org.example/api/network/orgs/public/lifetech/events?upcoming_only=true&hosted_only=true&limit=120')
     assert.equal(request.headers.get('x-forwarded-host'), 'lifetech.fyi')
     return Response.json([{ title: 'LifeTech Formational Event' }], {
       headers: { 'cache-control': 'no-store' },
@@ -13,7 +13,7 @@ test('LifeTech Worker proxies public OrgPortal event feeds through the same orig
   })
 
   const response = await worker.fetch(
-    new Request('https://lifetech.fyi/api/org/api/network/orgs/public/baltimore-medtech/events?upcoming_only=true&limit=120'),
+    new Request('https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/events?upcoming_only=true&hosted_only=true&limit=120'),
     { ORG_API_ORIGIN: 'https://org.example', ASSETS: { fetch: async () => new Response('not found', { status: 404 }) } },
   )
 
@@ -27,6 +27,7 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
   t.mock.method(globalThis, 'fetch', async (request, options) => {
     if (typeof request === 'string') request = new Request(request, options)
     seen.push({ url: request.url, method: request.method, headers: request.headers })
+    if (new URL(request.url).pathname.startsWith('/api/network/orgs/public/')) return Response.json({ tenant_id: null, tenant_home_url: null })
     if (request.url === 'https://portal.example/__portal_root/') {
       const headers = new Headers()
       headers.set('content-type', 'text/html')
@@ -275,8 +276,13 @@ test('LifeTech mounts shared governance pages and preserves authenticated API re
 
 test('organization pages stay on each tenant and keep authenticated requests intact', async (t) => {
   const seen = []
-  t.mock.method(globalThis, 'fetch', async request => { seen.push(request); return new Response('<div id="root"></div>', { headers: { 'content-type': 'text/html' } }) })
-  const env = { PORTAL_SITE_ORIGIN: 'https://portal.example', ASSETS: { fetch: async () => { throw new Error('Organization pages belong in OrgPortal') } } }
+  t.mock.method(globalThis, 'fetch', async (request, options) => {
+    if (typeof request === 'string') request = new Request(request, options)
+    seen.push(request)
+    if (new URL(request.url).pathname.startsWith('/api/network/orgs/public/')) return Response.json({ tenant_id: null, tenant_home_url: null })
+    return new Response('<div id="root"></div>', { headers: { 'content-type': 'text/html' } })
+  })
+  const env = { ORG_API_ORIGIN: 'https://org.example', PORTAL_SITE_ORIGIN: 'https://portal.example', ASSETS: { fetch: async () => { throw new Error('Organization pages belong in OrgPortal') } } }
   for (const host of ['lifetech.fyi', 'medtech.social']) {
     for (const path of ['/orgs/tedco', '/orgs/amplify-medtech', '/orgs/profile', '/orgs/register', '/create/non-profit']) {
       const response = await worker.fetch(new Request(`https://${host}${path}`, { headers: { cookie: 'session=fixture', authorization: 'Bearer fixture', accept: 'text/html' } }), env)

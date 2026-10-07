@@ -26,6 +26,8 @@ import docker_utils
 root = Path(os.path.abspath(os.path.dirname(__file__)))
 WORKSPACE = "/workspace"
 PREFIX = "bmoremedtech-"
+sys.path.append(str(root.parent / "OrgPortal"))
+from service_names import service_name, RENAMES
 DEFAULT_NODE_IMAGE = "node:22-bookworm-slim"
 DEFAULT_PYTHON_IMAGE = "python:3.13-alpine"
 DEFAULT_SELENIUM_IMAGE = "selenium/standalone-chrome:latest"
@@ -109,7 +111,7 @@ def wait_for_container_port(container_name: str, port: int, label: str, runtime:
 def local_system_values(args: argparse.Namespace) -> dict[str, str]:
     public_base = f"https://127.0.0.1:{args.site_port}"
     pidp_public_base = f"{public_base}/pidp"
-    portal_internal_base = f"http://{args.system_prefix}portal-dev:5173"
+    portal_internal_base = f"http://{service_name(args.system_prefix, 'portal-dev')}:5173"
     allowed_origins = ",".join(
         [
             public_base,
@@ -129,8 +131,8 @@ def local_system_values(args: argparse.Namespace) -> dict[str, str]:
 def start_pidp(args: argparse.Namespace, values: dict[str, str]) -> None:
     pidp_dir = Path(args.pidp_dir)
     pidp_editme = load_pidp_editme(pidp_dir)
-    db_name = f"{args.system_prefix}pidpdb"
-    pidp_name = f"{args.system_prefix}pidp-dev"
+    db_name = service_name(args.system_prefix, "pidpdb")
+    pidp_name = service_name(args.system_prefix, "pidp-dev")
     db_url = (
         f"postgresql+asyncpg://{pidp_editme.PIDP_POSTGRES_USER}:"
         f"{pidp_editme.PIDP_POSTGRES_PASSWORD}@{db_name}:5432/PIdP"
@@ -234,7 +236,7 @@ def start_orgportal(args: argparse.Namespace, values: dict[str, str]) -> None:
     portal_dir = Path(args.orgportal_dir) / "web"
     if not (portal_dir / "package.json").is_file():
         raise RuntimeError(f"OrgPortal web checkout not found at {portal_dir}")
-    portal_name = f"{args.system_prefix}portal-dev"
+    portal_name = service_name(args.system_prefix, "portal-dev")
     docker_utils.remove_container(portal_name)
     docker_utils.run_container(
         {
@@ -263,7 +265,7 @@ def start_orgportal(args: argparse.Namespace, values: dict[str, str]) -> None:
                     [
                         "localhost",
                         "127.0.0.1",
-                        f"{args.system_prefix}portal-dev",
+                        service_name(args.system_prefix, "portal-dev"),
                     ]
                 ),
                 "PIDP_PROXY_ORIGIN": args.pidp_origin,
@@ -524,11 +526,11 @@ def stop(args: argparse.Namespace) -> None:
     ]
     names.extend(
         [
-            f"{args.system_prefix}pidpdb",
-            f"{args.system_prefix}pidp",
-            f"{args.system_prefix}pidp-dev",
-            f"{args.system_prefix}portal",
-            f"{args.system_prefix}portal-dev",
+            service_name(args.system_prefix, "pidpdb"),
+            service_name(args.system_prefix, "pidp"),
+            service_name(args.system_prefix, "pidp-dev"),
+            service_name(args.system_prefix, "portal"),
+            service_name(args.system_prefix, "portal-dev"),
         ]
     )
     for name in names:
@@ -545,8 +547,8 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--tenant-host", default=os.getenv("PORTAL_TENANT_HOST", tenant_host_file.read_text().strip() if tenant_host_file.is_file() else ""), help="Registered portal tenant hostname for local branding.")
     parser.add_argument("--site-port", type=int, default=int(os.getenv("BMORE_MEDTECH_SITE_PORT", "8769")))
     parser.add_argument("--selenium-port", type=int, default=int(os.getenv("BMORE_MEDTECH_SELENIUM_PORT", "4445")))
-    parser.add_argument("--site-container-name", default=os.getenv("BMORE_MEDTECH_SITE_CONTAINER", f"{PREFIX}site"))
-    parser.add_argument("--selenium-container-name", default=os.getenv("BMORE_MEDTECH_SELENIUM_CONTAINER", f"{PREFIX}selenium"))
+    parser.add_argument("--site-container-name", default=os.getenv("BMORE_MEDTECH_SITE_CONTAINER"))
+    parser.add_argument("--selenium-container-name", default=os.getenv("BMORE_MEDTECH_SELENIUM_CONTAINER", "local-browser-automation"))
     parser.add_argument("--node-image", default=os.getenv("NODE_IMAGE", DEFAULT_NODE_IMAGE))
     parser.add_argument("--python-image", default=os.getenv("PYTHON_IMAGE", DEFAULT_PYTHON_IMAGE))
     parser.add_argument("--selenium-image", default=os.getenv("SELENIUM_IMAGE", DEFAULT_SELENIUM_IMAGE))
@@ -567,13 +569,17 @@ def normalize_args(args: argparse.Namespace) -> argparse.Namespace:
         args.orgportal_dir = str(Path(args.orgportal_dir).expanduser().resolve())
     if hasattr(args, "pidp_dir"):
         args.pidp_dir = str(Path(args.pidp_dir).expanduser().resolve())
+    args.site_container_name = RENAMES.get(args.site_container_name, args.site_container_name)
+    args.selenium_container_name = RENAMES.get(args.selenium_container_name, args.selenium_container_name)
+    if not args.site_container_name:
+        args.site_container_name = "lifetech-website" if args.site_brand == "lifetech" else "medtech-website"
     if getattr(args, "medtech_only", True):
         return args
     prefix = args.system_prefix
     if not args.pidp_origin:
-        args.pidp_origin = f"http://{prefix}pidp-dev:8000"
+        args.pidp_origin = f"http://{service_name(prefix, 'pidp-dev')}:8000"
     if not args.portal_origin:
-        args.portal_origin = f"http://{prefix}portal-dev:5173"
+        args.portal_origin = f"http://{service_name(prefix, 'portal-dev')}:5173"
     return args
 
 

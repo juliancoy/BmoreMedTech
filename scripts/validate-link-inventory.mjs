@@ -1,3 +1,4 @@
+import { applyFundHierarchy } from '../../OrgPortal/web/src/features/ecosystem/fund-pies.js'
 import { mergeNetworkHistory } from '../../OrgPortal/web/src/features/ecosystem/network-history.js'
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
@@ -49,14 +50,16 @@ const knownExternalOrigins = new Set([
 const portalEcosystemData = JSON.parse(await readFile(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem-portal.json', import.meta.url), 'utf8').catch(() => readFile(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem.json', import.meta.url), 'utf8')))
 const ecosystemHistory = JSON.parse(await readFile(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem-history.json', import.meta.url), 'utf8'))
 const ecosystemData = mergeNetworkHistory(portalEcosystemData, ecosystemHistory)
+applyFundHierarchy(ecosystemData)
 const ecosystemLinks = new Set([
-  ...ecosystemData.organizations.flatMap(o => [o.website, ...o.publicEmails.map(email => `mailto:${email}`)]),
+  ...ecosystemData.organizations.flatMap(o => [o.website, o.imageSourceUrl, o.administrationSourceUrl, ...o.publicEmails.map(email => `mailto:${email}`)]),
   ...ecosystemData.relationships.map(r => r.sourceUrl),
   ...ecosystemData.financing.map(f => f.sourceUrl),
   ...(ecosystemData.events || []).map(event => event.sourceUrl),
 ].filter(Boolean))
 const knownPortalRoutes = new Set([
   '/ecosystem/network',
+  '/ecosystem/network/events',
   '/users/login',
   '/users/register',
   '/people',

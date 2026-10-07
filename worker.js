@@ -240,6 +240,7 @@ function isHtmlNavigation(request) {
 
 function isRootPortalAssetPath(pathname) {
   return pathname === '/assets' || pathname.startsWith('/assets/')
+    || pathname === '/ecosystem-data' || pathname.startsWith('/ecosystem-data/')
     || pathname === '/images' || pathname.startsWith('/images/')
     || pathname === '/css' || pathname.startsWith('/css/')
     || pathname === '/mobile-update.json'
@@ -260,7 +261,7 @@ function isPortalDevAssetPath(pathname) {
 }
 
 function isPortalRoute(pathname) {
-  return pathname === '/ecosystem/network' || pathname === '/ecosystem/network/' || pathname === '/onboarding' || pathname === '/availability' || pathname.startsWith('/availability/')
+  return pathname === '/ecosystem/network' || pathname === '/ecosystem/network/' || pathname.startsWith('/ecosystem/network/') || pathname === '/onboarding' || pathname === '/availability' || pathname.startsWith('/availability/')
     || pathname === '/governance' || pathname.startsWith('/governance/')
     || pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')

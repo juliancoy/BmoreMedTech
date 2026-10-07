@@ -291,7 +291,7 @@ function isPortalDevAssetPath(pathname) {
 
 function isPortalRoute(pathname) {
   return pathname === '/onboarding' || pathname === '/availability' || pathname.startsWith('/availability/')
-    || pathname === '/ecosystem/network' || pathname === '/ecosystem/network/'
+    || pathname === '/ecosystem/network' || pathname === '/ecosystem/network/' || pathname.startsWith('/ecosystem/network/')
     || pathname === '/users' || pathname.startsWith('/users/')
     || pathname === '/events' || pathname.startsWith('/events/')
     || pathname === '/org-events' || pathname.startsWith('/org-events/')

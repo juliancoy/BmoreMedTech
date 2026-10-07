@@ -342,3 +342,23 @@ test('LifeTech slug homepage redirects signed-in and public navigation to the do
   const post = await worker.fetch(new Request('https://lifetech.fyi/portals/lifetech', { method: 'POST' }), env);
   assert.equal(post.status, 405);
 });
+
+
+test('ecosystem event navigation reaches the shared portal and its data stays available', async (t) => {
+  const seen = []
+  t.mock.method(globalThis, 'fetch', async (request, options) => {
+    const target = typeof request === 'string' ? new Request(request, options) : request
+    seen.push(target.url)
+    return target.url.includes('/ecosystem-data/')
+      ? Response.json({ organizations: [] })
+      : new Response('<html><head></head><body>Portal</body></html>', { headers: { 'content-type': 'text/html' } })
+  })
+  const env = { SITE_BRAND: 'lifetech', PORTAL_SITE_ORIGIN: 'https://portal.example', ASSETS: { fetch: async () => new Response('missing', { status: 404 }) } }
+  const navigation = await worker.fetch(new Request('https://lifetech.fyi/ecosystem/network/events?org=example', { headers: { accept: 'text/html' } }), env)
+  assert.equal(navigation.status, 200)
+  assert.equal(seen.at(-1), 'https://portal.example/__portal_root/?org=example')
+  const data = await worker.fetch(new Request('https://lifetech.fyi/ecosystem-data/ecosystem-portal.json'), env)
+  assert.equal(data.status, 200)
+  assert.deepEqual(await data.json(), { organizations: [] })
+  assert.equal(seen.at(-1), 'https://portal.example/__portal_root/ecosystem-data/ecosystem-portal.json')
+})

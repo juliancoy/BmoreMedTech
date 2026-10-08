@@ -119,6 +119,22 @@ function tenantPortalMetadata(url, brand) {
   }
 }
 
+// Eventbrite page image optimizers are not stable crawler image endpoints.
+// Unwrap only the known provider URL; keep SVG flyers out of raster social cards.
+function rasterSocialImage(value, origin) {
+  if (!value) return null
+  try {
+    let image = new URL(value, origin)
+    if (['eventbrite.com', 'www.eventbrite.com'].includes(image.hostname) && image.pathname.endsWith('/_next/image')) {
+      const original = new URL(image.searchParams.get('url'))
+      if (original.protocol === 'https:' && ['img.evbuc.com', 'cdn.evbuc.com'].includes(original.hostname)) image = original
+      else return null
+    }
+    if (!['https:', 'http:'].includes(image.protocol) || /\.svg$/i.test(image.pathname)) return null
+    return image.href
+  } catch { return null }
+}
+
 async function applyTenantPortalMetadata(request, response, url, env) {
   const brand = siteBrand(env.SITE_BRAND)
   if (!response.ok || request.method === 'HEAD') return response
@@ -134,12 +150,14 @@ async function applyTenantPortalMetadata(request, response, url, env) {
         signal: AbortSignal.timeout(5000),
       }))
       if (eventResponse.ok) {
-        const preview = eventListingPreview(await eventResponse.json(), url.origin)
-        if (preview.title) metadata.title = preview.title
+        const event = await eventResponse.json()
+        const preview = eventListingPreview(event, url.origin)
+        if (event.social_title || event.title) metadata.title = `${event.social_title || event.title} on ${url.hostname}`
         if (preview.description) metadata.description = preview.description
-        if (preview.image) {
-          metadata.imageUrl = new URL(preview.image, url.origin).href
-          metadata.imageAlt = preview.title || metadata.title
+        const image = rasterSocialImage(preview.image, url.origin)
+        if (image) {
+          metadata.imageUrl = image
+          metadata.imageAlt = event.social_title || event.title || metadata.title
           delete metadata.imageWidth
           delete metadata.imageHeight
           delete metadata.imageType

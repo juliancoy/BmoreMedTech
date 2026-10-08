@@ -63,7 +63,7 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
     headers: { accept: 'text/html' },
   }), env)
   assert.equal(portal.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/')
+  assert.equal(seen.some(entry => entry.url === 'https://portal.example/__portal_root/'), true)
   assert.equal(seen.at(-1).headers.get('x-forwarded-host'), 'lifetech.fyi')
   assert.deepEqual(portal.headers.getSetCookie(), [
     'portal_session=fixture; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax',
@@ -367,4 +367,27 @@ test('ecosystem event navigation reaches the shared portal and its data stays av
   assert.equal(data.status, 200)
   assert.deepEqual(await data.json(), { organizations: [] })
   assert.equal(seen.at(-1), 'https://portal.example/__portal_root/ecosystem-data/ecosystem-portal.json')
+})
+
+
+test('LifeTech event pages retain external listing social previews', async t => {
+  t.mock.method(globalThis, 'fetch', async input => {
+    const request = typeof input === 'string' ? new Request(input) : input
+    const url = new URL(request.url)
+    if (url.pathname === '/api/network/events/public/imported') {
+      assert.equal(request.headers.get('x-forwarded-host'), 'lifetech.fyi')
+      return Response.json({ title: 'Imported event', source_url: 'https://eventbrite.com/event',
+        links: [{ url: 'https://eventbrite.com/event', title: 'Original event title', description: 'Original description', image_url: 'https://eventbrite.com/image.jpg?original=1' }] })
+    }
+    return new Response('<html><head><title>Portal</title></head><body></body></html>', { headers: { 'content-type': 'text/html' } })
+  })
+  const response = await worker.fetch(new Request('https://lifetech.fyi/events/imported', { headers: { accept: 'text/html' } }), {
+    SITE_BRAND: 'lifetech', ORG_API_ORIGIN: 'https://org.example', PORTAL_SITE_ORIGIN: 'https://portal.example',
+    ASSETS: { fetch: async () => new Response('not found', { status: 404 }) },
+  })
+  const html = await response.text()
+  assert.match(html, /property="og:title" content="Original event title"/)
+  assert.match(html, /property="og:description" content="Original description"/)
+  assert.match(html, /property="og:image" content="https:\/\/eventbrite.com\/image.jpg\?original=1"/)
+  assert.match(html, /name="twitter:card" content="summary_large_image"/)
 })

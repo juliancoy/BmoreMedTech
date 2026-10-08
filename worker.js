@@ -1,3 +1,4 @@
+import { eventListingPreview } from '../OrgPortal/web/eventListingPreview.mjs'
 import { deploymentResponse, deploymentCachePolicy, isDeploymentAssetRequest } from '../OrgPortal/web/deployment.mjs'
 import { importantPages, sitePageSeo } from './lib/site-seo.js'
 import { isPortalPagePath, notFoundResponse, missingPortalResource } from '../OrgPortal/web/portalRoutes.mjs'
@@ -125,6 +126,27 @@ async function applyTenantPortalMetadata(request, response, url, env) {
   if (!contentType.includes('text/html')) return response
 
   const metadata = tenantPortalMetadata(url, brand)
+  const eventMatch = /^\/events\/([^/]+)\/?$/.exec(url.pathname)
+  if (eventMatch) {
+    try {
+      const eventResponse = await fetch(new Request(`${env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN}/api/network/events/public/${encodeURIComponent(decodeURIComponent(eventMatch[1]))}`, {
+        headers: { 'x-forwarded-host': url.host, 'x-forwarded-proto': url.protocol.slice(0, -1) },
+        signal: AbortSignal.timeout(5000),
+      }))
+      if (eventResponse.ok) {
+        const preview = eventListingPreview(await eventResponse.json(), url.origin)
+        if (preview.title) metadata.title = preview.title
+        if (preview.description) metadata.description = preview.description
+        if (preview.image) {
+          metadata.imageUrl = new URL(preview.image, url.origin).href
+          metadata.imageAlt = preview.title || metadata.title
+          delete metadata.imageWidth
+          delete metadata.imageHeight
+          delete metadata.imageType
+        }
+      }
+    } catch { /* Preserve tenant metadata if the authoritative event API is unavailable. */ }
+  }
   const html = applySeo(await response.text(), metadata)
 
   const headers = new Headers(response.headers)

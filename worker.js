@@ -1,4 +1,6 @@
 import { withEventSourcePreview } from '../OrgPortal/web/eventSourcePreview.mjs'
+import { mobileHeaderCss, eventHeadGuard } from './lib/portal-display-compat.js'
+import { pitchPosterBase64 } from './lib/pitch-original-preview.js'
 import { eventListingPreview } from '../OrgPortal/web/eventListingPreview.mjs'
 import { deploymentResponse, deploymentCachePolicy, isDeploymentAssetRequest } from '../OrgPortal/web/deployment.mjs'
 import { importantPages, sitePageSeo } from './lib/site-seo.js'
@@ -120,6 +122,22 @@ function tenantPortalMetadata(url, brand) {
   }
 }
 
+// Eventbrite page image optimizers are not stable crawler image endpoints.
+// Unwrap only the known provider URL; keep SVG flyers out of raster social cards.
+function rasterSocialImage(value, origin) {
+  if (!value) return null
+  try {
+    let image = new URL(value, origin)
+    if (['eventbrite.com', 'www.eventbrite.com'].includes(image.hostname) && image.pathname.endsWith('/_next/image')) {
+      const original = new URL(image.searchParams.get('url'))
+      if (original.protocol === 'https:' && ['img.evbuc.com', 'cdn.evbuc.com'].includes(original.hostname)) image = original
+      else return null
+    }
+    if (!['https:', 'http:'].includes(image.protocol) || /\.svg$/i.test(image.pathname)) return null
+    return image.href
+  } catch { return null }
+}
+
 async function applyTenantPortalMetadata(request, response, url, env) {
   const brand = siteBrand(env.SITE_BRAND)
   if (!response.ok || request.method === 'HEAD') return response
@@ -137,11 +155,12 @@ async function applyTenantPortalMetadata(request, response, url, env) {
       if (eventResponse.ok) {
         const event = await withEventSourcePreview(await eventResponse.json())
         const preview = eventListingPreview(event, url.origin)
-        if (preview.title) metadata.title = preview.title
+        if (event.social_title || event.title) metadata.title = `${event.social_title || event.title} on ${url.hostname}`
         if (preview.description) metadata.description = preview.description
-        if (preview.image) {
-          metadata.imageUrl = new URL(preview.image, url.origin).href
-          metadata.imageAlt = preview.title || metadata.title
+        const image = rasterSocialImage(preview.image, url.origin)
+        if (image) {
+          metadata.imageUrl = image
+          metadata.imageAlt = event.social_title || event.title || metadata.title
           delete metadata.imageWidth
           delete metadata.imageHeight
           delete metadata.imageType
@@ -149,7 +168,15 @@ async function applyTenantPortalMetadata(request, response, url, env) {
       }
     } catch { /* Preserve tenant metadata if the authoritative event API is unavailable. */ }
   }
-  const html = applySeo(await response.text(), metadata)
+  if (eventMatch?.[1] === 'medtech-startup-pitch-competition-eventbri') {
+    metadata.imageUrl = new URL('/event-preview/medtech-pitch-competition-20261008.jpg', url.origin).href
+    metadata.imageWidth = 940
+    metadata.imageHeight = 470
+    metadata.imageType = 'image/jpeg'
+    metadata.imageAlt = 'Amplify MedTech — MedTech Pitch Competition at 4MLK'
+  }
+  const html = applySeo(await response.text(), metadata).replace('</head>', `<style>${mobileHeaderCss}</style></head>`)
+    .replace('</body>', `${eventMatch ? eventHeadGuard(url.pathname, metadata) : ''}</body>`)
 
   const headers = new Headers(response.headers)
   headers.set('content-type', 'text/html; charset=utf-8')
@@ -311,6 +338,11 @@ const productionWorker = {
   async fetch(request, env) {
     const url = new URL(request.url)
     if (request.method === 'OPTIONS') return preflightResponse(request)
+    if (url.pathname === '/event-preview/medtech-pitch-competition-20261008.jpg') {
+      if (!['GET','HEAD'].includes(request.method)) return new Response(null, {status:405})
+      const bytes = request.method === 'HEAD' ? null : Uint8Array.from(atob(pitchPosterBase64), c => c.charCodeAt(0))
+      return new Response(bytes, {headers:{'content-type':'image/jpeg','cache-control':'public, max-age=31536000, immutable'}})
+    }
 
     if (env.SITE_BRAND === 'lifetech' && ['/robots.txt', '/sitemap.xml'].includes(url.pathname)) {
       if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } })

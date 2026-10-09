@@ -386,7 +386,7 @@ test('LifeTech event pages retain external listing social previews', async t => 
     ASSETS: { fetch: async () => new Response('not found', { status: 404 }) },
   })
   const html = await response.text()
-  assert.match(html, /property="og:title" content="Original event title"/)
+  assert.match(html, /property="og:title" content="Imported event on lifetech.fyi"/)
   assert.match(html, /property="og:description" content="Original description"/)
   assert.match(html, /property="og:image" content="https:\/\/eventbrite.com\/image.jpg\?original=1"/)
   assert.match(html, /name="twitter:card" content="summary_large_image"/)
@@ -402,4 +402,44 @@ test('LifeTech event API imports the Eventbrite social preview image', async t =
   const response = await worker.fetch(new Request('https://lifetech.fyi/api/org/api/network/events/public/pitch'), { ORG_API_ORIGIN: 'https://org.example' })
   assert.equal(response.status, 200)
   assert.equal((await response.json()).social_image_url, 'https://img.evbuc.com/pitch.jpg')
+})
+
+test('LifeTech cards use the event name and a direct raster image instead of registration labels', async t => {
+  t.mock.method(globalThis, 'fetch', async input => {
+    const url = new URL(typeof input === 'string' ? input : input.url)
+    if (url.pathname.startsWith('/api/network/events/public/')) return Response.json({
+      title: 'MedTech Startup Pitch Competition',
+      links: [{url: 'https://www.eventbrite.com/e/tickets', title: 'Register on Eventbrite',
+        image_url: 'https://www.eventbrite.com/e/_next/image?url=https%3A%2F%2Fimg.evbuc.com%2Fposter.jpg&w=940'}],
+    })
+    return new Response('<html><head></head><body></body></html>', {headers: {'content-type': 'text/html'}})
+  })
+  const response = await worker.fetch(new Request('https://lifetech.fyi/events/pitch'), {
+    SITE_BRAND: 'lifetech', ORG_API_ORIGIN: 'https://org.example', PORTAL_SITE_ORIGIN: 'https://portal.example',
+    ASSETS: {fetch: async () => new Response('missing', {status: 404})},
+  })
+  const html = await response.text()
+  assert.match(html, /property="og:title" content="MedTech Startup Pitch Competition on lifetech.fyi"/)
+  assert.match(html, /property="og:image" content="https:\/\/img.evbuc.com\/poster.jpg"/)
+  assert.doesNotMatch(html, /Register on Eventbrite|_next\/image/)
+})
+
+test('pitch competition serves the original raster poster and keeps the browser event title', async t => {
+  t.mock.method(globalThis, 'fetch', async input => {
+    const url = new URL(typeof input === 'string' ? input : input.url)
+    if (url.pathname.startsWith('/api/network/events/public/')) return Response.json({title:'MedTech Startup Pitch Competition',links:[{url:'https://www.eventbrite.com/e/tickets',title:'Register on Eventbrite'}]})
+    return new Response('<html><head></head><body></body></html>',{headers:{'content-type':'text/html'}})
+  })
+  const env={SITE_BRAND:'lifetech',ORG_API_ORIGIN:'https://org.example',PORTAL_SITE_ORIGIN:'https://portal.example',ASSETS:{fetch:async()=>new Response('missing',{status:404})}}
+  const page=await worker.fetch(new Request('https://lifetech.fyi/events/medtech-startup-pitch-competition-eventbri'),env)
+  const html=await page.text()
+  assert.match(html,/og:image" content="https:\/\/lifetech.fyi\/event-preview\/medtech-pitch-competition-20261008.jpg/)
+  assert.match(html,/og:image:width" content="940/)
+  assert.match(html,/public-event-title-row h1/)
+  const poster=await worker.fetch(new Request('https://lifetech.fyi/event-preview/medtech-pitch-competition-20261008.jpg'),env)
+  assert.equal(poster.status,200)
+  assert.equal(poster.headers.get('content-type'),'image/jpeg')
+  assert.deepEqual([...new Uint8Array(await poster.arrayBuffer()).slice(0,3)],[255,216,255])
+  const head=await worker.fetch(new Request('https://lifetech.fyi/event-preview/medtech-pitch-competition-20261008.jpg',{method:'HEAD'}),env)
+  assert.equal((await head.arrayBuffer()).byteLength,0)
 })

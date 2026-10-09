@@ -408,7 +408,14 @@ const productionWorker = {
       if (request.method === 'GET' && /^\/api\/org\/api\/network\/events\/public\/[^/]+$/.test(url.pathname) && response.ok) {
         try {
           const event = await response.clone().json()
-          const enriched = await withEventSourcePreview(event)
+          let enriched = await withEventSourcePreview(event)
+          if (url.pathname.endsWith('/medtech-startup-pitch-competition-eventbri')) {
+            const poster = new URL('/event-preview/medtech-pitch-competition-20261008.jpg', url.origin).href
+            enriched = { ...enriched, social_image_url: poster, image_url: event.image_url || poster }
+          } else if (enriched !== event) {
+            const image = rasterSocialImage(enriched.social_image_url, url.origin)
+            enriched = image ? { ...enriched, social_image_url: image, image_url: enriched.image_url || image } : event
+          }
           if (enriched !== event) {
             const headers = new Headers(response.headers)
             for (const name of ['content-length', 'content-encoding', 'etag']) headers.delete(name)

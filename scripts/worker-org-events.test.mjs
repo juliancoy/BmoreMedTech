@@ -443,3 +443,16 @@ test('pitch competition serves the original raster poster and keeps the browser 
   const head=await worker.fetch(new Request('https://lifetech.fyi/event-preview/medtech-pitch-competition-20261008.jpg',{method:'HEAD'}),env)
   assert.equal((await head.arrayBuffer()).byteLength,0)
 })
+
+
+test('pitch event API and social card use the same original Amplify artwork', async t => {
+  t.mock.method(globalThis, 'fetch', async request => Response.json({
+    slug: 'medtech-startup-pitch-competition-eventbri', title: 'MedTech Startup Pitch Competition', image_url: null, social_image_url: null,
+  }))
+  const response = await worker.fetch(new Request('https://lifetech.fyi/api/org/api/network/events/public/medtech-startup-pitch-competition-eventbri'), { ORG_API_ORIGIN: 'https://org.example' })
+  const event = await response.json()
+  const expected = 'https://lifetech.fyi/event-preview/medtech-pitch-competition-20261008.jpg'
+  assert.equal(event.image_url, expected)
+  assert.equal(event.social_image_url, expected)
+  assert.equal(response.headers.get('cache-control'), 'no-store')
+})

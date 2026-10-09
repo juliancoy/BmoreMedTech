@@ -391,3 +391,15 @@ test('LifeTech event pages retain external listing social previews', async t => 
   assert.match(html, /property="og:image" content="https:\/\/eventbrite.com\/image.jpg\?original=1"/)
   assert.match(html, /name="twitter:card" content="summary_large_image"/)
 })
+
+test('LifeTech event API imports the Eventbrite social preview image', async t => {
+  t.mock.method(globalThis, 'fetch', async request => {
+    const url = typeof request === 'string' ? request : request.url
+    if (url === 'https://org.example/api/network/events/public/pitch') return Response.json({ title: 'Pitch', source_url: 'https://www.eventbrite.com/e/pitch-123', social_image_url: null })
+    if (url === 'https://www.eventbrite.com/e/pitch-123') return new Response('<meta property="og:image" content="https://img.evbuc.com/pitch.jpg">', { headers: { 'content-type': 'text/html' } })
+    throw new Error(`Unexpected fetch ${url}`)
+  })
+  const response = await worker.fetch(new Request('https://lifetech.fyi/api/org/api/network/events/public/pitch'), { ORG_API_ORIGIN: 'https://org.example' })
+  assert.equal(response.status, 200)
+  assert.equal((await response.json()).social_image_url, 'https://img.evbuc.com/pitch.jpg')
+})

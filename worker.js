@@ -1,3 +1,4 @@
+import { withEventSourcePreview } from '../OrgPortal/web/eventSourcePreview.mjs'
 import { eventListingPreview } from '../OrgPortal/web/eventListingPreview.mjs'
 import { deploymentResponse, deploymentCachePolicy, isDeploymentAssetRequest } from '../OrgPortal/web/deployment.mjs'
 import { importantPages, sitePageSeo } from './lib/site-seo.js'
@@ -134,7 +135,8 @@ async function applyTenantPortalMetadata(request, response, url, env) {
         signal: AbortSignal.timeout(5000),
       }))
       if (eventResponse.ok) {
-        const preview = eventListingPreview(await eventResponse.json(), url.origin)
+        const event = await withEventSourcePreview(await eventResponse.json())
+        const preview = eventListingPreview(event, url.origin)
         if (preview.title) metadata.title = preview.title
         if (preview.description) metadata.description = preview.description
         if (preview.image) {
@@ -371,6 +373,18 @@ const productionWorker = {
 
     if (url.pathname === '/api/org' || url.pathname.startsWith('/api/org/')) {
       const response = await proxyResponse(request, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN, url, { stripPrefix: '/api/org' })
+      if (request.method === 'GET' && /^\/api\/org\/api\/network\/events\/public\/[^/]+$/.test(url.pathname) && response.ok) {
+        try {
+          const event = await response.clone().json()
+          const enriched = await withEventSourcePreview(event)
+          if (enriched !== event) {
+            const headers = new Headers(response.headers)
+            for (const name of ['content-length', 'content-encoding', 'etag']) headers.delete(name)
+            headers.set('cache-control', 'no-store')
+            return applyApiHeaders(request, Response.json(enriched, { status: response.status, headers }))
+          }
+        } catch { /* Preserve the API response when preview lookup fails. */ }
+      }
       return applyApiHeaders(request, response)
     }
 

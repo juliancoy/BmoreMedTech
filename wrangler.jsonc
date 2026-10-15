@@ -15,6 +15,7 @@
     "binding": "ASSETS",
     "run_worker_first": true
   },
+  "services": [{ "binding": "ORGPORTAL_WEB", "service": "orgportal-web" }],
   "vars": {
     "SITE_BRAND": "medtech"
   },
@@ -36,7 +37,7 @@
       "vars": {
         "SITE_BRAND": "lifetech"
       },
-      "services": [{ "binding": "DEV_ASSETS", "service": "codecollective-site-preview" }]
+      "services": [{ "binding": "DEV_ASSETS", "service": "codecollective-site-preview" }, { "binding": "ORGPORTAL_WEB", "service": "orgportal-web" }]
     }
   }
 }

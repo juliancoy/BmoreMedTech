@@ -100,3 +100,15 @@ test('network graph and its evidence are served by the shared portal',async()=>{
   assert.equal(calls[2].pathname,'/__portal_root/ecosystem-data/ecosystem-history.json')
  }finally{globalThis.fetch=original}
 })
+
+test('direct portal binding preserves tenant, nested research paths and cache validators', async()=>{
+ const calls=[]
+ const env={ORGPORTAL_WEB:{fetch:async request=>{calls.push(request);return new Response(null,{status:304,headers:{ETag:'"same"'}})}}}
+ for(const path of ['/ecosystem/network/3d','/ecosystem/network/funding','/ecosystem-data/ecosystem-relationships.json']){
+  const request=new Request('https://lifetech.fyi'+path+'?org=example',{headers:{'If-None-Match':'"same"'}})
+  const response=await worker.fetch(request,env)
+  assert.equal(response.status,304)
+  assert.equal(calls.at(-1).url,request.url)
+  assert.equal(calls.at(-1).headers.get('If-None-Match'),'"same"')
+ }
+})

@@ -241,12 +241,15 @@ function proxyResponse(request, targetOriginValue, url, { stripPrefix = '', rewr
 }
 
 function portalRootAssetProxyResponse(request, env, url) {
+  if (env.ORGPORTAL_WEB) return env.ORGPORTAL_WEB.fetch(new Request(url, request))
   const targetUrl = new URL(url)
   targetUrl.pathname = `/__portal_root${targetUrl.pathname}`
   return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })
 }
 
 function portalRootNavigationProxyResponse(request, env, url) {
+  if (env.ORGPORTAL_WEB) return env.ORGPORTAL_WEB.fetch(new Request(url, request))
+    .then(response => applyTenantPortalMetadata(request, response, url, env))
   const targetUrl = new URL(url)
   targetUrl.pathname = '/__portal_root/'
   return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, targetUrl, { rewriteCookieDomain: true })

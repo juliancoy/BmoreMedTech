@@ -45,6 +45,7 @@ const knownExternalOrigins = new Set([
   'https://chat.whatsapp.com',
   'https://github.com',
   'https://lifetech.fyi',
+  'https://orgportal.cc',
 ])
 // Only the generated ecosystem pages may link to URLs present in their sanitized input.
 const portalEcosystemData = JSON.parse(await readFile(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem-portal.json', import.meta.url), 'utf8').catch(() => readFile(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem.json', import.meta.url), 'utf8')))

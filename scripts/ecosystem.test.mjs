@@ -78,11 +78,11 @@ test('proximity chart ranks scores and distinguishes zero from missing with acce
 })
 
 
-test('every directory organization has a direct first-class portal page link', async () => {
+test('directory organizations link to registered OrgPortal profiles or name search', async () => {
  const directory = await readFile(new URL('../ecosystem/index.html',import.meta.url),'utf8')
  const enriched = JSON.parse(await readFile(new URL('../../OrgPortal/web/public/ecosystem-data/ecosystem-portal.json',import.meta.url)))
  for (const org of enriched.organizations.filter(org => org.directory)) {
-  const path = `/orgs/${encodeURIComponent(org.portalSlug || org.id.replace(/^org-/, ''))}`
+  const path = org.portalSlug ? `https://orgportal.cc/orgs/${encodeURIComponent(org.portalSlug)}` : `https://orgportal.cc/search?q=${encodeURIComponent(org.name)}`
   assert.ok(directory.includes(`href="${path}"`), `${org.name}: missing organization page`)
   assert.ok(orgDetails(org,enriched).includes(`href="${path}"`), `${org.name}: missing network detail page`)
  }

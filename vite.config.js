@@ -41,14 +41,16 @@ export default defineConfig({
       const description = rendered.match(/<meta\s+name="description"\s+content="([^"]*)"/s)?.[1] || brand.home.description
       const decode = value => value.replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#39;', "'").replaceAll('&lt;', '<').replaceAll('&gt;', '>')
       const pathname = canonicalPath(context.path)
-      return applySeo(rendered, {
+      const seoHtml = applySeo(rendered, {
         title: decode(title), description: decode(description),
         canonicalUrl: new URL(pathname, brand.origin).href,
+        ...(brand.name === 'LifeTech' ? { iconUrl: '/favicon.ico' } : {}),
         siteName: brand.name, imageUrl: new URL(brand.social, brand.origin).href,
         imageWidth: brand.socialWidth, imageHeight: brand.socialHeight,
         imageType: 'image/png', imageAlt: `${brand.name} — Health × Medicine × Biotech`,
         ...(sitePageSeo(pathname, brand) || {}),
       })
+      return brand.name === 'LifeTech' ? seoHtml.replace('</head>', '<link rel="manifest" href="/manifest.webmanifest"></head>') : seoHtml
     } },
     transform(code, id) {
       if (!id.includes('/node_modules/') && /\.[cm]?js(?:\?|$)/.test(id)) {

@@ -42,7 +42,9 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
     return new Response('ok')
   })
   const assets = {
-    fetch: async (request) => ['/index.html', '/calendar'].includes(new URL(request.url).pathname)
+    fetch: async (request) => new URL(request.url).pathname === '/assets/images/lifetech-logo-v2.png'
+      ? new Response('LifeTech icon', { headers: { 'content-type': 'image/png' } })
+      : ['/index.html', '/calendar'].includes(new URL(request.url).pathname)
       ? new Response('<div id="root"></div>', { headers: { 'content-type': 'text/html' } })
       : new URL(request.url).pathname === '/assets/theme-fixture.css'
         ? new Response('body{color:#123}', { headers: { 'content-type': 'text/css' } })
@@ -85,7 +87,8 @@ test('LifeTech Worker proxies the base-domain portal, org API, and PIdP paths', 
 
   const portalIcon = await worker.fetch(new Request('https://lifetech.fyi/codecollective_logo.png'), env)
   assert.equal(portalIcon.status, 200)
-  assert.equal(seen.at(-1).url, 'https://portal.example/__portal_root/codecollective_logo.png')
+  assert.equal(await portalIcon.text(), 'LifeTech icon')
+  assert.equal(seen.some(entry => entry.url === 'https://portal.example/__portal_root/codecollective_logo.png'), false)
 
   const rootPortalIcon = await worker.fetch(new Request('https://lifetech.fyi/images/google-g-logo.svg'), env)
   assert.equal(rootPortalIcon.status, 200)

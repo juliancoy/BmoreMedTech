@@ -1,5 +1,5 @@
 import {
-  MEDTECH_ORG_EVENTS_SOURCE_URL,
+  allLifeTechEvents,
   MEDTECH_IN_HUT_EVENT_SLUG,
   eventAttachmentImages,
   eventImageUrl,
@@ -47,7 +47,7 @@ function progressiveImageMarkup(image, attrs = '') {
   return `<img${className} src="${escapeHtml(placeholder)}"${fullAttrs} alt="${escapeHtml(image.alt)}" ${attrs} />`
 }
 
-async function showNextLifeTechEvent() {
+async function showLifeTechEvents() {
   if (!nextEventEl && !eventMediaSection) return
   if (nextEventEl?.dataset.serverRendered === 'true' && !eventMediaSection) return
   if (nextEventEl) {
@@ -55,20 +55,13 @@ async function showNextLifeTechEvent() {
     nextEventEl.innerHTML = '<p role="status">Loading LifeTech events…</p>'
   }
   try {
-    let response
+    let events
     for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        response = await fetch(MEDTECH_ORG_EVENTS_SOURCE_URL, { cache: 'no-store', signal: AbortSignal.timeout(10000) })
-        if (response.ok) break
-        if (response.status < 500) break
-      } catch (error) {
-        if (attempt === 1) throw error
-      }
+      try { events = await allLifeTechEvents(); break }
+      catch (error) { if (attempt === 1) throw error }
     }
-    if (!response.ok) throw new Error(`LifeTech events returned ${response.status}`)
-    const events = await response.json()
     const now = new Date()
-    const next = (Array.isArray(events) ? events : [])
+    const upcoming = (Array.isArray(events) ? events : [])
       .map(normalizeLifeTechPortalEvent)
       .map((event) => ({ event, date: parseEventDate(event) }))
       .filter((item) => {
@@ -78,7 +71,7 @@ async function showNextLifeTechEvent() {
         if (/^\d{4}-\d{2}-\d{2}$/.test(item.event.startDate) && !item.event.endTime) end.setHours(23, 59, 59, 999)
         return !Number.isNaN(end.getTime()) && end >= now
       })
-      .sort((a, b) => a.date.getTime() - b.date.getTime())[0]
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
     const medtechInHut = (Array.isArray(events) ? events : [])
       .map(normalizeLifeTechPortalEvent)
       .find((event) => event.slug === MEDTECH_IN_HUT_EVENT_SLUG || event.portalSlug === MEDTECH_IN_HUT_EVENT_SLUG)
@@ -96,37 +89,37 @@ async function showNextLifeTechEvent() {
       }
     }
     if (!nextEventEl) return
-    if (!next) {
+    if (!upcoming.length) {
       nextEventEl.innerHTML = '<p>No upcoming LifeTech events are published yet. <a href="/org-events">Browse events</a></p>'
       return
     }
 
-    const imageUrl = eventImageUrl(next.event)
-    const location = typeof next.event.location === 'object'
-      ? [next.event.location.name, next.event.location.address].filter(Boolean)[0]
-      : ''
-    const eventName = cleanText(next.event.name)
-    nextEventEl.innerHTML = `
-      <a class="hero-event-card${imageUrl ? ' has-image' : ''}" href="${escapeHtml(medtechEventUrl(next.event))}" aria-label="Open ${escapeHtml(eventName)}">
-        ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="" loading="eager" decoding="async" />` : ''}
-        <span class="hero-event-copy">
-          <span class="hero-event-label">Next LifeTech event</span>
-          <span class="hero-event-title">${escapeHtml(eventName)}</span>
-          <span class="hero-event-meta">${escapeHtml(formatHeroEventDate(next.date))}${location ? ` | ${escapeHtml(cleanText(location))}` : ''}</span>
-        </span>
-        <span class="hero-event-cue">View event <span aria-hidden="true">&rarr;</span></span>
-      </a>
-    `
+    nextEventEl.innerHTML = upcoming.map(next => {
+      const imageUrl = eventImageUrl(next.event)
+      const location = typeof next.event.location === 'object'
+        ? [next.event.location.name, next.event.location.address].filter(Boolean)[0]
+        : ''
+      const eventName = cleanText(next.event.name)
+      return `
+        <a class="hero-event-card${imageUrl ? ' has-image' : ''}" href="${escapeHtml(medtechEventUrl(next.event))}" aria-label="Open ${escapeHtml(eventName)}">
+          ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="" loading="eager" decoding="async" />` : ''}
+          <span class="hero-event-copy">
+            <span class="hero-event-label">Upcoming LifeTech event</span>
+            <span class="hero-event-title">${escapeHtml(eventName)}</span>
+            <span class="hero-event-meta">${escapeHtml(formatHeroEventDate(next.date))}${location ? ` | ${escapeHtml(cleanText(location))}` : ''}</span>
+          </span>
+          <span class="hero-event-cue">View event <span aria-hidden="true">&rarr;</span></span>
+        </a>
+      `
+    }).join('')
     nextEventEl.hidden = false
     window.dispatchEvent(new Event('bmoremedtech:progressive-images'))
-    nextEventEl.querySelector('img')?.addEventListener('error', (event) => {
-      event.currentTarget.remove()
-    }, { once: true })
+    nextEventEl.querySelectorAll('img').forEach(image => image.addEventListener('error', event => event.currentTarget.remove(), { once: true }))
   } catch (error) {
-    console.warn('Next LifeTech event could not be loaded for the hero.', error)
+    console.warn('LifeTech events could not be loaded for the hero.', error)
     if (nextEventEl) {
       nextEventEl.innerHTML = '<p role="status">LifeTech events could not be loaded.</p><button type="button" class="button">Retry</button> <a href="/org-events">Browse events</a>'
-      nextEventEl.querySelector('button').addEventListener('click', showNextLifeTechEvent, { once: true })
+      nextEventEl.querySelector('button').addEventListener('click', showLifeTechEvents, { once: true })
     }
   }
 }
@@ -153,4 +146,4 @@ if (revealItems.length && 'IntersectionObserver' in window) {
   })
 }
 
-showNextLifeTechEvent()
+showLifeTechEvents()

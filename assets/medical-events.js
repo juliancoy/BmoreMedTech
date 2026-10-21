@@ -201,3 +201,16 @@ export function eventCoordinates(event) {
   if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return null
   return [longitude, latitude]
 }
+
+// The organization's hosted feed is authoritative; never mix in other groups.
+export async function allLifeTechEvents(fetcher = fetch) {
+  const events = []
+  for (let offset = 0; ; offset += 120) {
+    const response = await fetcher(MEDTECH_ORG_EVENTS_SOURCE_URL + (offset ? `&offset=${offset}` : ''), { cache: 'no-store', signal: AbortSignal.timeout(10000) })
+    if (!response.ok) throw new Error(`LifeTech events returned ${response.status}`)
+    const page = await response.json()
+    if (!Array.isArray(page)) throw new Error('Invalid LifeTech event feed')
+    events.push(...page)
+    if (page.length < 120) return events
+  }
+}

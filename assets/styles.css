@@ -2105,6 +2105,8 @@ h2 {
 }
 
 .hero-event {
+  display: grid;
+  gap: 1rem;
   width: min(100%, 680px);
   margin-top: 28px;
 }

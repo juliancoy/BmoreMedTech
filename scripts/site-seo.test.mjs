@@ -120,12 +120,15 @@ test('homepage serves a safe upcoming event before JavaScript runs and survives 
   const env = { SITE_BRAND: 'lifetech', ASSETS: { fetch: async () => new Response(template, { headers: { 'content-type': 'text/html' } }) } }
   const mock = t.mock.method(globalThis, 'fetch', async () => Response.json([
     { slug: 'old-event', title: 'Old event', starts_at: '2000-01-01T12:00:00Z' },
+    { slug: 'second-upcoming', title: 'Another hosted event', starts_at: '2099-12-01T23:00:00Z' },
     { slug: 'demo-day', title: 'Demo <script> & $&', starts_at: '2099-11-17T23:00:00Z', venues: [{ name: 'Baltimore & beyond' }] },
   ]))
   const result = await worker.fetch(new Request(`${brand.origin}/`), env)
   const html = await result.text()
   assert.match(html, /data-server-rendered="true"/)
   assert.match(html, /href="\/events\/demo-day"/)
+  assert.match(html, /href="\/events\/second-upcoming"/)
+  assert.equal((html.match(/class="hero-event-card"/g)||[]).length,2)
   assert.match(html, /Demo &lt;script&gt; &amp; \$&amp;/)
   assert.match(html, /<time datetime="2099-11-17T23:00:00Z">/)
   assert.doesNotMatch(html, /old-event|<script>/)

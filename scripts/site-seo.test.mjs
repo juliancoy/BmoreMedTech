@@ -24,12 +24,15 @@ test('important LifeTech pages have unique metadata and consistent schema URLs',
   assert.equal(sitePageSeo('/', siteBrand('medtech')), null)
 })
 
-test('LifeTech discovery endpoints list only the important public canonical pages', async () => {
+test('LifeTech sitemap index links its public page, event, and organization maps', async () => {
   const sitemap = await worker.fetch(new Request(`${brand.origin}/sitemap.xml`), { SITE_BRAND: 'lifetech' })
   assert.equal(sitemap.status, 200)
   assert.match(sitemap.headers.get('content-type'), /application\/xml/)
   const xml = await sitemap.text()
-  for (const path of Object.keys(importantPages)) assert.ok(xml.includes(`<loc>${brand.origin}${path}</loc>`))
+  for (const kind of ['pages', 'events', 'organizations']) assert.ok(xml.includes(`<loc>${brand.origin}/sitemap-${kind}.xml</loc>`))
+  const pages = await worker.fetch(new Request(`${brand.origin}/sitemap-pages.xml`), { SITE_BRAND: 'lifetech' })
+  const pagesXml = await pages.text()
+  for (const path of Object.keys(importantPages)) assert.ok(pagesXml.includes(`<loc>${brand.origin}${path}</loc>`))
   assert.doesNotMatch(xml, /\.html|users\/|search|chat|onboarding/)
   const robots = await worker.fetch(new Request(`${brand.origin}/robots.txt`), { SITE_BRAND: 'lifetech' })
   assert.match(await robots.text(), /Sitemap: https:\/\/lifetech.fyi\/sitemap.xml/)
@@ -58,4 +61,75 @@ test('missing navigation pages return 404 and cannot be indexed as the homepage'
   const response = await worker.fetch(new Request(`${brand.origin}/not-a-real-page`, { headers: { accept: 'text/html' } }), env)
   assert.equal(response.status, 404)
   assert.equal(response.headers.get('x-robots-tag'), 'noindex')
+})
+
+test('LifeTech identity assets cannot fall back to Code Collective', async t => {
+  t.mock.method(globalThis, 'fetch', () => { throw new Error('Shared fallback must not run') })
+  const env = { SITE_BRAND: 'lifetech', ASSETS: { fetch: async request => {
+    assert.equal(new URL(request.url).pathname, brand.logo)
+    return new Response('lifetech-image', { headers: { 'content-type': 'image/png' } })
+  } } }
+  const icon = await worker.fetch(new Request(`${brand.origin}/favicon.ico`), env)
+  assert.equal(await icon.text(), 'lifetech-image')
+  assert.equal(icon.headers.get('content-type'), 'image/png')
+  const legacy = await worker.fetch(new Request(`${brand.origin}/codecollective_logo.png`), env)
+  assert.equal(await legacy.text(), 'lifetech-image')
+  for (const path of ['/manifest.webmanifest', '/orgportal.webmanifest']) {
+    const manifest = await worker.fetch(new Request(`${brand.origin}${path}`), env)
+    const body = await manifest.json()
+    assert.equal(body.name, 'LifeTech')
+    assert.equal(body.icons[0].src, brand.logo)
+    assert.doesNotMatch(JSON.stringify(body), /Code Collective|codecollective/)
+  }
+  const missing = await worker.fetch(new Request(`${brand.origin}/favicon.ico`), { ...env, ASSETS: { fetch: async () => new Response(null, { status: 404 }) } })
+  assert.equal(missing.status, 404)
+})
+
+test('public sitemaps paginate live organizations and include event URLs', async t => {
+  const requests = []
+  t.mock.method(globalThis, 'fetch', async request => {
+    const url = new URL(request.url)
+    requests.push(url)
+    assert.equal(request.headers.get('authorization'), null)
+    assert.equal(request.headers.get('cookie'), null)
+    if (url.pathname.endsWith('/events')) return Response.json([{ slug: 'demo-day' }])
+    return Response.json(url.searchParams.get('offset') === '0'
+      ? Array.from({ length: 500 }, (_, i) => ({ slug: `company-${i}` }))
+      : [{ slug: 'formedinsight' }])
+  })
+  const env = { SITE_BRAND: 'lifetech', ORG_API_ORIGIN: 'https://api.example' }
+  const organizations = await worker.fetch(new Request(`${brand.origin}/sitemap-organizations.xml`), env)
+  assert.equal(organizations.status, 200)
+  const xml = await organizations.text()
+  assert.equal((xml.match(/<url>/g) || []).length, 501)
+  assert.match(xml, /https:\/\/lifetech.fyi\/orgs\/formedinsight/)
+  assert.deepEqual(requests.map(url => url.searchParams.get('offset')), ['0', '500'])
+  const events = await worker.fetch(new Request(`${brand.origin}/sitemap-events.xml`), env)
+  assert.match(await events.text(), /https:\/\/lifetech.fyi\/events\/demo-day/)
+})
+
+test('sitemap API failures return a retryable error rather than an empty success', async t => {
+  t.mock.method(globalThis, 'fetch', async () => new Response('Unavailable', { status: 503 }))
+  const result = await worker.fetch(new Request(`${brand.origin}/sitemap-organizations.xml`), { SITE_BRAND: 'lifetech' })
+  assert.equal(result.status, 503)
+  assert.equal(result.headers.get('retry-after'), '300')
+})
+
+test('homepage serves a safe upcoming event before JavaScript runs and survives API failure', async t => {
+  const template = '<html><head></head><body><article id="next-medtech-event" class="hero-event"><a href="/org-events">Browse events</a></article></body></html>'
+  const env = { SITE_BRAND: 'lifetech', ASSETS: { fetch: async () => new Response(template, { headers: { 'content-type': 'text/html' } }) } }
+  const mock = t.mock.method(globalThis, 'fetch', async () => Response.json([
+    { slug: 'old-event', title: 'Old event', starts_at: '2000-01-01T12:00:00Z' },
+    { slug: 'demo-day', title: 'Demo <script> & $&', starts_at: '2099-11-17T23:00:00Z', venues: [{ name: 'Baltimore & beyond' }] },
+  ]))
+  const result = await worker.fetch(new Request(`${brand.origin}/`), env)
+  const html = await result.text()
+  assert.match(html, /data-server-rendered="true"/)
+  assert.match(html, /href="\/events\/demo-day"/)
+  assert.match(html, /Demo &lt;script&gt; &amp; \$&amp;/)
+  assert.match(html, /<time datetime="2099-11-17T23:00:00Z">/)
+  assert.doesNotMatch(html, /old-event|<script>/)
+  mock.mock.mockImplementation(async () => { throw new Error('timeout') })
+  const fallback = await worker.fetch(new Request(`${brand.origin}/`), env)
+  assert.equal(await fallback.text(), template)
 })

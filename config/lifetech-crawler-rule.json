@@ -1,0 +1,10 @@
+{
+  "ref": "lifetech_public_discovery_bic",
+  "description": "Allow public search pages and discovery assets without browser-only header checks",
+  "expression": "http.host eq \"lifetech.fyi\" and http.request.method in {\"GET\" \"HEAD\"} and (http.request.uri.path in {\"/\" \"/index.html\" \"/about\" \"/start\" \"/org-events\" \"/calendar\" \"/map\" \"/ecosystem\" \"/ecosystem/network\" \"/taxonomy\" \"/datasets\" \"/robots.txt\" \"/sitemap.xml\" \"/sitemap-pages.xml\" \"/sitemap-events.xml\" \"/sitemap-organizations.xml\" \"/favicon.ico\" \"/favicon.png\" \"/apple-touch-icon.png\" \"/manifest.webmanifest\" \"/orgportal.webmanifest\" \"/site.webmanifest\"} or starts_with(http.request.uri.path, \"/events/\") or starts_with(http.request.uri.path, \"/orgs/\") or starts_with(http.request.uri.path, \"/assets/\"))",
+  "action": "set_config",
+  "action_parameters": {
+    "bic": false
+  },
+  "enabled": true
+}

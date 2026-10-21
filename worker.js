@@ -1,11 +1,12 @@
+import { brandAssetResponse, discoveryResponse, renderHomeEvent } from './lib/public-discovery.js'
 import { withEventSourcePreview } from '../OrgPortal/web/eventSourcePreview.mjs'
 import { mobileHeaderCss, eventHeadGuard } from './lib/portal-display-compat.js'
 import { pitchPosterBase64 } from './lib/pitch-original-preview.js'
 import { eventListingPreview } from '../OrgPortal/web/eventListingPreview.mjs'
 import { deploymentResponse, deploymentCachePolicy, isDeploymentAssetRequest } from '../OrgPortal/web/deployment.mjs'
-import { importantPages, sitePageSeo } from './lib/site-seo.js'
+import { sitePageSeo } from './lib/site-seo.js'
 import { isPortalPagePath, notFoundResponse, missingPortalResource } from '../OrgPortal/web/portalRoutes.mjs'
-import { applySeo, canonicalPath, buildSitemap } from '../OrgPortal/web/seo.mjs'
+import { applySeo, canonicalPath } from '../OrgPortal/web/seo.mjs'
 import { handleDatasetApi } from './worker/datasets.js'
 import { siteBrand } from './lib/site-brand.js'
 
@@ -113,7 +114,7 @@ function tenantPortalMetadata(url, brand) {
     imageWidth: brand.socialWidth,
     imageHeight: brand.socialHeight,
     imageType: 'image/png',
-    iconUrl: new URL(brand.logo, url.origin).toString(),
+    iconUrl: new URL(brand.name === 'LifeTech' ? '/favicon.ico' : brand.logo, url.origin).toString(),
     themeColor: '#061a26',
     robots: /^(?:\/(?:users|chat|onboarding|availability|auth|admin|email|create|people|search|profile|settings|tools))(?:\/|$)/.test(url.pathname) ? 'noindex,follow' : 'index,follow,max-image-preview:large',
     imageAlt: `${brand.name} — Health × Medicine × Biotech`,
@@ -175,7 +176,7 @@ async function applyTenantPortalMetadata(request, response, url, env) {
     metadata.imageType = 'image/jpeg'
     metadata.imageAlt = 'Amplify MedTech — MedTech Pitch Competition at 4MLK'
   }
-  const html = applySeo(await response.text(), metadata).replace('</head>', `<style>${mobileHeaderCss}</style></head>`)
+  const html = applySeo(await response.text(), metadata).replace('</head>', `${brand.name === 'LifeTech' ? '<link rel="manifest" href="/manifest.webmanifest">' : ''}</head>`).replace('</head>', `<style>${mobileHeaderCss}</style></head>`)
     .replace('</body>', `${eventMatch ? eventHeadGuard(url.pathname, metadata) : ''}</body>`)
 
   const headers = new Headers(response.headers)
@@ -347,12 +348,19 @@ const productionWorker = {
       return new Response(bytes, {headers:{'content-type':'image/jpeg','cache-control':'public, max-age=31536000, immutable'}})
     }
 
-    if (env.SITE_BRAND === 'lifetech' && ['/robots.txt', '/sitemap.xml'].includes(url.pathname)) {
+    if (env.SITE_BRAND === 'lifetech') {
+      const brand = siteBrand('lifetech')
+      const discovery = await discoveryResponse(request, env, brand)
+      if (discovery) return discovery
+      const asset = await brandAssetResponse(request, env, brand)
+      if (asset) return asset
+    }
+
+    if (env.SITE_BRAND === 'lifetech' && url.pathname === '/robots.txt') {
       if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } })
       const brand = siteBrand(env.SITE_BRAND)
-      const sitemap = url.pathname === '/sitemap.xml'
-      const body = sitemap ? buildSitemap(brand.origin, Object.keys(importantPages)) : `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /pidp/\nSitemap: ${brand.origin}/sitemap.xml\n`
-      return new Response(request.method === 'HEAD' ? null : body, { headers: { 'content-type': sitemap ? 'application/xml; charset=utf-8' : 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } })
+      const body = `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /pidp/\nSitemap: ${brand.origin}/sitemap.xml\n`
+      return new Response(request.method === 'HEAD' ? null : body, { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } })
     }
 
     if (env.SITE_BRAND === 'lifetech' && ['/portals/lifetech', '/portals/lifetech/'].includes(url.pathname)) {
@@ -464,7 +472,8 @@ const productionWorker = {
       return portalRootNavigationProxyResponse(request, env, url)
     }
 
-    const response = await env.ASSETS.fetch(request)
+    let response = await env.ASSETS.fetch(request)
+    if (env.SITE_BRAND === 'lifetech' && ['/', '/index.html'].includes(url.pathname) && request.method === 'GET') response = await renderHomeEvent(response, env, url)
     if (response.status !== 404) return applyStaticHeaders(request, url.pathname, response)
 
     if (isHtmlNavigation(request)) {

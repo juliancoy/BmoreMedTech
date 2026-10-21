@@ -49,6 +49,7 @@ function progressiveImageMarkup(image, attrs = '') {
 
 async function showNextLifeTechEvent() {
   if (!nextEventEl && !eventMediaSection) return
+  if (nextEventEl?.dataset.serverRendered === 'true' && !eventMediaSection) return
   if (nextEventEl) {
     nextEventEl.hidden = false
     nextEventEl.innerHTML = '<p role="status">Loading LifeTech events…</p>'

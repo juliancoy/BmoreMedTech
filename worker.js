@@ -387,6 +387,8 @@ const productionWorker = {
       return proxyResponse(request, env.PORTAL_SITE_ORIGIN || DEFAULT_PORTAL_SITE_ORIGIN, url, { rewriteCookieDomain: true })
     }
 
+    if (url.pathname === '/llms.txt') return portalRootAssetProxyResponse(request, env, url)
+
     if (url.pathname.startsWith('/ecosystem-data/')) return portalRootAssetProxyResponse(request, env, url)
 
     if (url.pathname === '/specialty' || url.pathname.startsWith('/specialty/')) {

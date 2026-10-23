@@ -462,7 +462,7 @@ test('pitch event API and social card use the same original Amplify artwork', as
 
 
 test('LifeTech forwards discovery text and audience pages to the shared portal',async()=>{
- for(const path of ['/llms.txt','/orgs/lifetech/public','/orgs/lifetech/member','/orgs/lifetech/organizer','/orgs/lifetech/attendee','/orgs/lifetech/volunteer']){
+ for(const path of ['/llms.txt','/orgs/lifetech/public','/orgs/lifetech/claim','/orgs/lifetech/member','/orgs/lifetech/organizer','/orgs/lifetech/attendee','/orgs/lifetech/volunteer']){
   const expected=new Response(path,{headers:{'content-type':path.endsWith('.txt')?'text/plain':'text/html'}});
   const response=await worker.fetch(new Request('https://lifetech.fyi'+path),{
    SITE_BRAND:'lifetech',ASSETS:{fetch:async()=>new Response('missing',{status:404})},

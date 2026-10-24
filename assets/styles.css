@@ -3808,3 +3808,12 @@ h2 {
 .account-menu-items .portal-deployment-label { display: block; padding: 4px 12px; font-size: 12px; opacity: .75; }
 .account-menu-items .portal-deployment-switcher button { width: 100%; min-height: 44px; text-align: left; }
 .account-menu-items .portal-deployment-error { padding: 0 12px; font-size: 13px; color: var(--danger, #b42318); }
+
+.brand .name-banner, .home-body .brand .name-banner, .footer-brand .name-banner {
+  display: block; width: clamp(120px, 15vw, 180px); height: auto;
+  max-height: 60px; object-fit: contain; border-radius: 0;
+}
+.brand:has(.name-banner) > img { display: none; }
+.nav-enhanced .site-header .brand:has(.name-banner) > .brand-copy {
+  display: flex;
+}

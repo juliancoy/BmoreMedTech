@@ -50,6 +50,7 @@ try {
   assert.equal(icon.status, 200)
   assert.equal(icon.headers.get('content-type'), 'image/png')
   assert.deepEqual(Buffer.from(await icon.arrayBuffer()), await readFile(new URL('../../assets/images/lifetech-logo-v2.png', import.meta.url)))
+  await page.getByRole('button', {name:'Open application menu',exact:true}).waitFor()
   const report = []
   for (const theme of ['light', 'dark']) {
     await application.evaluate(({ nativeTheme }, theme) => { nativeTheme.themeSource = theme }, theme)
@@ -76,6 +77,9 @@ try {
   await page.reload()
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'light' && document.documentElement.dataset.desktop === 'true')
   assert.equal(await page.evaluate(() => typeof window.require), 'undefined')
+  await page.emulateMedia({forcedColors:'active', reducedMotion:'reduce'})
+  await page.screenshot({path:`${output}/native-high-contrast.png`})
+  await page.emulateMedia({forcedColors:'none', reducedMotion:'no-preference'})
   const fixture = new URL('../../ubuntu-native-reload-check.html', import.meta.url)
   try {
     await writeFile(fixture, '<html><body><h1>Before desktop edit</h1></body></html>')

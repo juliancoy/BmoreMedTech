@@ -65,11 +65,34 @@ nativeTheme.on('updated', () => {
 const portalOrigin = development ? new URL(localOrigin).origin : target.origin
 function authError(error) {
   window.setTitle(app.name)
+  window.webContents.send('lifetech:sign-in-status', false)
   dialog.showMessageBox(window, {type:'error', title:'LifeTech sign-in', message:error.message})
 }
+function trustedSender(event) {
+  return window && !window.isDestroyed() && event.sender === window.webContents &&
+    event.senderFrame === window.webContents.mainFrame && trustedOrigins.has(new URL(event.senderFrame.url).origin)
+}
+function cancelBrowserAuth() {
+  pendingBrowserAuth?.cancel()
+  pendingBrowserAuth = null
+  window.setTitle(app.name)
+  window.webContents.send('lifetech:sign-in-status', false)
+}
+function showAppMenu() {
+  Menu.buildFromTemplate([
+    {label:'Sign in Using Browser', click:startBrowserAuth},
+    {label:'Cancel Browser Sign-in', enabled:!!pendingBrowserAuth, click:cancelBrowserAuth},
+    {type:'separator'},
+    {label:'Home', accelerator:'Alt+Home', click:()=>window.loadURL(target.href)},
+    {role:'reload'},
+    {label:'Open in Browser', click:()=>shell.openExternal(window.webContents.getURL())},
+    {type:'separator'}, {role:'quit'},
+  ]).popup({window})
+}
+ipcMain.on('lifetech:app-menu', event => { if (trustedSender(event)) showAppMenu() })
+ipcMain.on('lifetech:cancel-sign-in', event => { if (trustedSender(event)) cancelBrowserAuth() })
 ipcMain.on('lifetech:browser-sign-in', event => {
-  if (!window || event.sender !== window.webContents || event.senderFrame !== window.webContents.mainFrame) return
-  if (!trustedOrigins.has(new URL(event.senderFrame.url).origin)) return
+  if (!trustedSender(event)) return
   startBrowserAuth()
 })
 async function startBrowserAuth() {
@@ -77,6 +100,7 @@ async function startBrowserAuth() {
   const attempt = {cancel() {}}
   pendingBrowserAuth = attempt
   window.setTitle(`${app.name} — waiting for browser sign-in`)
+  window.webContents.send('lifetech:sign-in-status', true)
   try {
     const handle = await browserAuth({session:window.webContents.session,portalOrigin,issuer:development ? process.env.LIFETECH_IDENTITY_ORIGIN || 'https://id.localhost:8443' : 'https://orgportal.cc/pidp',
       openExternal:url=>shell.openExternal(url),
@@ -105,6 +129,9 @@ async function createWindow() {
       await window.webContents.executeJavaScript(desktopSetup())
     } catch (error) { console.error('Desktop styling:', error.message) }
   })
+  window.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'F10') {event.preventDefault();showAppMenu()}
+  })
   window.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https://') || url.startsWith('http://')) shell.openExternal(url)
     return { action: 'deny' }
@@ -126,7 +153,7 @@ app.whenReady().then(() => {
     { label: 'LifeTech', submenu: [
       { label: 'Sign in Using Browser', click: startBrowserAuth },
       { label: 'Sign in Here', click: () => {pendingBrowserAuth?.cancel();pendingBrowserAuth=null;window.setTitle(app.name);window.loadURL(new URL('/users/login', portalOrigin).href)} },
-      { label: 'Cancel Browser Sign-in', click: () => {pendingBrowserAuth?.cancel();pendingBrowserAuth=null;window.setTitle(app.name)} },
+      { label: 'Cancel Browser Sign-in', click: cancelBrowserAuth },
       { type: 'separator' },
       { label: 'Home', accelerator: 'Alt+Home', click: () => window.loadURL(target.href) },
       { label: 'Open in Browser', click: () => shell.openExternal(target.href) },

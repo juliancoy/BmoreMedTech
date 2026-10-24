@@ -65,7 +65,9 @@ try {
   }
   const authorization=await application.evaluate(()=>globalThis.__browserAuthUrl)
   assert.equal(new URL(appPage.url()).pathname, '/org-events', 'The native window must stay on LifeTech while the normal browser signs in')
-  console.log('Desktop requested external authorization; native window stayed on LifeTech')
+  await appPage.getByRole('region', {name:'Browser sign-in'}).or(appPage.getByRole('complementary', {name:'Browser sign-in'})).waitFor()
+  await appPage.getByRole('button', {name:'Cancel sign-in', exact:true}).waitFor()
+  console.log('Desktop requested external authorization; native window stayed on LifeTech with visible status and cancel')
   assert.ok(authorization,'Native app must open the PIdP authorization URL')
   externalBrowser=await chromium.launch({headless:true,executablePath:'/usr/bin/google-chrome',args:['--disable-gpu']})
   const context=await externalBrowser.newContext()
@@ -113,6 +115,11 @@ try {
   await appPage.waitForURL(u=>u.origin==='https://localhost:8770'&&u.pathname==='/org-events')
   await appPage.getByRole('button',{name:'Open user menu',exact:true}).waitFor()
   console.log('PASS: existing browser session returns to the app without another password')
+  await application.evaluate(({Menu})=>Menu.getApplicationMenu().items[0].submenu.items.find(item=>item.label==='Sign in Using Browser').click())
+  await appPage.getByRole('button',{name:'Cancel sign-in',exact:true}).click()
+  await appPage.locator('.desktop-sign-in-status').waitFor({state:'detached'})
+  assert.equal(await application.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].getTitle()),'LifeTech Development')
+  console.log('PASS: browser sign-in can be cancelled from the visible status banner')
  }
  await writeFile(output+(browserMode?'browser-auth-report.json':'login-report.json'),JSON.stringify({passed:true,mode:browserMode?'System browser with S256 PKCE':'In-app',origin:'https://localhost:8770',issuer:'https://id.localhost:8443',destinations,session:200,sessionAfterReload:200,fixture:'disposable unprivileged local member'},null,2))
  console.log(browserMode?'PASS: separate browser sign-in with PKCE → desktop app session → reload':'PASS: LifeTech Login → local PIdP email form → password → LifeTech callback → session survives reload')

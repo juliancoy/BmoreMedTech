@@ -176,7 +176,11 @@ function renderList() {
 
     const month = item.date.toLocaleDateString(undefined, { month: 'short' })
     const day = item.date.toLocaleDateString(undefined, { day: 'numeric' })
-    const description = cleanText(item.event.description).replace(/\s+/g, ' ').trim()
+    const description = cleanText(item.event.description)
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/^\s*#{1,6}\s+/gm, '')
+      .replace(/\*\*|__|`/g, '')
+      .replace(/\s+/g, ' ').trim()
     const eventUrl = safeUrl(item.event.url)
     const imageUrl = eventImageUrl(item.event)
     const attachmentImages = eventAttachmentImages(item.event)

@@ -18,6 +18,9 @@ Vite starts with LifeTech branding and live reload, chooses an available port
 starting at 5173, and opens the desktop window at the actual URL. Closing the
 window or pressing Ctrl+C stops the development server. Use
 `LIFETECH_DEV_PORT=5174 npm run dev:ubuntu` to require a particular port.
+Website edits reload through Vite. Changes to the desktop main process, preload,
+sign-in module, stylesheet, or runtime configuration automatically restart the
+window while keeping Vite on the same port and retaining the saved profile.
 The View menu includes reload, zoom, fullscreen, and development tools.
 
 The Vite loop serves the frontend only. For authenticated portal/API development,
@@ -113,3 +116,12 @@ Browser sign-in requires the updated PIdP service. The local Python container
 creates its new ephemeral request table at startup. Worker deployments require
 PIdP migration `0015_portal_desktop_auth.sql` before enabling this flow remotely.
 The Ubuntu package does not deploy or migrate PIdP.
+
+### Heuristic aesthetic audit
+
+Run `npm run test:ubuntu:heuristics` for the research-referenced composition,
+spacing, reading, balance, and sampled-contrast audit across 24 native layouts.
+Open `artifacts/lifetech-aesthetics/heuristics.html` in the workspace for annotated
+screenshots and findings. See [the rubric and sources](AESTHETIC-HEURISTICS.md)
+for measurement definitions, configurable percentages, and evidence limits.
+Composition advisories do not fail the test; sampled concrete defects do.

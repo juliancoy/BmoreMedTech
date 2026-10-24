@@ -49,6 +49,20 @@ npm run build:links
 node scripts/validate-link-inventory.mjs --json
 ```
 
+For a running local LifeTech preview, audit rendered pages and their links:
+
+```sh
+npm run audit:links:local -- https://localhost:8770
+```
+
+This uses headless Chrome and the sibling OrgPortal browser tooling. It opens all
+built HTML variants and non-parameter portal routes, checks rendered internal
+links and anchors, and records failed modules, API responses and blank pages.
+The report and screenshots are in `.local/link-audit/`. Automatic writes are
+suppressed. Authenticated actions, arbitrary dynamic IDs and external websites
+are outside this crawl; the Worker route-contract test checks every registered
+portal route template. Upstream dataset failures remain visible in the report.
+
 The check verifies LifeTech checked-in HTML links, same-page and cross-page
 anchors, known external handoffs, and the small set of runtime-populated
 placeholder links. The generated visualization also includes bounded link

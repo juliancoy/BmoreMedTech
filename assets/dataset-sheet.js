@@ -219,7 +219,7 @@ function renderSource() {
   const rows = [
     ['Source page', state.dataset.source_url],
     ['Documented API', state.dataset.api_url || 'Not published'],
-    ['Actual upstream request', state.payload.upstream?.url || 'Repository asset'],
+    ...(state.payload.upstream?.urls || [state.payload.upstream?.url || 'Repository asset']).map(url => ['Actual upstream request', url]),
     ['Upstream status', state.payload.upstream?.status ?? '—'],
     ['Dataset mode', modeLabel(state.dataset.mode)],
     ['Sort scope', state.payload.sort_scope],

@@ -283,6 +283,9 @@ function isRootPortalAssetPath(pathname) {
     || pathname === '/ecosystem-data' || pathname.startsWith('/ecosystem-data/')
     || pathname === '/images' || pathname.startsWith('/images/')
     || pathname === '/css' || pathname.startsWith('/css/')
+    || pathname === '/fonts' || pathname.startsWith('/fonts/')
+    || pathname === '/data' || pathname.startsWith('/data/')
+    || pathname === '/test-status.json'
     || pathname === '/mobile-update.json'
     || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
 }
@@ -332,6 +335,10 @@ const server = https.createServer(
       }
       if (requestUrl.pathname === '/api/org' || requestUrl.pathname.startsWith('/api/org/')) {
         await serveProxy(req, res, requestUrl, orgApiOrigin, '/api/org')
+        return
+      }
+      if (requestUrl.pathname === '/api/governance' || requestUrl.pathname.startsWith('/api/governance/')) {
+        await serveProxy(req, res, requestUrl, orgApiOrigin)
         return
       }
       if (requestUrl.pathname === '/api/network' || requestUrl.pathname.startsWith('/api/network/')) {

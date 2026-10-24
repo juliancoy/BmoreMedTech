@@ -298,6 +298,9 @@ function isRootPortalAssetPath(pathname) {
     || pathname === '/ecosystem-data' || pathname.startsWith('/ecosystem-data/')
     || pathname === '/images' || pathname.startsWith('/images/')
     || pathname === '/css' || pathname.startsWith('/css/')
+    || pathname === '/fonts' || pathname.startsWith('/fonts/')
+    || pathname === '/data' || pathname.startsWith('/data/')
+    || pathname === '/test-status.json'
     || pathname === '/mobile-update.json'
     || /^\/[^/]+\.(?:png|jpe?g|webp|gif|svg|ico|css|js|wasm|webmanifest)$/.test(pathname)
 }

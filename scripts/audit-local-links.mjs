@@ -29,6 +29,9 @@ const templates = [...router.matchAll(/path:\s*'([^']+)'/g)].map(match => match[
 for (const path of templates) if (!path.includes(':')) paths.add(path)
 const browser = await chromium.launch({headless: true, executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome'})
 const context = await browser.newContext({ignoreHTTPSErrors: true, viewport: {width: 1440, height: 1000}})
+// Suppress automatic analytics writes as well as any action forms might initiate.
+await context.route('**/*', route => ['GET', 'HEAD', 'OPTIONS'].includes(route.request().method())
+  ? route.continue() : route.fulfill({status: 204}))
 const pages = [], links = new Map(), external = new Set()
 let cursor = 0
 const seeds = [...paths]
@@ -49,10 +52,14 @@ try {
     while (cursor < seeds.length) {
       const path = seeds[cursor++]
       const page = await context.newPage()
-      const item = {path, errors: [], resources: [], failedRequests: []}
+      const item = {path, errors: [], resources: [], failedRequests: [], optionalResponses: []}
       page.on('pageerror', error => item.errors.push(error.message))
       page.on('response', response => {
         const url = new URL(response.url())
+        if (response.status() === 404 && /^\/api\/org\/api\/network\/financing\/recipients\/[^/]+$/.test(url.pathname)) {
+          item.optionalResponses.push({status: 404, url: url.pathname, reason: 'No recipient-specific funding research'})
+          return
+        }
         if (url.origin === base.origin && response.status() >= 400 && !['document'].includes(response.request().resourceType())
           && !(response.status() === 401 && url.pathname === '/pidp/auth/session-token')) {
           item.resources.push({status: response.status(), url: url.pathname + url.search})
@@ -72,6 +79,7 @@ try {
         item.title = await page.title()
         item.text = (await page.locator('body').innerText()).slice(0, 1200)
         item.blank = !item.text.trim()
+        item.anchors = await page.locator('[id], a[name]').evaluateAll(nodes => nodes.map(node => node.id || node.getAttribute('name')))
         item.visibleError = /Failed to fetch|Something went wrong|Unexpected Application Error|Cannot GET\b|Unable to load|Could not load/i.test(item.text)
         for (const href of await page.locator('a[href]').evaluateAll(nodes => nodes.map(node => node.href))) recordLink(href, page.url())
         item.brokenImages = await page.locator('img').evaluateAll(nodes => nodes.filter(node => node.complete && !node.naturalWidth).map(node => node.currentSrc || node.src))
@@ -102,7 +110,9 @@ try {
           // Only static HTML anchors can be checked without another JS navigation.
           if (!html.includes('id="root"')) {
             const id = decodeURIComponent(fragment.slice(1))
-            item.missingAnchor = ![...html.matchAll(/\b(?:id|name)=["']([^"']+)["']/g)].some(match => match[1] === id)
+            const rendered = pages.find(page => page.finalUrl && new URL(page.finalUrl).pathname === new URL(item.path, base).pathname)
+            item.missingAnchor = !rendered?.anchors?.includes(id)
+              && ![...html.matchAll(/\b(?:id|name)=["']([^"']+)["']/g)].some(match => match[1] === id)
           }
         }
         await response.dispose()

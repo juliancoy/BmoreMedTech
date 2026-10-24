@@ -47,7 +47,7 @@ async function localMetaIndex(dataset, query, env, origin) {
   return {
     ...paginateLocal(rows, query),
     sourceUpdatedAt: metaIndex.meta?.as_of || null,
-    upstream: { url: '/medtech-meta-index.json + /dataset-registry.json', status: 200 },
+    upstream: { url: '/medtech-meta-index.json', urls: ['/medtech-meta-index.json', '/dataset-registry.json'], status: 200 },
     warnings: metaIndex.meta?.limitations || [],
   }
 }

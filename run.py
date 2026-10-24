@@ -367,7 +367,7 @@ def run_one_shot_container(config: dict):
         raise RuntimeError(f"{config['name']} exited with status {status_code}")
 
 
-def build_site(args: argparse.Namespace) -> None:
+def build_site(args: argparse.Namespace, *, validate: bool = True) -> None:
     run_one_shot_container(
         {
             "image": args.node_image,
@@ -390,7 +390,9 @@ def build_site(args: argparse.Namespace) -> None:
             "command": [
                 "sh",
                 "-c",
-                "npm ci --ignore-scripts --no-audit --no-fund && npm run build && chown -R ${HOST_UID}:${HOST_GID} ${SITE_OUTPUT_DIRECTORY} assets/data",
+                "npm ci --ignore-scripts --no-audit --no-fund && "
+                + ("npm run build" if validate else "npx vite build")
+                + " && chown -R ${HOST_UID}:${HOST_GID} ${SITE_OUTPUT_DIRECTORY} assets/data",
             ],
         }
     )
@@ -414,6 +416,8 @@ def start_site(args: argparse.Namespace) -> None:
         environment["PIDP_PROXY_ORIGIN"] = args.pidp_origin
     if args.portal_origin:
         environment["PORTAL_SITE_ORIGIN"] = args.portal_origin
+    if getattr(args, "chat_origin", None):
+        environment["CHAT_API_ORIGIN"] = args.chat_origin
 
     config = {
         "image": args.node_image,

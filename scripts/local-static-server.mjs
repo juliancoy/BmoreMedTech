@@ -238,7 +238,7 @@ async function serveProxy(req, res, requestUrl, targetOriginValue, stripPrefix =
     const proxiedRequest = webRequest(req, targetUrl)
     // Only public presentation reads use the registered branding hostname.
     // Preserve the request's host for account routes and every mutation.
-    const publicTenantRead = requestUrl.pathname === '/api/org/api/portal/tenant'
+    const publicTenantRead = (req.method === 'GET' && ['/api/org/api/portal/tenant', '/api/org/api/portal/site'].includes(requestUrl.pathname))
       || (req.method === 'GET' && requestUrl.pathname === '/api/org/api/media/carousels/medtech-photos')
     proxiedRequest.headers.set('x-forwarded-host', publicTenantRead ? portalTenantHost : req.headers.host || '')
     proxiedRequest.headers.set('x-forwarded-proto', requestUrl.protocol.replace(':', ''))

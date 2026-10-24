@@ -315,28 +315,6 @@ function isPortalDevAssetPath(pathname) {
     || pathname === '/node_modules' || pathname.startsWith('/node_modules/')
 }
 
-function isPortalRoute(pathname) {
-  return pathname === '/ecosystem/network' || pathname === '/ecosystem/network/' || pathname.startsWith('/ecosystem/network/') || pathname === '/onboarding' || pathname === '/availability' || pathname.startsWith('/availability/')
-    || pathname === '/governance' || pathname.startsWith('/governance/')
-    || pathname === '/users' || pathname.startsWith('/users/')
-    || pathname === '/events' || pathname.startsWith('/events/')
-    || pathname === '/org-events' || pathname.startsWith('/org-events/')
-    || pathname === '/specialty' || pathname.startsWith('/specialty/')
-    || pathname === '/orgs' || pathname.startsWith('/orgs/')
-    || pathname === '/create' || pathname.startsWith('/create/')
-    || pathname === '/people' || pathname.startsWith('/people/')
-    || pathname === '/chat' || pathname.startsWith('/chat/')
-    || pathname === '/auth/callback'
-    || pathname === '/email' || pathname.startsWith('/email/')
-    || pathname === '/admin' || pathname.startsWith('/admin/')
-    || pathname === '/profile'
-    || pathname === '/settings' || pathname.startsWith('/settings/')
-    || pathname === '/search'
-    || pathname === '/branding'
-    || pathname === '/resources' || pathname.startsWith('/resources/')
-    || pathname === '/tools' || pathname.startsWith('/tools/')
-}
-
 
 const productionWorker = {
   async fetch(request, env) {
@@ -469,14 +447,15 @@ const productionWorker = {
       return applyStaticHeaders(request, '/ecosystem.html', response)
     }
 
-    if (isPortalRoute(url.pathname)) {
-      if (!isPortalPagePath(url.pathname)) return notFoundResponse(request)
+    // These shared route names belong to this site's static presentation.
+    if (isPortalPagePath(url.pathname) && !['/', '/about', '/calendar'].includes(canonicalPath(url.pathname))) {
       return portalRootNavigationProxyResponse(request, env, url)
     }
 
     let response = await env.ASSETS.fetch(request)
     if (env.SITE_BRAND === 'lifetech' && ['/', '/index.html'].includes(url.pathname) && request.method === 'GET') response = await renderHomeEvent(response, env, url)
     if (response.status !== 404) return applyStaticHeaders(request, url.pathname, response)
+
 
     if (isHtmlNavigation(request)) {
       return notFoundResponse(request)

@@ -429,6 +429,7 @@ def start_site(args: argparse.Namespace) -> None:
         "extra_hosts": {"host.docker.internal": "host-gateway"},
         "volumes": {
             str(root): {"bind": WORKSPACE, "mode": "rw"},
+            str(Path(args.orgportal_dir).resolve()): {"bind": "/OrgPortal", "mode": "ro"},
             f"{PREFIX}node-modules": {"bind": f"{WORKSPACE}/node_modules", "mode": "rw"},
             str(cert_dir): {"bind": "/certs", "mode": "ro"},
         },

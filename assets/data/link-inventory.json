@@ -51,19 +51,24 @@
     "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
     "orgportal:index.html",
     "orgportal:public/standalone.html",
+    "orgportal:public/website-observatory/index.html",
     "orgportal:src/App.tsx",
     "orgportal:src/features/ecosystem/CompanyRetentionSummary.tsx",
     "orgportal:src/features/ecosystem/ecosystem-view.js",
     "orgportal:src/features/ecosystem/markup.html",
     "orgportal:src/features/ecosystem/navigation-practice.js",
+    "orgportal:src/features/ecosystem/nd-controls.js",
+    "orgportal:src/features/ecosystem/network-visibility.js",
     "orgportal:src/features/ecosystem/network-webgpu.js",
     "orgportal:src/infrastructure/platform/inAppBrowser.test.ts",
     "orgportal:src/ui/components/EventCompanyVotes.tsx",
     "orgportal:src/ui/components/EventDetailsEditor.tsx",
     "orgportal:src/ui/components/FloatingSocialDock.tsx",
+    "orgportal:src/ui/components/NeoNatalFocus.tsx",
     "orgportal:src/ui/components/OrganizationBrandGuide.tsx",
     "orgportal:src/ui/components/OrganizationFollowButton.tsx",
     "orgportal:src/ui/components/OrganizationFundingChart.test.ts",
+    "orgportal:src/ui/components/OrganizationRegistrationForm.tsx",
     "orgportal:src/ui/components/OrganizationTools.tsx",
     "orgportal:src/ui/components/PeerOrganizations.tsx",
     "orgportal:src/ui/components/RouteErrorPage.tsx",
@@ -89,7 +94,6 @@
     "orgportal:src/ui/views/DepartmentsPage.tsx",
     "orgportal:src/ui/views/DevToolsPage.tsx",
     "orgportal:src/ui/views/EconomicOpsPage.tsx",
-    "orgportal:src/ui/views/EcosystemNetworkPage.tsx",
     "orgportal:src/ui/views/EcosystemNetworkViews.tsx",
     "orgportal:src/ui/views/EcosystemOverviewPage.tsx",
     "orgportal:src/ui/views/HealthInsurancePage.tsx",
@@ -100,6 +104,7 @@
     "orgportal:src/ui/views/LandingPage.tsx",
     "orgportal:src/ui/views/LifeInsurancePage.tsx",
     "orgportal:src/ui/views/LocalHomePage.tsx",
+    "orgportal:src/ui/views/McpLiveStatistics.tsx",
     "orgportal:src/ui/views/MemberMeetingsPage.tsx",
     "orgportal:src/ui/views/NametagsPage.tsx",
     "orgportal:src/ui/views/NonprofitNetworkPage.tsx",
@@ -118,10 +123,12 @@
     "orgportal:src/ui/views/chat/OrgChatPage.tsx",
     "orgportal:src/ui/views/email/EmailCampaignsPage.tsx",
     "orgportal:src/ui/views/email/GroupMailingList.tsx",
+    "orgportal:src/ui/views/governance/DraftMergeWorkspace.tsx",
     "orgportal:src/ui/views/governance/GovernanceDocumentPage.tsx",
     "orgportal:src/ui/views/governance/MotionListPage.tsx",
     "orgportal:src/ui/views/governance/ProposeAmendmentPage.tsx",
     "orgportal:src/ui/views/governance/ProposeMotionPage.tsx",
+    "orgportal:src/ui/views/orgs/FiveOverFivePage.tsx",
     "orgportal:src/ui/views/orgs/OrgAccountPage.tsx",
     "orgportal:src/ui/views/orgs/OrgEventsPage.tsx",
     "orgportal:src/ui/views/orgs/OrgInitiativeBallotPage.tsx",
@@ -129,6 +136,7 @@
     "orgportal:src/ui/views/orgs/OrgInitiativesPage.tsx",
     "orgportal:src/ui/views/orgs/OrgProfilePage.tsx",
     "orgportal:src/ui/views/orgs/VenuesPage.tsx",
+    "orgportal:src/ui/views/public/EventApplicationPage.tsx",
     "orgportal:src/ui/views/public/EventRegistration.tsx",
     "orgportal:src/ui/views/public/GlobalSearchPage.tsx",
     "orgportal:src/ui/views/public/PublicAdminPage.tsx",
@@ -136,6 +144,7 @@
     "orgportal:src/ui/views/public/PublicContactPage.tsx",
     "orgportal:src/ui/views/public/PublicEventPage.tsx",
     "orgportal:src/ui/views/public/PublicEventsPage.tsx",
+    "orgportal:src/ui/views/support/SupportPage.tsx",
     "orgportal:src/ui/views/timebank/TimebankClaims.tsx",
     "orgportal:src/ui/views/timebank/TimebankNotifications.tsx",
     "orgportal:src/ui/views/users/McpConnectPage.tsx",
@@ -152,6 +161,7 @@
     "pidp:frontend/templates/profile.html",
     "pidp:frontend/templates/site_detail.html",
     "pidp:frontend/templates/sites.html",
+    "pidp:main.py",
     "pidp:mcp_browser_bridge.py",
     "pidp:migrate_encrypt_identity_data.py",
     "pidp:portal_sso.py",
@@ -161,17 +171,22 @@
     "pidp:serverless/src/consentPage.ts",
     "pidp:serverless/src/index.ts",
     "pidp:serverless/src/mcpAuthorization.ts",
+    "pidp:serverless/src/oauth.ts",
     "pidp:serverless/src/portalSso.ts",
     "pidp:serverless/src/profilePage.ts",
     "pidp:serverless/test/account-identity.test.mjs",
     "pidp:serverless/test/app-login.test.mjs",
+    "pidp:serverless/test/browser-sessions.test.mjs",
+    "pidp:serverless/test/email-verification.test.mjs",
     "pidp:serverless/test/mcp-authorization.test.mjs",
     "pidp:serverless/test/portal-sso.test.mjs",
     "pidp:serverless/test/profile-self-service.test.mjs",
+    "pidp:serverless/test/shared-credentials-d1.test.mjs",
     "pidp:serverless/test/shared-credentials-migration.test.mjs",
-    "pidp:tests/test_identity_urls.py"
+    "pidp:tests/test_identity_urls.py",
+    "pidp:tests/test_portal_sso.py"
   ],
-  "linkCount": 5219,
+  "linkCount": 5243,
   "links": [
     {
       "source": "medtech:about.html",
@@ -51170,6 +51185,28 @@
       "source": "orgportal:src/ui/shell/Header.tsx",
       "sourcePath": "src/ui/shell/Header.tsx",
       "sourceRepo": "orgportal",
+      "href": "/support",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "support.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/shell/Header.tsx",
+      "sourcePath": "src/ui/shell/Header.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/test-status",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "test-status.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/shell/Header.tsx",
+      "sourcePath": "src/ui/shell/Header.tsx",
+      "sourceRepo": "orgportal",
       "href": "/timebanking",
       "textRole": "",
       "kind": "internal-page",
@@ -51299,6 +51336,17 @@
       "source": "orgportal:src/ui/views/chat/NativeChatPage.tsx",
       "sourcePath": "src/ui/views/chat/NativeChatPage.tsx",
       "sourceRepo": "orgportal",
+      "href": "/orgs",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/chat/NativeChatPage.tsx",
+      "sourcePath": "src/ui/views/chat/NativeChatPage.tsx",
+      "sourceRepo": "orgportal",
       "href": "/people",
       "textRole": "",
       "kind": "portal-route",
@@ -51368,6 +51416,17 @@
       "kind": "portal-route",
       "targetRepo": "orgportal",
       "target": "/chat"
+    },
+    {
+      "source": "orgportal:src/ui/views/DevToolsPage.tsx",
+      "sourcePath": "src/ui/views/DevToolsPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/test-status",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "test-status.html",
+      "fragment": ""
     },
     {
       "source": "orgportal:src/ui/views/DevToolsPage.tsx",
@@ -51577,6 +51636,26 @@
       "fragment": ""
     },
     {
+      "source": "orgportal:src/ui/views/email/EmailCampaignsPage.tsx",
+      "sourcePath": "src/ui/views/email/EmailCampaignsPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "mailto:julian@codecollective.us?subject=OrgPortal%20email%20setup",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "null"
+    },
+    {
+      "source": "orgportal:src/ui/views/governance/DraftMergeWorkspace.tsx",
+      "sourcePath": "src/ui/views/governance/DraftMergeWorkspace.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/users/login?next=%2Fgovernance%2Fdocuments%2Flifetech-constitution",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/users/login"
+    },
+    {
       "source": "orgportal:src/ui/views/governance/GovernanceDocumentPage.tsx",
       "sourcePath": "src/ui/views/governance/GovernanceDocumentPage.tsx",
       "sourceRepo": "orgportal",
@@ -51590,22 +51669,12 @@
       "source": "orgportal:src/ui/views/governance/GovernanceDocumentPage.tsx",
       "sourcePath": "src/ui/views/governance/GovernanceDocumentPage.tsx",
       "sourceRepo": "orgportal",
-      "href": "#suggest",
+      "href": "#gpt-suggestions",
       "textRole": "",
       "kind": "same-page-anchor",
       "targetRepo": "orgportal",
       "target": "orgportal:src/ui/views/governance/GovernanceDocumentPage.tsx",
-      "fragment": "suggest"
-    },
-    {
-      "source": "orgportal:src/ui/views/governance/GovernanceDocumentPage.tsx",
-      "sourcePath": "src/ui/views/governance/GovernanceDocumentPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "https://robertsrules.com/frequently-asked-questions/",
-      "textRole": "",
-      "kind": "external-handoff",
-      "targetRepo": "",
-      "origin": "https://robertsrules.com"
+      "fragment": "gpt-suggestions"
     },
     {
       "source": "orgportal:src/ui/views/HealthInsurancePage.tsx",
@@ -51846,6 +51915,17 @@
       "fragment": "main-content"
     },
     {
+      "source": "orgportal:src/ui/views/McpLiveStatistics.tsx",
+      "sourcePath": "src/ui/views/McpLiveStatistics.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/test-status",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "test-status.html",
+      "fragment": ""
+    },
+    {
       "source": "orgportal:src/ui/views/MemberMeetingsPage.tsx",
       "sourcePath": "src/ui/views/MemberMeetingsPage.tsx",
       "sourceRepo": "orgportal",
@@ -51987,6 +52067,17 @@
       "fragment": ""
     },
     {
+      "source": "orgportal:src/ui/views/NotFoundPage.tsx",
+      "sourcePath": "src/ui/views/NotFoundPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/orgs",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs.html",
+      "fragment": ""
+    },
+    {
       "source": "orgportal:src/ui/views/OnboardingPage.tsx",
       "sourcePath": "src/ui/views/OnboardingPage.tsx",
       "sourceRepo": "orgportal",
@@ -52016,6 +52107,17 @@
       "kind": "portal-route",
       "targetRepo": "orgportal",
       "target": "/users/login"
+    },
+    {
+      "source": "orgportal:src/ui/views/orgs/FiveOverFivePage.tsx",
+      "sourcePath": "src/ui/views/orgs/FiveOverFivePage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "#nominate",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "targetRepo": "orgportal",
+      "target": "orgportal:src/ui/views/orgs/FiveOverFivePage.tsx",
+      "fragment": "nominate"
     },
     {
       "source": "orgportal:src/ui/views/orgs/OrgEventsPage.tsx",
@@ -52241,6 +52343,28 @@
       "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
       "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
       "sourceRepo": "orgportal",
+      "href": "?tab=branding",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
+      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "?tab=personnel",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "index.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
+      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
+      "sourceRepo": "orgportal",
       "href": "/",
       "textRole": "",
       "kind": "internal-page",
@@ -52273,6 +52397,17 @@
       "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
       "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
       "sourceRepo": "orgportal",
+      "href": "/orgs/code-collective/five-over-five",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs/code-collective/five-over-five.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
+      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
+      "sourceRepo": "orgportal",
       "href": "/orgs/events",
       "textRole": "",
       "kind": "internal-page",
@@ -52284,23 +52419,23 @@
       "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
       "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
       "sourceRepo": "orgportal",
-      "href": "#organization-brand-guide",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-brand-guide"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
       "href": "#organization-domain",
       "textRole": "",
       "kind": "same-page-anchor",
       "targetRepo": "orgportal",
       "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
       "fragment": "organization-domain"
+    },
+    {
+      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
+      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "#organization-events",
+      "textRole": "",
+      "kind": "same-page-anchor",
+      "targetRepo": "orgportal",
+      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
+      "fragment": "organization-events"
     },
     {
       "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
@@ -52334,17 +52469,6 @@
       "targetRepo": "orgportal",
       "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
       "fragment": "organization-member-feedback"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-members",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-members"
     },
     {
       "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
@@ -52569,6 +52693,17 @@
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "ecosystem/network/relationships.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/support/SupportPage.tsx",
+      "sourcePath": "src/ui/views/support/SupportPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/support",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "support.html",
       "fragment": ""
     },
     {
@@ -52946,6 +53081,17 @@
       "source": "pidp:frontend/templates/home.html",
       "sourcePath": "frontend/templates/home.html",
       "sourceRepo": "pidp",
+      "href": "{{ ui_base }}/app/login?owner=1&next={{ login_next | urlencode }}",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "%7B%7B%20ui_base%20%7D%7D/app/login.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:frontend/templates/home.html",
+      "sourcePath": "frontend/templates/home.html",
+      "sourceRepo": "pidp",
       "href": "{{ ui_base }}/auth/github/login?next={{ (login_next or (ui_base or '/')) | urlencode }}{% if login_app_slug %}&app={{ login_app_slug | urlencode }}{% endif %}{% if login_force_owner %}&owner=1{% endif %}",
       "textRole": "Login with GitHub",
       "kind": "internal-page",
@@ -52962,6 +53108,17 @@
       "kind": "internal-page",
       "targetRepo": "pidp",
       "target": "%7B%7B%20ui_base%20%7D%7D/auth/google/login.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:frontend/templates/home.html",
+      "sourcePath": "frontend/templates/home.html",
+      "sourceRepo": "pidp",
+      "href": "/",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "index.html",
       "fragment": ""
     },
     {
@@ -52995,6 +53152,17 @@
       "kind": "internal-page",
       "targetRepo": "pidp",
       "target": "%7B%7B%20ui_base%20%7D%7D/sites/%7B%7B%20website.id%20%7D%7D.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:main.py",
+      "sourcePath": "main.py",
+      "sourceRepo": "pidp",
+      "href": "{escape(login)}",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "%7Bescape(login)%7D.html",
       "fragment": ""
     },
     {
@@ -53050,6 +53218,17 @@
       "kind": "internal-page",
       "targetRepo": "pidp",
       "target": "store_true.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:portal_sso.py",
+      "sourcePath": "portal_sso.py",
+      "sourceRepo": "pidp",
+      "href": "{escape(action)}",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "%7Bescape(action)%7D.html",
       "fragment": ""
     },
     {
@@ -53199,6 +53378,28 @@
       "source": "pidp:serverless/src/index.ts",
       "sourcePath": "serverless/src/index.ts",
       "sourceRepo": "pidp",
+      "href": "/app/login?${escapeHtml(new URLSearchParams({owner:",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "app/login.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:serverless/src/index.ts",
+      "sourcePath": "serverless/src/index.ts",
+      "sourceRepo": "pidp",
+      "href": "/auth/resend-verification",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "auth/resend-verification.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:serverless/src/index.ts",
+      "sourcePath": "serverless/src/index.ts",
+      "sourceRepo": "pidp",
       "href": "${escapeHtml(link.href)}",
       "textRole": "",
       "kind": "internal-page",
@@ -53248,6 +53449,17 @@
       "kind": "internal-page",
       "targetRepo": "pidp",
       "target": "$%7Bescape(same.toString())%7D.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:serverless/src/oauth.ts",
+      "sourcePath": "serverless/src/oauth.ts",
+      "sourceRepo": "pidp",
+      "href": "${href}",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "$%7Bhref%7D.html",
       "fragment": ""
     },
     {
@@ -53371,6 +53583,28 @@
       "origin": "https://app"
     },
     {
+      "source": "pidp:serverless/test/email-verification.test.mjs",
+      "sourcePath": "serverless/test/email-verification.test.mjs",
+      "sourceRepo": "pidp",
+      "href": "/auth/resend-verification",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "auth/resend-verification.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:serverless/test/portal-sso.test.mjs",
+      "sourcePath": "serverless/test/portal-sso.test.mjs",
+      "sourceRepo": "pidp",
+      "href": "([^",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "([%5E.html",
+      "fragment": ""
+    },
+    {
       "source": "pidp:serverless/test/portal-sso.test.mjs",
       "sourcePath": "serverless/test/portal-sso.test.mjs",
       "sourceRepo": "pidp",
@@ -53379,6 +53613,26 @@
       "kind": "external-handoff",
       "targetRepo": "pidp",
       "origin": "https://pidp"
+    },
+    {
+      "source": "pidp:serverless/test/portal-sso.test.mjs",
+      "sourcePath": "serverless/test/portal-sso.test.mjs",
+      "sourceRepo": "pidp",
+      "href": "https:\\/\\/one.example\\/pidp\\/auth\\/sso\\/start",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://one.example"
+    },
+    {
+      "source": "pidp:serverless/test/portal-sso.test.mjs",
+      "sourcePath": "serverless/test/portal-sso.test.mjs",
+      "sourceRepo": "pidp",
+      "href": "https:\\/\\/orgportal.cc\\/users\\/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "orgportal",
+      "origin": "https://orgportal.cc"
     },
     {
       "source": "pidp:tests/test_identity_urls.py",
@@ -53423,6 +53677,26 @@
       "targetRepo": "pidp",
       "target": "pidp/app/login.html",
       "fragment": ""
+    },
+    {
+      "source": "pidp:tests/test_portal_sso.py",
+      "sourcePath": "tests/test_portal_sso.py",
+      "sourceRepo": "pidp",
+      "href": "https://one.example/pidp/auth/sso/start",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://one.example"
+    },
+    {
+      "source": "pidp:tests/test_portal_sso.py",
+      "sourcePath": "tests/test_portal_sso.py",
+      "sourceRepo": "pidp",
+      "href": "https://orgportal.cc/users/login",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "orgportal",
+      "origin": "https://orgportal.cc"
     }
   ]
 }

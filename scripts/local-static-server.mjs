@@ -3,6 +3,7 @@ import { readFile, stat } from 'node:fs/promises'
 import https from 'node:https'
 import path from 'node:path'
 import { handleDatasetApi } from '../worker/datasets.js'
+import { isPortalPagePath } from '../../OrgPortal/web/portalRoutes.mjs'
 
 const siteRoot = process.env.SITE_ROOT || '/site'
 const publicRoot = process.env.PUBLIC_ROOT || ''
@@ -195,6 +196,10 @@ function prefixProxyLocation(location, stripPrefix) {
 
 async function sendWebResponse(req, res, response, { stripPrefix = '' } = {}) {
   const headers = Object.fromEntries(response.headers.entries())
+  // Node fetch decodes compressed bodies; downstream headers must describe those bytes.
+  for (const name of ['content-encoding', 'content-length', 'transfer-encoding']) delete headers[name]
+  const cookies = response.headers.getSetCookie()
+  if (cookies.length) headers['set-cookie'] = cookies
   const locationHeader = headers.location || headers.Location
   if (locationHeader) {
     headers.location = prefixProxyLocation(locationHeader, stripPrefix)
@@ -283,32 +288,14 @@ function isRootPortalAssetPath(pathname) {
 }
 
 function isPortalDevAssetPath(pathname) {
-  return pathname === '/@vite' || pathname.startsWith('/@vite/')
+  return pathname === '/@fs' || pathname.startsWith('/@fs/')
+    || pathname === '/@id' || pathname.startsWith('/@id/')
+    || pathname === '/@vite' || pathname.startsWith('/@vite/')
     || pathname === '/@react-refresh'
     || pathname === '/src' || pathname.startsWith('/src/')
     || pathname === '/node_modules' || pathname.startsWith('/node_modules/')
 }
 
-function isPortalRoute(pathname) {
-  return pathname === '/onboarding' || pathname === '/availability' || pathname.startsWith('/availability/')
-    || pathname === '/ecosystem/network' || pathname === '/ecosystem/network/' || pathname.startsWith('/ecosystem/network/')
-    || pathname === '/users' || pathname.startsWith('/users/')
-    || pathname === '/events' || pathname.startsWith('/events/')
-    || pathname === '/org-events' || pathname.startsWith('/org-events/')
-    || pathname === '/specialty' || pathname.startsWith('/specialty/')
-    || pathname === '/orgs' || pathname.startsWith('/orgs/')
-    || pathname === '/create' || pathname.startsWith('/create/')
-    || pathname === '/people' || pathname.startsWith('/people/')
-    || pathname === '/chat' || pathname.startsWith('/chat/')
-    || pathname === '/auth/callback'
-    || pathname === '/email' || pathname.startsWith('/email/')
-    || pathname === '/profile'
-    || pathname === '/settings'
-    || pathname === '/search'
-    || pathname === '/branding'
-    || pathname === '/resources' || pathname.startsWith('/resources/')
-    || pathname === '/tools' || pathname.startsWith('/tools/')
-}
 
 const server = https.createServer(
   {
@@ -381,7 +368,7 @@ const server = https.createServer(
         await serveFile(req, res, filePath)
         return
       }
-      if (isPortalRoute(requestUrl.pathname)) {
+      if (isPortalPagePath(requestUrl.pathname)) {
         await servePortalRootNavigationProxy(req, res, requestUrl)
         return
       }

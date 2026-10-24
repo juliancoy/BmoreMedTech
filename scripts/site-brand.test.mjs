@@ -3,6 +3,15 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { renderSiteBrand, siteBrand } from '../lib/site-brand.js'
 
+test('LifeTech mounts the shared accessible palette without changing MedTech', () => {
+  const template = '<html lang="en"><head></head><body>LifeTech</body></html>'
+  const life = renderSiteBrand(template, siteBrand('lifetech'))
+  const med = renderSiteBrand(template, siteBrand('medtech'))
+  assert.match(life, /data-site-brand="lifetech"/)
+  assert.match(life, /href="\/assets\/lifetech-brand\.css"/)
+  assert.doesNotMatch(med, /data-site-brand="lifetech"|lifetech-brand\.css/)
+})
+
 test('MedTech and LifeTech have distinct names, imagery, origins, and preference keys', () => {
   const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
   for (const id of ['medtech', 'lifetech']) {

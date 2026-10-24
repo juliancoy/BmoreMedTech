@@ -1,6 +1,30 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import worker from '../worker.js'
+
+test('all registered portal page paths mount on LifeTech without falling through to static assets', async t => {
+  const source = await readFile(new URL('../../OrgPortal/web/src/ui/router/createAppRouter.tsx', import.meta.url), 'utf8')
+  const staticOrRedirect = new Set(['/', '/index.html', '/about', '/calendar', '/calendar.html', '/community', '/medtech-events', '/branding.html'])
+  const seen = []
+  t.mock.method(globalThis, 'fetch', async (request, options) => {
+    const url = new URL(typeof request === 'string' ? request : request.url)
+    if (url.origin === 'https://org.example') return Response.json({})
+    seen.push(url.href)
+    return new Response('<!doctype html><html><head></head><body>Portal</body></html>', {headers: {'content-type': 'text/html'}})
+  })
+  const env = {
+    SITE_BRAND: 'lifetech', ORG_API_ORIGIN: 'https://org.example', PORTAL_SITE_ORIGIN: 'https://portal.example',
+    ASSETS: {fetch: async () => {throw new Error('Portal pages must not depend on static files')}},
+  }
+  for (const [, pattern] of source.matchAll(/path:\s*'([^']+)'/g)) {
+    if (pattern === '*' || staticOrRedirect.has(pattern)) continue
+    const path = pattern.replace(/:[^/]+/g, 'example')
+    const response = await worker.fetch(new Request('https://lifetech.fyi' + path, {headers: {accept: 'text/html'}}), env)
+    assert.equal(response.status, 200, path)
+    assert.equal(seen.at(-1), 'https://portal.example/__portal_root/', path)
+  }
+})
 
 test('LifeTech Worker proxies public OrgPortal event feeds through the same origin', async (t) => {
   t.mock.method(globalThis, 'fetch', async (request) => {

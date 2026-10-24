@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=LifeTech Development
+Comment=Open a running local LifeTech development server
+Exec=lifetech --dev
+Icon=lifetech
+Terminal=false
+Categories=Development;
+StartupWMClass=lifetech-dev
+StartupNotify=true
+NoDisplay=true

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=LifeTech
+Comment=Health × Medicine × Biotech
+Exec=lifetech
+Icon=lifetech
+Terminal=false
+Categories=Network;
+StartupWMClass=lifetech
+StartupNotify=true
+Actions=Development;
+
+[Desktop Action Development]
+Name=LifeTech Development
+Exec=lifetech --dev

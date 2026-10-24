@@ -184,9 +184,10 @@
     "pidp:serverless/test/shared-credentials-d1.test.mjs",
     "pidp:serverless/test/shared-credentials-migration.test.mjs",
     "pidp:tests/test_identity_urls.py",
+    "pidp:tests/test_local_login.py",
     "pidp:tests/test_portal_sso.py"
   ],
-  "linkCount": 5243,
+  "linkCount": 5245,
   "links": [
     {
       "source": "medtech:about.html",
@@ -52716,6 +52717,26 @@
       "targetRepo": "orgportal",
       "target": "index.html",
       "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/TenantBrandingPage.tsx",
+      "sourcePath": "src/ui/views/TenantBrandingPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://www.w3.org"
+    },
+    {
+      "source": "orgportal:src/ui/views/TenantBrandingPage.tsx",
+      "sourcePath": "src/ui/views/TenantBrandingPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://www.w3.org"
     },
     {
       "source": "orgportal:src/ui/views/TenantHomePage.tsx",

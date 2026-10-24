@@ -1,9 +1,15 @@
+import { isPortalPagePath } from '../OrgPortal/web/portalRoutes.mjs'
+import { readFileSync, existsSync } from 'node:fs'
+import { brandAssetResponse } from './lib/public-discovery.js'
 import { sitePageSeo } from './lib/site-seo.js'
 import { applySeo, canonicalPath } from '../OrgPortal/web/seo.mjs'
 import { defineConfig } from 'vite'
 import { prepareBuildAssets } from './scripts/prepare-build-assets.mjs'
 import { siteBrand, renderSiteBrand } from './lib/site-brand.js'
 
+const desktopDev = process.env.LIFETECH_DESKTOP_DEV === '1'
+const localOrigin = process.env.LIFETECH_LOCAL_ORIGIN || 'https://localhost:8770'
+if (desktopDev && !['localhost', '127.0.0.1', '[::1]'].includes(new URL(localOrigin).hostname)) throw new Error('LIFETECH_LOCAL_ORIGIN must point to the local stack')
 const brandId = process.env.SITE_BRAND || 'medtech'
 const brand = siteBrand(brandId)
 const outputDirectory = brandId === 'medtech' ? 'dist' : 'dist-lifetech'
@@ -32,8 +38,27 @@ const datasetInputs = Object.fromEntries(
 
 export default defineConfig({
   publicDir: 'assets/data',
+  server: desktopDev ? { proxy: { '/api': { target: localOrigin, changeOrigin: true, secure: false }, '/pidp': { target: localOrigin, changeOrigin: true, secure: false } } } : undefined,
   plugins: [{
     name: 'site-brand',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        try {
+          const path = new URL(req.url, 'http://localhost').pathname
+          if (desktopDev && path !== '/' && path !== '/index.html' && isPortalPagePath(path) && !existsSync(new URL(`.${path}.html`, import.meta.url))) {
+            res.writeHead(302, { location: new URL(req.url, localOrigin).href }); res.end(); return
+          }
+          if (path === '/ecosystem') req.url = req.url.replace('/ecosystem', '/ecosystem/index.html')
+          const request = new Request(new URL(req.url, 'http://localhost'), { method: req.method })
+          const response = await brandAssetResponse(request, {
+            ASSETS: { fetch: async () => new Response(readFileSync(new URL(`.${brand.logo}`, import.meta.url))) },
+          }, brand)
+          if (!response) return next()
+          res.writeHead(response.status, Object.fromEntries(response.headers))
+          res.end(req.method === 'HEAD' ? undefined : Buffer.from(await response.arrayBuffer()))
+        } catch (error) { next(error) }
+      })
+    },
     enforce: 'pre',
     transformIndexHtml: { order: 'pre', handler(html, context) {
       const rendered = renderSiteBrand(html, brand).replace(/href="(\/[^"?#]*\.html)([^"]*)"/g, (_, path, suffix) => `href="${canonicalPath(path)}${suffix}"`)

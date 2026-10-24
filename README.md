@@ -128,3 +128,8 @@ A separate LifeTech repository is unnecessary unless the sites need independent
 code ownership or release workflows. Their deployments are already separate.
 
 LifeTech SEO copy for its principal public pages is configured in `lib/site-seo.js`. The shared OrgPortal SEO module renders metadata, canonical paths, and structured data. LifeTech serves `/robots.txt` and `/sitemap.xml` from the Worker; the sitemap includes only the configured public pages. Login, account, search, chat, and onboarding pages are marked `noindex`, and missing static pages return HTTP 404.
+
+## Ubuntu app
+
+Build the LifeTech Ubuntu installer with `npm run build:ubuntu`. See
+[Ubuntu installation and requirements](desktop/ubuntu/README.md).

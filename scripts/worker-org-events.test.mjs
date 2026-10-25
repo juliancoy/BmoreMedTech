@@ -501,3 +501,16 @@ test('the removed organization claim page returns not found', async()=>{
  const response=await worker.fetch(new Request('https://lifetech.fyi/orgs/lifetech/claim'),{SITE_BRAND:'lifetech',ASSETS:{fetch:async()=>new Response('missing',{status:404})},ORGPORTAL_WEB:{fetch:async()=>{throw new Error('Claim forms must not be served')}}});
  assert.equal(response.status,404);
 });
+
+
+test('LifeTech always serves published assets despite an old preview cookie', async () => {
+  const forbidden = {fetch: () => {throw new Error('Development assets must not be served')}}
+  const env = {SITE_BRAND: 'lifetech', DEV_ASSETS: forbidden, ASSETS: {fetch: async () => new Response('published asset')}}
+  for (const method of ['GET', 'POST']) {
+    const response = await worker.fetch(new Request('https://lifetech.fyi/__portal/deployment', {method}), env)
+    assert.equal(response.status, 404)
+  }
+  const response = await worker.fetch(new Request('https://lifetech.fyi/assets/example.js', {headers: {cookie: '__Host-portal_deployment=development'}}), env)
+  assert.equal(await response.text(), 'published asset')
+  assert.equal(response.headers.get('x-portal-deployment'), null)
+})

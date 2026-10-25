@@ -266,7 +266,6 @@ nav a[aria-current="page"] {
 .account-icon:hover { background: var(--nav-active-bg); }
 .account-icon:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .account-menu { position: relative; }
-.account-mobile-links { display: none; }
 .account-menu-items {
   position: absolute;
   right: 0;
@@ -310,7 +309,6 @@ nav a[aria-current="page"] {
 
 @media (max-width: 720px) {
   .nav-enhanced .site-header.has-account .nav-toggle { display: none; }
-  .account-mobile-links { display: grid; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 8px; }
   .nav-enhanced .site-header-inner,
   .nav-enhanced .site-header { gap: 8px; }
   .nav-enhanced .site-header .brand { margin-right: auto; }

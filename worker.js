@@ -3,7 +3,6 @@ import { withEventSourcePreview } from '../OrgPortal/web/eventSourcePreview.mjs'
 import { mobileHeaderCss, eventHeadGuard } from './lib/portal-display-compat.js'
 import { pitchPosterBase64 } from './lib/pitch-original-preview.js'
 import { eventListingPreview } from '../OrgPortal/web/eventListingPreview.mjs'
-import { deploymentResponse, deploymentCachePolicy, isDeploymentAssetRequest } from '../OrgPortal/web/deployment.mjs'
 import { sitePageSeo } from './lib/site-seo.js'
 import { isPortalPagePath, notFoundResponse, missingPortalResource } from '../OrgPortal/web/portalRoutes.mjs'
 import { applySeo, canonicalPath } from '../OrgPortal/web/seo.mjs'
@@ -470,11 +469,10 @@ const productionWorker = {
 
 export default {
   async fetch(request, env) {
+    if (new URL(request.url).pathname === '/__portal/deployment') return notFoundResponse(request)
     const missing = await missingPortalResource(request, new URL(request.url).pathname, env.ORG_API_ORIGIN || DEFAULT_ORG_API_ORIGIN)
     if (missing) return missing
-    const selected = await deploymentResponse(request, env, { enabled: env.SITE_BRAND === 'lifetech', mount: 'lifetech' })
-    if (selected) return selected
     const response = await productionWorker.fetch(request, env)
-    return isDeploymentAssetRequest(request) ? deploymentCachePolicy(response, env) : response
+    return response
   },
 }

@@ -1,4 +1,3 @@
-import { createDeploymentMenu } from '../../OrgPortal/web/src/ui/components/deploymentMenu.ts'
 import { createElement, MessageCircle, UserRound } from 'lucide';
 
 
@@ -312,14 +311,7 @@ async function setupAuthNavigation() {
     const summary = profile
     const items = document.createElement('div')
     items.className = 'account-menu-items'
-    const mobileLinks = document.createElement('div')
-    mobileLinks.className = 'account-mobile-links'
-    for (const link of header.querySelectorAll('nav .nav-group-links a, nav > a')) {
-      mobileLinks.append(link.cloneNode(true))
-    }
-    items.append(mobileLinks)
-    void createDeploymentMenu().then(chooser => { if (chooser) items.insertBefore(chooser, mobileLinks) })
-    for (const [label, href] of [['My profile', '/profile'], ['Dashboard', '/users/dashboard']]) {
+    for (const [label, href] of [['My profile', '/profile'], ['Account settings', '/settings']]) {
       const link = document.createElement('a')
       link.textContent = label
       link.href = href

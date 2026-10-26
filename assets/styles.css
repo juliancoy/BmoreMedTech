@@ -3823,6 +3823,10 @@ h2 {
   margin: clamp(20px, 3vw, 40px) auto;
 }
 .home-upcoming .hero-event { width: 100%; margin: 0; }
+.home-upcoming .hero-event-card {
+  background: linear-gradient(135deg, rgba(157, 231, 238, 0.16), rgba(255, 208, 138, 0.1)), #061a26;
+  color: #fff;
+}
 .home-upcoming .hero-event-card.has-image {
   grid-template-columns: clamp(104px, 18vw, 200px) minmax(0, 1fr);
   align-items: center;

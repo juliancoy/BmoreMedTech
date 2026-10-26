@@ -455,3 +455,5 @@ function setupOrganizationViews() {
   window.addEventListener('site-account-change', () => void refresh())
   void accountReady.then(refresh)
 }
+
+import './desktop-migration.js'

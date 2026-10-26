@@ -1,0 +1,9 @@
+.newsletter-signup { max-width: 760px; margin: 2rem auto; padding: clamp(20px, 4vw, 40px); border: 1px solid currentColor; border-radius: 20px; }
+.newsletter-signup h2 { margin-top: 0; }
+.newsletter-signup form { display: grid; gap: 12px; }
+.newsletter-signup input { box-sizing: border-box; width: 100%; min-width: 0; padding: 14px; font: inherit; border: 1px solid currentColor; border-radius: 8px; background: transparent; color: inherit; }
+.newsletter-signup button { justify-self: start; cursor: pointer; }
+.newsletter-signup button:disabled { opacity: .6; cursor: wait; }
+.newsletter-signup :focus-visible { outline: 3px solid #d4af37; outline-offset: 4px; }
+.newsletter-signup [role="status"] { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 800px) { .newsletter-signup { margin: 1rem; } }

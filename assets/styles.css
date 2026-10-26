@@ -3815,3 +3815,29 @@ h2 {
 .nav-enhanced .site-header .brand:has(.name-banner) > .brand-copy {
   display: flex;
 }
+
+
+/* Put upcoming events first, with the complete associated poster visible. */
+.home-upcoming {
+  width: min(1440px, calc(100% - 48px));
+  margin: clamp(20px, 3vw, 40px) auto;
+}
+.home-upcoming .hero-event { width: 100%; margin: 0; }
+.home-upcoming .hero-event-card.has-image {
+  grid-template-columns: clamp(104px, 18vw, 200px) minmax(0, 1fr);
+  align-items: center;
+}
+.home-upcoming .hero-event-card img {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+.home-upcoming .hero-event-card.has-image .hero-event-copy { grid-column: 2; }
+.home-upcoming .hero-event-card.has-image .hero-event-cue { grid-column: 2; }
+@media (max-width: 640px) {
+  .home-upcoming { width: calc(100% - 24px); margin: 16px auto; }
+  .home-upcoming .hero-event-card.has-image { grid-template-columns: 96px minmax(0, 1fr); gap: 10px 12px; }
+}

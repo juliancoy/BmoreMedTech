@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { allLifeTechEvents } from '../assets/medical-events.js'
-import { publicEvents } from '../lib/public-discovery.js'
+import { publicEvents, renderHomeEvent } from '../lib/public-discovery.js'
 test('browser homepage retrieves every hosted event beyond the first feed page',async()=>{
  const calls=[]
  const rows=await allLifeTechEvents(async path=>{
@@ -26,4 +26,22 @@ test('server homepage and discovery retrieve every page using the same hosted sc
  })
  const rows=await publicEvents({},new URL('https://lifetech.fyi/'))
  assert.equal(rows.length,201);assert.equal(rows[200].id,'200');assert.equal(calls.length,2)
+})
+
+
+test('server-rendered homepage includes each associated cover or gallery image safely', async t => {
+ t.mock.method(globalThis,'fetch',async()=>Response.json([
+  {slug:'cover',title:'Cover event',starts_at:'2099-11-17T23:00:00Z',image_url:'https://images.example/cover.png?width=800&height=800'},
+  {slug:'gallery',title:'Gallery event',starts_at:'2099-11-18T23:00:00Z',image_url:'javascript:alert(1)',media:[{url:'https://images.example/gallery.webp'}]},
+  {slug:'no-cover',title:'No cover',starts_at:'2099-11-19T23:00:00Z'},
+ ]))
+ const response=await renderHomeEvent(new Response('<article id="next-medtech-event"></article>',{headers:{'content-type':'text/html'}}),{},new URL('https://lifetech.fyi/'))
+ const html=await response.text()
+ assert.equal((html.match(/<img /g)||[]).length,2)
+ assert.match(html,/src="https:\/\/images.example\/cover.png\?width=800&amp;height=800"/)
+ assert.match(html,/src="https:\/\/images.example\/gallery.webp"/)
+ assert.equal((html.match(/class="hero-event-card has-image"/g)||[]).length,2)
+ assert.match(html,/loading="eager"/)
+ assert.match(html,/href="\/events\/no-cover"/)
+ assert.doesNotMatch(html,/javascript:/)
 })

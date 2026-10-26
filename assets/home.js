@@ -102,7 +102,7 @@ async function showLifeTechEvents() {
       const eventName = cleanText(next.event.name)
       return `
         <a class="hero-event-card${imageUrl ? ' has-image' : ''}" href="${escapeHtml(medtechEventUrl(next.event))}" aria-label="Open ${escapeHtml(eventName)}">
-          ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="" loading="eager" decoding="async" />` : ''}
+          ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="" width="200" height="200" loading="eager" decoding="async" />` : ''}
           <span class="hero-event-copy">
             <span class="hero-event-label">Upcoming LifeTech event</span>
             <span class="hero-event-title">${escapeHtml(eventName)}</span>

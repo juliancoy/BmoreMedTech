@@ -64,7 +64,7 @@ export function eventAttachmentImages(event) {
 }
 
 export function eventImageUrl(event) {
-  for (const value of [event.imageUrl, event.orgImageUrl]) {
+  for (const value of [event.imageUrl, event.image_url, ...(Array.isArray(event.media) ? event.media.map(item => item?.url) : []), event.orgImageUrl]) {
     if (typeof value !== 'string' || !value.trim()) continue
     try {
       const url = new URL(value, MEDICAL_EVENTS_SOURCE_URL)

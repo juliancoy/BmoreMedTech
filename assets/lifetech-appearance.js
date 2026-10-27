@@ -1,5 +1,5 @@
 import { parseOrganizationThemes } from '../../OrgPortal/shared/organizationThemes.ts'
-import { appearanceFallback, appearanceCss, resolveAppearance, LAYOUT_STORAGE_KEY, modeStorageKey } from '../lib/lifetech-appearance.js'
+import { appearanceFallback, appearanceCss, normalizeAppearanceConfig, resolveAppearance, LAYOUT_STORAGE_KEY, modeStorageKey } from '../lib/lifetech-appearance.js'
 
 export function setupLifeTechAppearance() {
  const root = document.documentElement
@@ -75,7 +75,8 @@ export function setupLifeTechAppearance() {
   .then(async response=>{if(!response.ok)return;const data=await response.json();const next=data.portal?.feature_config;if(!next)return
    // Validate the whole configuration before it can reach generated CSS or image URLs.
    if(!parseOrganizationThemes(next.brandThemes))return
-   config={brandThemes:next.brandThemes,nameBannerUrl:typeof next.nameBannerUrl==='string'&&/^https:\/\//.test(next.nameBannerUrl)?next.nameBannerUrl:appearanceFallback.nameBannerUrl}
+   config=normalizeAppearanceConfig({brandThemes:next.brandThemes,nameBannerUrl:typeof next.nameBannerUrl==='string'&&/^https:\/\//.test(next.nameBannerUrl)?next.nameBannerUrl:appearanceFallback.nameBannerUrl})
+   root.dataset.appearanceSource='portal'
    layout=read(LAYOUT_STORAGE_KEY)||config.brandThemes.defaultTheme;updateOptions();apply()
   }).catch(()=>{/* The shipped snapshot keeps the public site usable offline. */})
  window.__bmoreLifeTechTheme={storageKey:modeStorageKey(layout),readThemeMode:readMode,applyThemeMode:mode=>{write(modeStorageKey(layout),mode);return apply(mode)}}

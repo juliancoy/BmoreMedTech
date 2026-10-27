@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import vm from 'node:vm'
-import { appearanceFallback, resolveAppearance, appearanceBootstrap, modeStorageKey, LAYOUT_STORAGE_KEY } from '../lib/lifetech-appearance.js'
+import { appearanceFallback, normalizeAppearanceConfig, resolveAppearance, appearanceBootstrap, modeStorageKey, LAYOUT_STORAGE_KEY } from '../lib/lifetech-appearance.js'
 
 test('both layouts resolve separate light/dark palettes and System follows the device',()=>{
  for(const id of ['ankhtech','postcapitalist-corporate']) {
@@ -25,4 +25,11 @@ test('initial paint reads the selected layout preference and tolerates blocked s
  context.localStorage.getItem=()=>{throw Error('blocked')};context.matchMedia=()=>({matches:true})
  vm.runInNewContext(appearanceBootstrap(),context)
  assert.equal(dataset.brandLayout,'postcapitalist-corporate');assert.equal(dataset.themeMode,'system');assert.equal(dataset.theme,'dark')
+})
+
+test('a legacy editor cannot restore retired layouts or replace a valid current default',()=>{
+ const old={...appearanceFallback.brandThemes.themes[0],id:'botanical',name:'Botanical'}
+ const config=normalizeAppearanceConfig({...appearanceFallback,brandThemes:{defaultTheme:'ankhtech',themes:[old,...appearanceFallback.brandThemes.themes]}})
+ assert.equal(config.brandThemes.defaultTheme,'ankhtech')
+ assert.deepEqual(config.brandThemes.themes.map(t=>t.id),['postcapitalist-corporate','ankhtech'])
 })

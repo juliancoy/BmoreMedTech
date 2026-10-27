@@ -23,6 +23,7 @@ try {
  const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(String(error)))
  await page.goto(base+'/')
  const root=page.locator('html'),layout=page.getByLabel('Branding layout',{exact:true})
+ await expect(root).toHaveAttribute('data-appearance-source','portal')
  await expect(root).toHaveAttribute('data-brand-layout','postcapitalist-corporate')
  await expect(root).toHaveAttribute('data-theme','light')
  async function menu(){const toggle=page.getByRole('button',{name:'Menu',exact:true});if(await toggle.isVisible()&&await toggle.getAttribute('aria-expanded')==='false')await toggle.click();const appearance=page.locator('.appearance-control');if(!await appearance.getAttribute('open')){if(!await appearance.evaluate(el=>el.open))await appearance.locator('summary').click()}await expect(layout).toBeVisible()}

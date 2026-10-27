@@ -1,3 +1,4 @@
+import { setupLifeTechAppearance } from './lifetech-appearance.js';
 import { createElement, MessageCircle, UserRound } from 'lucide';
 
 
@@ -47,6 +48,7 @@ function applyThemeMode(mode) {
 }
 
 function setupThemeControls() {
+  if (document.documentElement.dataset.siteBrand === 'lifetech') { setupLifeTechAppearance(); return; }
   const controls = [...document.querySelectorAll('.theme-option[data-theme-mode]')];
   const state = applyThemeMode(readThemeMode());
 

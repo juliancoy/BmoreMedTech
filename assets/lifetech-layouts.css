@@ -1,0 +1,51 @@
+.signature-wordmark {display:none}
+:root[data-site-brand='lifetech'] .footer-brand .signature-wordmark {width:220px;height:auto}
+/* The layout and its color mode are independent. Maps come from portal branding. */
+:root[data-site-brand='lifetech'] { color-scheme: light; }
+:root[data-site-brand='lifetech'][data-theme='dark'] { color-scheme: dark; --gold-text: #D4AF37; }
+:root[data-site-brand='lifetech'] .home-body { --home-navy: var(--surface); --home-navy-soft: var(--panel); --home-cyan: var(--primary); --home-mint: var(--panel-2); --home-sand: var(--panel-2); background: var(--surface); color: var(--text-primary); }
+:root[data-site-brand='lifetech'] .branding-layout-control { display: grid; gap: 4px; font-size: 12px; color: var(--text-secondary); text-align: left; }
+:root[data-site-brand='lifetech'] .branding-layout-control select { max-width: 100%; width: 215px; min-height: 44px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--panel); color: var(--text-primary); font: inherit; font-size: 13px; }
+:root[data-site-brand='lifetech'] .appearance-status { color: var(--text-secondary); font-size: 11px; line-height: 1.4; }
+:root[data-site-brand='lifetech'] .home-body .hero { background: var(--surface); min-height: 600px; border-bottom: 1px solid var(--border); }
+:root[data-site-brand='lifetech'] .home-body .hero::before { background: linear-gradient(90deg,var(--surface) 0%,color-mix(in srgb,var(--surface) 97%,transparent) 40%,color-mix(in srgb,var(--surface) 20%,transparent) 100%); }
+:root[data-site-brand='lifetech'] .home-body .hero::after { display: none; }
+:root[data-site-brand='lifetech'] .home-body .hero-image { height: 100%; object-position: right center; filter: none; }
+:root[data-site-brand='lifetech'] .home-body .hero-copy { color: var(--text-primary); padding: 60px 0; border: 0; border-radius: 0; }
+:root[data-site-brand='lifetech'] .home-body .hero h1 { font-size: clamp(2.8rem,5.2vw,5.2rem); letter-spacing: -.045em; line-height: 1.04; }
+:root[data-site-brand='lifetech'] .home-body .hero p:not(.eyebrow) { color: var(--text-secondary); }
+:root[data-site-brand='lifetech'] .home-body .hero .eyebrow { color: var(--primary); }
+:root[data-site-brand='lifetech'] .home-body .hero .eyebrow span { color: var(--gold-text); }
+:root[data-site-brand='lifetech'] .home-body :is(.hero-meta,.hero-meta span,.hero-meta strong) { color: var(--text-secondary); border-color: var(--border); }
+:root[data-site-brand='lifetech'] .home-body :is(.hero-actions .button.primary,.account-login) { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+:root[data-site-brand='lifetech'] .home-body .hero-actions .button.secondary { background: var(--panel); color: var(--primary); border-color: var(--border); }
+:root[data-site-brand='lifetech'] .home-body :is(.hero-event-card,.site-footer,.home-upcoming) { background: var(--panel); color: var(--text-primary); border-color: var(--border); }
+:root[data-site-brand='lifetech'] .home-body .site-footer :is(p,span,a) { color: var(--text-secondary); }
+:root[data-site-brand='lifetech'] .home-body .hero-event-card :is(p,span,a,strong) { color: var(--text-primary); }
+:root[data-site-brand='lifetech'] .home-body .hero-event-card :is(.button,.hero-event-link) { color: var(--primary); }
+:root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] :is(.technology-card,.event-media-card,.hero-event-card,.theme-control,.theme-option) { border-radius: 4px; box-shadow: none; }
+:root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] .site-header { border-bottom: 3px solid #D4AF37; }
+:root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] .signature-wordmark { display: block; background: #F4F5F0; padding: 0; border-radius: 0; object-fit: contain; }
+:root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] .brand .signature-wordmark { width: 180px; height: 45px; }
+:root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] .brand > span { display: grid; }
+:root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] .hero-copy > .signature-wordmark { width: min(100%,360px); height: auto; margin-bottom: 24px; }
+:root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] :is(.brand > img,.brand .name-banner,.footer-brand .name-banner) { display: none; }
+:root[data-site-brand='lifetech'][data-brand-layout='ankhtech'] .hero-copy > .signature-wordmark { display: none; }
+@media(max-width:720px) {
+ :root[data-site-brand='lifetech'] .home-body .hero { min-height: 620px; padding: 0 20px; }
+ :root[data-site-brand='lifetech'] .home-body .hero::before { background: linear-gradient(0deg,var(--surface) 12%,color-mix(in srgb,var(--surface) 96%,transparent) 60%,color-mix(in srgb,var(--surface) 55%,transparent)); }
+ :root[data-site-brand='lifetech'] .home-body .hero-copy { padding: 70px 0 44px; }
+ :root[data-site-brand='lifetech'] .hero-grid { align-content: center; }
+ :root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] .brand .signature-wordmark { width: 140px; height: 35px; }
+ :root[data-site-brand='lifetech'][data-brand-layout='postcapitalist-corporate'] .brand small { display: none; }
+ :root[data-site-brand='lifetech'] .branding-layout-control { justify-items: center; }
+}
+
+:root[data-site-brand='lifetech'] .appearance-control {position:relative;color:var(--text-primary);font-size:14px}
+:root[data-site-brand='lifetech'] .appearance-control>summary {cursor:pointer;min-height:44px;display:flex;align-items:center;padding:0 12px;font-weight:700;list-style:none}
+:root[data-site-brand='lifetech'] .appearance-panel {position:absolute;right:0;top:100%;z-index:20;display:grid;gap:14px;width:260px;padding:18px;border:1px solid var(--border);border-radius:6px;background:var(--panel);box-shadow:0 12px 30px #061a2626}
+:root[data-site-brand='lifetech'] .appearance-panel .theme-control {justify-content:flex-start}
+:root[data-site-brand='lifetech'] .appearance-control:not([open]) .appearance-panel {display:none}
+@media(max-width:720px){:root[data-site-brand='lifetech'] .appearance-control {width:100%}:root[data-site-brand='lifetech'] .appearance-control>summary{justify-content:center}:root[data-site-brand='lifetech'] .appearance-panel{position:static;width:auto;margin:6px 12px}:root[data-site-brand='lifetech'] .appearance-panel .theme-control{justify-content:center}}
+:root[data-site-brand='lifetech'] .home-body .hero-place {padding:18px 22px;border-color:var(--primary);background:color-mix(in srgb,var(--panel) 94%,transparent);color:var(--text-primary)}
+:root[data-site-brand='lifetech'] .home-body .hero-place span {color:var(--text-secondary)}

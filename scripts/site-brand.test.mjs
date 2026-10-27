@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { appearanceFallback } from '../lib/lifetech-appearance.js'
 import { renderSiteBrand, siteBrand } from '../lib/site-brand.js'
 
 test('LifeTech mounts the shared accessible palette without changing MedTech', () => {
@@ -19,7 +20,8 @@ test('MedTech and LifeTech have distinct names, imagery, origins, and preference
     const html = renderSiteBrand(template, brand)
     assert.ok(html.includes(`<title>${brand.name}</title>`))
     for (const key of ['origin', 'logo', 'hero', 'social', 'themeKey']) {
-      assert.ok(html.includes(brand[key]), `${id}: missing ${key}`)
+      const expected = id === 'lifetech' && key === 'hero' ? appearanceFallback.brandThemes.themes[0].imagery.background : brand[key]
+      assert.ok(html.includes(expected), `${id}: missing ${key}`)
     }
     const other = siteBrand(id === 'medtech' ? 'lifetech' : 'medtech')
     for (const key of ['origin', 'logo', 'hero', 'social', 'themeKey']) {

@@ -1,0 +1,78 @@
+{
+  "nameBannerUrl": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/1c3ae2e50334aecec17a0e17a21b2080d487acb2dc4a412f01104a38e66d8033",
+  "brandThemes": {
+    "defaultTheme": "postcapitalist-corporate",
+    "themes": [
+      {
+        "id": "postcapitalist-corporate",
+        "name": "Postcapitalist Corporate",
+        "light": {
+          "primary": "#155E59",
+          "on-primary": "#F4F5F0",
+          "surface": "#F4F5F0",
+          "panel": "#FFFFFF",
+          "panel-2": "#E5F2EE",
+          "text-primary": "#061A26",
+          "text-secondary": "#465D65",
+          "border": "#60817C",
+          "brand-gold": "#D4AF37",
+          "brand-teal": "#155E59",
+          "brand-offwhite": "#F4F5F0"
+        },
+        "dark": {
+          "primary": "#7BDDCF",
+          "on-primary": "#061A26",
+          "surface": "#061A26",
+          "panel": "#0B2733",
+          "panel-2": "#123C43",
+          "text-primary": "#F4F5F0",
+          "text-secondary": "#AFC9CE",
+          "border": "#60817C",
+          "brand-gold": "#D4AF37",
+          "brand-teal": "#155E59",
+          "brand-offwhite": "#F4F5F0"
+        },
+        "imagery": {
+          "icon": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/09ab44d949d0c34e95339ca11856c22abed35fcac01b7df0aa79a90ca7d78cc0",
+          "avatar": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/eddbe770eb33bdf1ffee8d46aa0211cf125ee536dff3b10b71a984eea0fd5203",
+          "background": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/d10c421871cb912c9ba1376e15ccb2eac8125242d09f725267c6e3a137560471"
+        }
+      },
+      {
+        "id": "ankhtech",
+        "name": "AnkhTech",
+        "light": {
+          "primary": "#155E59",
+          "on-primary": "#F4F5F0",
+          "surface": "#F4F5F0",
+          "panel": "#F4F5F0",
+          "panel-2": "#E0EEEA",
+          "text-primary": "#061A26",
+          "text-secondary": "#465D65",
+          "border": "#60817C",
+          "brand-gold": "#D4AF37",
+          "brand-teal": "#155E59",
+          "brand-offwhite": "#F4F5F0"
+        },
+        "dark": {
+          "primary": "#D4AF37",
+          "on-primary": "#061A26",
+          "surface": "#061A26",
+          "panel": "#0B2733",
+          "panel-2": "#155E59",
+          "text-primary": "#F4F5F0",
+          "text-secondary": "#AFC9CE",
+          "border": "#60817C",
+          "brand-gold": "#D4AF37",
+          "brand-teal": "#155E59",
+          "brand-offwhite": "#F4F5F0"
+        },
+        "imagery": {
+          "icon": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/96d27240a7a7ac8c56e329ecd8d4e299b66bcb37a5a738b7a2bc8f8d291994a1",
+          "avatar": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/aff7a7541df57b57a680f54f7ca40be57c37fd5e0b67c00f5b4ce2ba11f75184",
+          "background": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/0d1fc4e459ddb30f5146e82d4e086da70252466d5d8b5e68e4d1f06dd27121e6"
+        }
+      }
+    ]
+  }
+}

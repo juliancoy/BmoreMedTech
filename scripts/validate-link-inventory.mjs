@@ -12,7 +12,7 @@ const workspaces = [
     root,
     strict: true,
     extensions: new Set(['.html']),
-    ignoredDirs: new Set(['.git', '.local', '.wrangler', 'dist', 'dist-lifetech', 'node_modules', '__pycache__']),
+    ignoredDirs: new Set(['.git', '.local', '.wrangler', 'artifacts', 'dist', 'dist-lifetech', 'node_modules', '__pycache__']),
   },
   {
     id: 'orgportal',

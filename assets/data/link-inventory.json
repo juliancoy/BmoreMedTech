@@ -53,6 +53,8 @@
     "orgportal:public/standalone.html",
     "orgportal:public/website-observatory/index.html",
     "orgportal:src/App.tsx",
+    "orgportal:src/config/organizationThemes.ts",
+    "orgportal:src/data/publicOrganization/events.test.ts",
     "orgportal:src/features/ecosystem/CompanyRetentionSummary.tsx",
     "orgportal:src/features/ecosystem/ecosystem-view.js",
     "orgportal:src/features/ecosystem/markup.html",
@@ -61,9 +63,11 @@
     "orgportal:src/features/ecosystem/network-visibility.js",
     "orgportal:src/features/ecosystem/network-webgpu.js",
     "orgportal:src/infrastructure/platform/inAppBrowser.test.ts",
+    "orgportal:src/ui/components/EventApplyButtons.tsx",
     "orgportal:src/ui/components/EventCompanyVotes.tsx",
     "orgportal:src/ui/components/EventDetailsEditor.tsx",
     "orgportal:src/ui/components/FloatingSocialDock.tsx",
+    "orgportal:src/ui/components/GuestPresentationForm.tsx",
     "orgportal:src/ui/components/NeoNatalFocus.tsx",
     "orgportal:src/ui/components/OrganizationBrandGuide.tsx",
     "orgportal:src/ui/components/OrganizationFollowButton.tsx",
@@ -166,6 +170,8 @@
     "pidp:migrate_encrypt_identity_data.py",
     "pidp:portal_sso.py",
     "pidp:scripts/migrate_shared_credentials.py",
+    "pidp:serverless/browser/fixtures/chatgpt-plugin.html",
+    "pidp:serverless/browser/mcp-admin-reconnect.mjs",
     "pidp:serverless/identity-lab/server.mjs",
     "pidp:serverless/src/accountLinkBrowser.ts",
     "pidp:serverless/src/consentPage.ts",
@@ -183,11 +189,12 @@
     "pidp:serverless/test/profile-self-service.test.mjs",
     "pidp:serverless/test/shared-credentials-d1.test.mjs",
     "pidp:serverless/test/shared-credentials-migration.test.mjs",
+    "pidp:tests/test_consent_page.py",
     "pidp:tests/test_identity_urls.py",
     "pidp:tests/test_local_login.py",
     "pidp:tests/test_portal_sso.py"
   ],
-  "linkCount": 5245,
+  "linkCount": 5238,
   "links": [
     {
       "source": "medtech:about.html",
@@ -50928,17 +50935,6 @@
       "source": "orgportal:src/ui/shell/Header.tsx",
       "sourcePath": "src/ui/shell/Header.tsx",
       "sourceRepo": "orgportal",
-      "href": "/admin/ubi-settings",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "admin/ubi-settings.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/shell/Header.tsx",
-      "sourcePath": "src/ui/shell/Header.tsx",
-      "sourceRepo": "orgportal",
       "href": "/android/install",
       "textRole": "",
       "kind": "internal-page",
@@ -51008,17 +51004,6 @@
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "departments.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/shell/Header.tsx",
-      "sourcePath": "src/ui/shell/Header.tsx",
-      "sourceRepo": "orgportal",
-      "href": "/dev-tools",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "dev-tools.html",
       "fragment": ""
     },
     {
@@ -51191,17 +51176,6 @@
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "support.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/shell/Header.tsx",
-      "sourcePath": "src/ui/shell/Header.tsx",
-      "sourceRepo": "orgportal",
-      "href": "/test-status",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "test-status.html",
       "fragment": ""
     },
     {
@@ -52344,28 +52318,6 @@
       "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
       "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
       "sourceRepo": "orgportal",
-      "href": "?tab=branding",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "index.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "?tab=personnel",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "index.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
       "href": "/",
       "textRole": "",
       "kind": "internal-page",
@@ -52388,16 +52340,6 @@
       "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
       "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
       "sourceRepo": "orgportal",
-      "href": "/org-events",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/org-events"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
       "href": "/orgs/code-collective/five-over-five",
       "textRole": "",
       "kind": "internal-page",
@@ -52415,94 +52357,6 @@
       "targetRepo": "orgportal",
       "target": "orgs/events.html",
       "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-domain",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-domain"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-events",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-events"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-events",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-events"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-mailing-list",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-mailing-list"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-member-feedback",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-member-feedback"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-overview",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-overview"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-page-editor",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-page-editor"
-    },
-    {
-      "source": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "sourcePath": "src/ui/views/public/PublicAdminPage.tsx",
-      "sourceRepo": "orgportal",
-      "href": "#organization-support",
-      "textRole": "",
-      "kind": "same-page-anchor",
-      "targetRepo": "orgportal",
-      "target": "orgportal:src/ui/views/public/PublicAdminPage.tsx",
-      "fragment": "organization-support"
     },
     {
       "source": "orgportal:src/ui/views/public/PublicContactPage.tsx",
@@ -52945,6 +52799,17 @@
       "fragment": ""
     },
     {
+      "source": "orgportal:src/ui/views/users/UserSettingsPage.tsx",
+      "sourcePath": "src/ui/views/users/UserSettingsPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/settings/notifications",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "settings/notifications.html",
+      "fragment": ""
+    },
+    {
       "source": "pidp:account_link_browser.py",
       "sourcePath": "account_link_browser.py",
       "sourceRepo": "pidp",
@@ -52997,6 +52862,17 @@
       "kind": "internal-page",
       "targetRepo": "pidp",
       "target": "auth/account-links/switch.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:consent_page.py",
+      "sourcePath": "consent_page.py",
+      "sourceRepo": "pidp",
+      "href": "{html.escape(admin_login)}",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "%7Bhtml.escape(admin_login)%7D.html",
       "fragment": ""
     },
     {
@@ -53341,6 +53217,28 @@
       "fragment": ""
     },
     {
+      "source": "pidp:serverless/browser/fixtures/chatgpt-plugin.html",
+      "sourcePath": "serverless/browser/fixtures/chatgpt-plugin.html",
+      "sourceRepo": "pidp",
+      "href": "__AUTHORIZE__",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "__AUTHORIZE__.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:serverless/browser/mcp-admin-reconnect.mjs",
+      "sourcePath": "serverless/browser/mcp-admin-reconnect.mjs",
+      "sourceRepo": "pidp",
+      "href": "'+next.replaceAll('&','&').replaceAll('",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "'+next.replaceAll('&','&').replaceAll('.html",
+      "fragment": ""
+    },
+    {
       "source": "pidp:serverless/identity-lab/server.mjs",
       "sourcePath": "serverless/identity-lab/server.mjs",
       "sourceRepo": "pidp",
@@ -53371,6 +53269,17 @@
       "kind": "internal-page",
       "targetRepo": "pidp",
       "target": "$%7Besc(login)%7D.html",
+      "fragment": ""
+    },
+    {
+      "source": "pidp:serverless/src/consentPage.ts",
+      "sourcePath": "serverless/src/consentPage.ts",
+      "sourceRepo": "pidp",
+      "href": "${escape(adminLogin.pathname + adminLogin.search)}",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "$%7Bescape(adminLogin.pathname%20+%20adminLogin.search)%7D.html",
       "fragment": ""
     },
     {
@@ -53615,6 +53524,17 @@
       "fragment": ""
     },
     {
+      "source": "pidp:serverless/test/mcp-authorization.test.mjs",
+      "sourcePath": "serverless/test/mcp-authorization.test.mjs",
+      "sourceRepo": "pidp",
+      "href": "([^",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "([%5E.html",
+      "fragment": ""
+    },
+    {
       "source": "pidp:serverless/test/portal-sso.test.mjs",
       "sourcePath": "serverless/test/portal-sso.test.mjs",
       "sourceRepo": "pidp",
@@ -53654,6 +53574,17 @@
       "kind": "external-handoff",
       "targetRepo": "orgportal",
       "origin": "https://orgportal.cc"
+    },
+    {
+      "source": "pidp:tests/test_consent_page.py",
+      "sourcePath": "tests/test_consent_page.py",
+      "sourceRepo": "pidp",
+      "href": "([^",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "pidp",
+      "target": "([%5E.html",
+      "fragment": ""
     },
     {
       "source": "pidp:tests/test_identity_urls.py",

@@ -11,15 +11,16 @@ assets.set(appearanceFallback.nameBannerUrl,'../../OrgPortal/web/public/images/o
 const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/google-chrome'})
 try {
  const context=await browser.newContext({colorScheme:'light',ignoreHTTPSErrors:true})
- await context.route('**/*',async route=>{
+ async function fixtures(context,viewer='guest'){await context.route('**/*',async route=>{
   const url=route.request().url(),path=new URL(url).pathname
   if(assets.has(url))return route.fulfill({contentType:'image/webp',body:await readFile(new URL(assets.get(url),import.meta.url))})
   if(!url.startsWith(base))return route.abort()
   if(path.endsWith('/branding'))return route.fulfill({json:{portal:{feature_config:appearanceFallback}}})
-  if(path.startsWith('/pidp/'))return route.fulfill({status:401,json:{}})
+  if(path.startsWith('/pidp/'))return route.fulfill(viewer==='guest'?{status:401,json:{}}:{json:path.endsWith('/session-token')?{access_token:'local-synthetic-'+viewer}:{id:'fixture-'+viewer,email:viewer+'@example.invalid',full_name:'Fixture '+viewer}})
   if(path.startsWith('/api/'))return route.fulfill({json:path.includes('/media/carousels/')?{images:[],hidden:[],tags:[]}:[]})
   return route.continue()
- })
+ })}
+ await fixtures(context)
  const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(String(error)))
  await page.goto(base+'/')
  const root=page.locator('html'),layout=page.getByLabel('Branding layout',{exact:true})
@@ -54,5 +55,24 @@ try {
  }
  expect(errors).toEqual([])
  await context.close()
- console.log('PASS: both layouts × light/dark × mobile/desktop, independent preferences, reload, imagery and System media changes')
+ for(const viewer of ['guest','attendee','volunteer','member','administrator']) {
+  const account=await browser.newContext({colorScheme:'light',ignoreHTTPSErrors:true})
+  await fixtures(account,viewer)
+  await account.addInitScript(()=>localStorage.setItem('orgportal.organizationView.lifetech','organizers'))
+  const home=await account.newPage();let membershipRequests=0
+  home.on('request',request=>{if(new URL(request.url()).pathname.endsWith('/membership'))membershipRequests++})
+  await home.goto(base+'/?view=organizers')
+  if(viewer!=='guest')await expect(home.locator('.account-avatar')).toBeVisible()
+  await expect(home).toHaveURL(base+'/?view=organizers')
+  await expect(home.locator('#hero-title')).toHaveText('Baltimore’s health, medicine & biotech community.')
+  await expect(home.locator('.organization-view-indicator,.organization-view-switcher')).toHaveCount(0)
+  await expect(home.getByLabel('Organization view',{exact:true})).toHaveCount(0)
+  if(viewer!=='guest') {
+   await home.locator('.account-menu summary').click()
+   await expect(home.getByRole('link',{name:'Organization workspace',exact:true})).toHaveAttribute('href','/orgs/lifetech/dashboard')
+  }
+  expect(membershipRequests).toBe(0)
+  await account.close()
+ }
+ console.log('PASS: both layouts × light/dark × mobile/desktop, independent preferences, reload, imagery, System media changes and identical landing for five account groups')
 }finally{await browser.close()}

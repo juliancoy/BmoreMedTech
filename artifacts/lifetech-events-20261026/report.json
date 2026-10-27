@@ -1,0 +1,42 @@
+[
+  {
+    "name": "lifetech-upcoming-events-first",
+    "theme": "light",
+    "device": "desktop",
+    "file": "lifetech-upcoming-events-first-desktop-light.png",
+    "finalUrl": "http://127.0.0.1:37113/",
+    "brokenImages": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "name": "lifetech-upcoming-events-first",
+    "theme": "light",
+    "device": "mobile",
+    "file": "lifetech-upcoming-events-first-mobile-light.png",
+    "finalUrl": "http://127.0.0.1:37113/",
+    "brokenImages": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "name": "lifetech-upcoming-events-first",
+    "theme": "dark",
+    "device": "desktop",
+    "file": "lifetech-upcoming-events-first-desktop-dark.png",
+    "finalUrl": "http://127.0.0.1:37113/",
+    "brokenImages": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "name": "lifetech-upcoming-events-first",
+    "theme": "dark",
+    "device": "mobile",
+    "file": "lifetech-upcoming-events-first-mobile-dark.png",
+    "finalUrl": "http://127.0.0.1:37113/",
+    "brokenImages": [],
+    "overflow": false,
+    "errors": []
+  }
+]

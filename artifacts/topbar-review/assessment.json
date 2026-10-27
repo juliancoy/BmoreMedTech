@@ -1,0 +1,31 @@
+{
+  "modes": [
+    {
+      "layout": "postcapitalist-corporate",
+      "mode": "light",
+      "assessment": "The off-white canvas, teal typography and three-bar wordmark create the clearest institutional hierarchy. Restrained card corners and the gold rule give it a consistent identity. The large hero wordmark makes this layout slightly taller than AnkhTech, but its actions stay clear on mobile."
+    },
+    {
+      "layout": "postcapitalist-corporate",
+      "mode": "dark",
+      "assessment": "The same geometry stays recognizable in deep ink. Teal actions and off-white text separate controls from the artwork. The light wordmark tile is deliberately high contrast; it is visually prominent without covering the headline."
+    },
+    {
+      "layout": "ankhtech",
+      "mode": "light",
+      "assessment": "The ankh artwork and traditional wordmark feel more expressive than Corporate. The light overlay protects reading space and softens the gold detail. It remains legible, although the illustration competes more strongly with the copy than the geometric Corporate background."
+    },
+    {
+      "layout": "ankhtech",
+      "mode": "dark",
+      "assessment": "Gold actions and the ankh artwork work naturally against deep teal. Text occupies a clear, darker area of the hero while the illustration sits to the right on desktop. On mobile, the overlay keeps artwork behind the text subdued."
+    }
+  ],
+  "viewports": [
+    320,
+    390,
+    768,
+    1024,
+    1440
+  ]
+}

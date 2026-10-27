@@ -1,0 +1,63 @@
+{
+  "commit": "08bf585",
+  "previousVersion": "9e7263e8-a398-4747-8653-cdd774e56c29",
+  "version": "e6b5cf96-a9d1-427a-bbbc-da0acd777b74",
+  "checks": [
+    {
+      "layout": "postcapitalist-corporate",
+      "mode": "light",
+      "width": 1440,
+      "overflow": false,
+      "adminActionHidden": true
+    },
+    {
+      "layout": "postcapitalist-corporate",
+      "mode": "dark",
+      "width": 1440,
+      "overflow": false,
+      "adminActionHidden": true
+    },
+    {
+      "layout": "ankhtech",
+      "mode": "light",
+      "width": 1440,
+      "overflow": false,
+      "adminActionHidden": true
+    },
+    {
+      "layout": "ankhtech",
+      "mode": "dark",
+      "width": 1440,
+      "overflow": false,
+      "adminActionHidden": true
+    },
+    {
+      "layout": "postcapitalist-corporate",
+      "mode": "light",
+      "width": 390,
+      "overflow": false,
+      "adminActionHidden": true
+    },
+    {
+      "layout": "postcapitalist-corporate",
+      "mode": "dark",
+      "width": 390,
+      "overflow": false,
+      "adminActionHidden": true
+    },
+    {
+      "layout": "ankhtech",
+      "mode": "light",
+      "width": 390,
+      "overflow": false,
+      "adminActionHidden": true
+    },
+    {
+      "layout": "ankhtech",
+      "mode": "dark",
+      "width": 390,
+      "overflow": false,
+      "adminActionHidden": true
+    }
+  ]
+}

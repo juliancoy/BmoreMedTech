@@ -1,0 +1,27 @@
+{
+  "commit": "d84bc51",
+  "previousVersion": "974aee4d-5b3c-47a5-b47a-05454675df7b",
+  "version": "978b9aff-abd2-46d7-9515-37571536913e",
+  "liveChecks": [
+    {
+      "mode": "light",
+      "layout": "ankhtech",
+      "surface": "#F4F5F0",
+      "hero": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/0d1fc4e459ddb30f5146e82d4e086da70252466d5d8b5e68e4d1f06dd27121e6",
+      "overflow": false,
+      "scripts": [
+        "https://lifetech.fyi/assets/main-BcTz2C40.js"
+      ]
+    },
+    {
+      "mode": "dark",
+      "layout": "ankhtech",
+      "surface": "#061A26",
+      "hero": "https://lifetech.fyi/api/org/api/network/orgs/public/lifetech/media/0d1fc4e459ddb30f5146e82d4e086da70252466d5d8b5e68e4d1f06dd27121e6",
+      "overflow": false,
+      "scripts": [
+        "https://lifetech.fyi/assets/main-BcTz2C40.js"
+      ]
+    }
+  ]
+}

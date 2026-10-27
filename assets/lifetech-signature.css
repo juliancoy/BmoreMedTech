@@ -1,0 +1,11 @@
+.signature-wordmark { display: none; }
+:root[data-signature] .signature-wordmark { display: block; background: #155E59; padding: 10px 16px; border-radius: 4px; box-sizing: border-box; object-fit: contain; }
+:root[data-signature] .brand .name-banner, :root[data-signature] .footer-brand .name-banner, :root[data-signature] .brand > img { display: none; }
+:root[data-signature] .brand .signature-wordmark { width: 180px; height: auto; }
+:root[data-signature] .footer-brand .signature-wordmark { width: 220px; height: auto; }
+:root[data-signature] .hero-copy > .signature-wordmark { width: min(100%, 460px); height: auto; margin-bottom: 28px; }
+:root[data-signature] .hero-copy { border-radius: 4px; border-top: 3px solid #D4AF37; }
+:root[data-signature] .technology-card { border-radius: 4px; box-shadow: none; }
+:root[data-signature] .site-header { border-bottom: 2px solid #155E59; }
+.theme-control .signature-toggle { width: auto; padding-inline: 10px; font: inherit; font-size: 12px; }
+@media (max-width: 720px) { :root[data-signature] .brand .signature-wordmark { width: 145px; } }

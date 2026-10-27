@@ -114,7 +114,7 @@ async function showLifeTechEvents() {
     }).join('')
     nextEventEl.hidden = false
     window.dispatchEvent(new Event('bmoremedtech:progressive-images'))
-    nextEventEl.querySelectorAll('img').forEach(image => image.addEventListener('error', event => event.currentTarget.remove(), { once: true }))
+    nextEventEl.querySelectorAll('img').forEach(image => image.addEventListener('error', () => { const card = image.closest('.hero-event-card'); image.remove(); card?.classList.remove('has-image') }, { once: true }))
   } catch (error) {
     console.warn('LifeTech events could not be loaded for the hero.', error)
     if (nextEventEl) {

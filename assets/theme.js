@@ -48,7 +48,7 @@ function applyThemeMode(mode) {
 }
 
 function setupThemeControls() {
-  if (document.documentElement.dataset.siteBrand === 'lifetech') { setupLifeTechAppearance(); return; }
+  if (document.documentElement.dataset.siteBrand === 'lifetech') { setupLifeTechAppearance({ getAccount: getSiteAccount }); return; }
   const controls = [...document.querySelectorAll('.theme-option[data-theme-mode]')];
   const state = applyThemeMode(readThemeMode());
 
@@ -141,6 +141,7 @@ function organizeNavigation() {
   function group(label, children) {
     const details = document.createElement('details')
     details.className = 'nav-group'
+    details.dataset.navSection = label === 'About Us' ? 'about' : label === 'Events & calendar' ? 'events' : 'research'
     const summary = document.createElement('summary')
     summary.textContent = label
     if (children.some((link) => link.hasAttribute('aria-current'))) details.classList.add('has-current')
@@ -154,7 +155,12 @@ function organizeNavigation() {
     groups.push(details)
     return details
   }
-  nav.prepend(links[0], links[1], group('Research', [...links.slice(3, 6), ...links.slice(7, 9)]), group('Community', [links[2], links[6], links[9], links[11]]), links[10])
+  links[10].textContent = 'About LifeTech'
+  links[5].textContent = 'Branding guide'
+  const about = group('About Us', [links[10], links[6], links[5], links[11]])
+  const appearance = nav.querySelector('.appearance-control')
+  if (appearance) about.querySelector('.nav-group-links').append(appearance)
+  nav.prepend(group('Events & calendar', [links[0], links[1], links[2], links[9]]), group('Research', [links[3], links[4], links[7], links[8]]), about)
   document.addEventListener('click', (event) => {
     groups.forEach((group) => { if (!group.contains(event.target) || event.target.closest('a')) group.open = false })
   })

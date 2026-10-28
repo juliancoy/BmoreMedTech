@@ -5,7 +5,8 @@ export function setupLifeTechAppearance({getAccount = () => ({token:null})} = {}
  const root = document.documentElement
  if(root.dataset.appearanceReady === 'true')return
  root.dataset.appearanceReady='true'
- let config = appearanceFallback
+ let config = appearanceFallback, serverReady=false
+ try { const initial=JSON.parse(document.getElementById('lifetech-appearance-config')?.textContent||'null');if(parseOrganizationThemes(initial?.brandThemes)){config=normalizeAppearanceConfig(initial);serverReady=true;root.dataset.appearanceSource='portal'} } catch { /* Use the shipped snapshot if unavailable. */ }
  let layout = root.dataset.brandLayout || config.brandThemes.defaultTheme
  const media = window.matchMedia('(prefers-color-scheme: dark)')
  const read = key => { try { return localStorage.getItem(key) } catch { return null } }
@@ -111,13 +112,14 @@ export function setupLifeTechAppearance({getAccount = () => ({token:null})} = {}
   else if(event.key===modeStorageKey(layout))apply()
  })
  // The public projection contains only approved organization presentation settings.
- fetch('/api/org/api/network/orgs/public/lifetech/branding',{cache:'no-store',signal:AbortSignal.timeout(8000)})
+ if(!serverReady)fetch('/api/org/api/network/orgs/public/lifetech/branding',{cache:'no-store',signal:AbortSignal.timeout(8000)})
   .then(async response=>{if(!response.ok)return;const data=await response.json();const next=data.portal?.feature_config;if(!next)return
    // Validate the whole configuration before it can reach generated CSS or image URLs.
    if(!parseOrganizationThemes(next.brandThemes))return
    config=normalizeAppearanceConfig({brandThemes:next.brandThemes,nameBannerUrl:typeof next.nameBannerUrl==='string'&&/^https:\/\//.test(next.nameBannerUrl)?next.nameBannerUrl:appearanceFallback.nameBannerUrl})
    root.dataset.appearanceSource='portal'
    layout=read(LAYOUT_STORAGE_KEY)||config.brandThemes.defaultTheme;updateOptions();apply()
-  }).catch(()=>{/* The shipped snapshot keeps the public site usable offline. */})
+  }).catch(()=>{/* The shipped snapshot keeps the public site usable offline. */}).finally(()=>{delete root.dataset.appearancePending})
+ if(serverReady)delete root.dataset.appearancePending
  window.__bmoreLifeTechTheme={storageKey:modeStorageKey(layout),readThemeMode:readMode,applyThemeMode:mode=>{write(modeStorageKey(layout),mode);return apply(mode)}}
 }

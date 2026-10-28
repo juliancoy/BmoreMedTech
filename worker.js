@@ -1,3 +1,4 @@
+import {renderHomeBranding} from './lib/home-branding.js'
 import { brandAssetResponse, discoveryResponse, renderHomeEvent } from './lib/public-discovery.js'
 import { withEventSourcePreview } from '../OrgPortal/web/eventSourcePreview.mjs'
 import { mobileHeaderCss, eventHeadGuard } from './lib/portal-display-compat.js'
@@ -455,7 +456,10 @@ const productionWorker = {
     }
 
     let response = await env.ASSETS.fetch(request)
-    if (env.SITE_BRAND === 'lifetech' && ['/', '/index.html'].includes(url.pathname) && request.method === 'GET') response = await renderHomeEvent(response, env, url)
+    if (env.SITE_BRAND === 'lifetech' && ['/', '/index.html'].includes(url.pathname) && request.method === 'GET') {
+      response = await renderHomeBranding(response, env, url)
+      response = await renderHomeEvent(response, env, url)
+    }
     if (response.status !== 404) return applyStaticHeaders(request, url.pathname, response)
 
 

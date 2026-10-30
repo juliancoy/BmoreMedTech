@@ -1,3 +1,4 @@
+import { setupLifeTechSocialLinks } from './lifetech-social.js';
 import { setupLifeTechAppearance } from './lifetech-appearance.js';
 import { createElement, MessageCircle, UserRound } from 'lucide';
 
@@ -390,3 +391,5 @@ if (document.querySelector('.taxonomy-page')) {
 }
 
 import './desktop-migration.js'
+
+setupLifeTechSocialLinks();

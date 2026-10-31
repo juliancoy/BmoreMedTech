@@ -45,10 +45,6 @@
     "medtech:need-availability-distortions.html",
     "medtech:start.html",
     "medtech:taxonomy.html",
-    "orgportal:.tmp/visitor-statistics-vite/deps/chunk-D7VTPM44.js",
-    "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
-    "orgportal:.tmp/visitor-statistics-vite/deps/react-markdown.js",
-    "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
     "orgportal:index.html",
     "orgportal:public/standalone.html",
     "orgportal:public/website-observatory/index.html",
@@ -63,7 +59,6 @@
     "orgportal:src/features/ecosystem/network-visibility.js",
     "orgportal:src/features/ecosystem/network-webgpu.js",
     "orgportal:src/infrastructure/platform/inAppBrowser.test.ts",
-    "orgportal:src/ui/components/EventApplyButtons.tsx",
     "orgportal:src/ui/components/EventCompanyVotes.tsx",
     "orgportal:src/ui/components/EventDetailsEditor.tsx",
     "orgportal:src/ui/components/FloatingSocialDock.tsx",
@@ -75,6 +70,7 @@
     "orgportal:src/ui/components/OrganizationRegistrationForm.tsx",
     "orgportal:src/ui/components/OrganizationTools.tsx",
     "orgportal:src/ui/components/PeerOrganizations.tsx",
+    "orgportal:src/ui/components/PendingUploadGuard.tsx",
     "orgportal:src/ui/components/RouteErrorPage.tsx",
     "orgportal:src/ui/components/SpecialtyResourcesPanel.tsx",
     "orgportal:src/ui/components/governance/GovernanceNav.tsx",
@@ -127,6 +123,7 @@
     "orgportal:src/ui/views/chat/OrgChatPage.tsx",
     "orgportal:src/ui/views/email/EmailCampaignsPage.tsx",
     "orgportal:src/ui/views/email/GroupMailingList.tsx",
+    "orgportal:src/ui/views/email/NewsletterSignupPage.tsx",
     "orgportal:src/ui/views/governance/DraftMergeWorkspace.tsx",
     "orgportal:src/ui/views/governance/GovernanceDocumentPage.tsx",
     "orgportal:src/ui/views/governance/MotionListPage.tsx",
@@ -148,6 +145,7 @@
     "orgportal:src/ui/views/public/PublicContactPage.tsx",
     "orgportal:src/ui/views/public/PublicEventPage.tsx",
     "orgportal:src/ui/views/public/PublicEventsPage.tsx",
+    "orgportal:src/ui/views/support/SupportDrafts.tsx",
     "orgportal:src/ui/views/support/SupportPage.tsx",
     "orgportal:src/ui/views/timebank/TimebankClaims.tsx",
     "orgportal:src/ui/views/timebank/TimebankNotifications.tsx",
@@ -194,7 +192,7 @@
     "pidp:tests/test_local_login.py",
     "pidp:tests/test_portal_sso.py"
   ],
-  "linkCount": 5238,
+  "linkCount": 5204,
   "links": [
     {
       "source": "medtech:about.html",
@@ -48800,266 +48798,11 @@
       "source": "medtech:index.html",
       "sourcePath": "index.html",
       "sourceRepo": "medtech",
-      "href": "/about.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "about.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/about.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "about.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/about.html#regional-glossary",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "about.html",
-      "fragment": "regional-glossary"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/about.html#ways-in",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "about.html",
-      "fragment": "ways-in"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/availability",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/availability"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/branding",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/branding"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/calendar.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "calendar.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/calendar.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "calendar.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/datasets.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "datasets.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/ecosystem",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "ecosystem/index.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/ecosystem",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "ecosystem/index.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/ecosystem/network",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/ecosystem/network"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/ecosystem/network",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/ecosystem/network"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/governance/roberts",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/governance/roberts"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/map.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "map.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/map.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "map.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
       "href": "/org-events",
       "textRole": "",
       "kind": "portal-route",
       "targetRepo": "orgportal",
       "target": "/org-events"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/org-events",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/org-events"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/org-events",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/org-events"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/org-events",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/org-events"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/people",
-      "textRole": "",
-      "kind": "portal-route",
-      "targetRepo": "orgportal",
-      "target": "/people"
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/start.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "start.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/start.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "start.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/taxonomy.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "taxonomy.html",
-      "fragment": ""
-    },
-    {
-      "source": "medtech:index.html",
-      "sourcePath": "index.html",
-      "sourceRepo": "medtech",
-      "href": "/taxonomy.html",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "medtech",
-      "target": "taxonomy.html",
-      "fragment": ""
     },
     {
       "source": "medtech:index.html",
@@ -50171,127 +49914,6 @@
       "kind": "external-handoff",
       "targetRepo": "",
       "origin": "https://github.com"
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourceRepo": "orgportal",
-      "href": "' + (null === props.href ? ",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "'%20+%20(null%20===%20props.href%20.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourceRepo": "orgportal",
-      "href": "' + escapeSelectorAttributeValueInsideDoubleQuotes(href) + '",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "'%20+%20escapeSelectorAttributeValueInsideDoubleQuotes(href)%20+%20'.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourceRepo": "orgportal",
-      "href": "' + limitedEscapedHref + '",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "'%20+%20limitedEscapedHref%20+%20'.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourceRepo": "orgportal",
-      "href": "' + props.href + '",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "'%20+%20props.href%20+%20'.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourceRepo": "orgportal",
-      "href": "%s",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "%s.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
-      "sourceRepo": "orgportal",
-      "href": "some unique resource identifier",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "some%20unique%20resource%20identifier.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-markdown.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-markdown.js",
-      "sourceRepo": "orgportal",
-      "href": "-",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "-.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-router-dom.js",
-      "sourceRepo": "orgportal",
-      "href": "...",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "....html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-router-dom.js",
-      "sourceRepo": "orgportal",
-      "href": "POP",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "POP.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-router-dom.js",
-      "sourceRepo": "orgportal",
-      "href": "PUSH",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "PUSH.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
-      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-router-dom.js",
-      "sourceRepo": "orgportal",
-      "href": "REPLACE",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "REPLACE.html",
-      "fragment": ""
     },
     {
       "source": "orgportal:public/standalone.html",
@@ -51621,6 +51243,17 @@
       "origin": "null"
     },
     {
+      "source": "orgportal:src/ui/views/email/NewsletterSignupPage.tsx",
+      "sourcePath": "src/ui/views/email/NewsletterSignupPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/api/org/privacy",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "api/org/privacy.html",
+      "fragment": ""
+    },
+    {
       "source": "orgportal:src/ui/views/governance/DraftMergeWorkspace.tsx",
       "sourcePath": "src/ui/views/governance/DraftMergeWorkspace.tsx",
       "sourceRepo": "orgportal",
@@ -52296,17 +51929,6 @@
       "source": "orgportal:src/ui/views/public/EventRegistration.tsx",
       "sourcePath": "src/ui/views/public/EventRegistration.tsx",
       "sourceRepo": "orgportal",
-      "href": "/calendar/integrations",
-      "textRole": "",
-      "kind": "internal-page",
-      "targetRepo": "orgportal",
-      "target": "calendar/integrations.html",
-      "fragment": ""
-    },
-    {
-      "source": "orgportal:src/ui/views/public/EventRegistration.tsx",
-      "sourcePath": "src/ui/views/public/EventRegistration.tsx",
-      "sourceRepo": "orgportal",
       "href": "/settings/notifications",
       "textRole": "",
       "kind": "internal-page",
@@ -52548,6 +52170,17 @@
       "kind": "internal-page",
       "targetRepo": "orgportal",
       "target": "ecosystem/network/relationships.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/support/SupportDrafts.tsx",
+      "sourcePath": "src/ui/views/support/SupportDrafts.tsx",
+      "sourceRepo": "orgportal",
+      "href": "$1",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "$1.html",
       "fragment": ""
     },
     {
@@ -53499,7 +53132,7 @@
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "pidp",
-      "target": "([%5E.html",
+      "target": "([^.html",
       "fragment": ""
     },
     {
@@ -53531,7 +53164,7 @@
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "pidp",
-      "target": "([%5E.html",
+      "target": "([^.html",
       "fragment": ""
     },
     {
@@ -53542,7 +53175,7 @@
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "pidp",
-      "target": "([%5E.html",
+      "target": "([^.html",
       "fragment": ""
     },
     {
@@ -53583,7 +53216,7 @@
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "pidp",
-      "target": "([%5E.html",
+      "target": "([^.html",
       "fragment": ""
     },
     {

@@ -109,7 +109,7 @@ function upgradeProgressiveImages() {
 function organizeNavigation() {
   const header = document.querySelector('.site-header')
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
-  if (!nav) return
+  if (!nav || document.querySelector('[data-organization-summary]')) return
   const destinations = [
     ['/org-events', 'Events'],
     ['/calendar', 'Calendar'],

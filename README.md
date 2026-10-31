@@ -1,7 +1,11 @@
 # LifeTech
 
-LifeTech's public site contains medical datasets, taxonomy and strategy views,
-and medical event discovery. Organization services in the live deployment are
+LifeTech’s homepage is a thin branded entry to its OrgPortal organization page.
+Its public introduction comes from OrgPortal, and Login returns members to
+`/orgs/lifetech` through the shared portal’s member sign-in. The existing hero
+image, branding, theme controls, event preview and community media stay on the
+landing page. Medical datasets, taxonomy and strategy views remain available
+through their existing URLs. Organization services in the live deployment are
 provided by [OrgPortal](https://github.com/juliancoy/OrgPortal). The active
 local deployment checkout is `../OrgPortal`; this repository no
 longer vendors OrgPortal as a submodule.

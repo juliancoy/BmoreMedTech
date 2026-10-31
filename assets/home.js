@@ -147,3 +147,20 @@ if (revealItems.length && 'IntersectionObserver' in window) {
 }
 
 showLifeTechEvents()
+
+// OrgPortal remains the source of organization copy; the landing page only
+// presents its public introduction alongside the existing LifeTech imagery.
+async function showOrganizationSummary() {
+  const summary = document.querySelector('[data-organization-summary]')
+  if (!summary) return
+  try {
+    const response = await fetch(`/api/org/api/network/orgs/public/${encodeURIComponent(summary.dataset.organizationSummary)}`, { signal: AbortSignal.timeout(5000) })
+    if (!response.ok) return
+    const organization = await response.json()
+    if (typeof organization.description !== 'string' || !organization.description.trim()) return
+    summary.textContent = organization.description.trim().split(/\n\s*\n/).slice(0, 2).join('\n\n')
+    summary.style.whiteSpace = 'pre-line'
+  } catch { /* Keep the branded introduction available when OrgPortal is offline. */ }
+}
+
+void showOrganizationSummary()

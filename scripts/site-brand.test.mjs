@@ -27,8 +27,8 @@ test('MedTech and LifeTech have distinct names, imagery, origins, and preference
     for (const key of ['origin', 'logo', 'hero', 'social', 'themeKey']) {
       assert.ok(!html.includes(other[key]), `${id}: leaked ${key}`)
     }
-    assert.ok(html.includes('href="/users/login"'))
-    assert.ok(html.includes('href="/about.html#ways-in"'))
+    assert.ok(html.includes(id === 'lifetech' ? 'href="/users/login?next=%2Forgs%2Flifetech"' : 'href="/users/login"'))
+    assert.ok(html.includes(id === 'lifetech' ? 'href="/orgs/lifetech"' : 'href="/about.html#ways-in"'))
   }
 })
 
@@ -49,7 +49,7 @@ test('medical technology showcase belongs only to MedTech', () => {
   const lifetech = renderSiteBrand(template, siteBrand('lifetech'))
   assert.ok(medtech.includes('Surgical robotics'))
   assert.ok(medtech.includes('Clinical AI &amp; software'))
-  assert.ok(lifetech.includes('A place to meet Baltimore’s life sciences community.'))
+  assert.ok(lifetech.includes('data-organization-summary="lifetech"'))
   assert.ok(lifetech.includes('Baltimore’s health, medicine &amp; biotech community.'))
   assert.ok(!medtech.includes('{{home.'))
   assert.ok(!lifetech.includes('{{home.'))
@@ -105,4 +105,17 @@ test('homepages keep MCP instructions in the portal rather than the carousel', (
     assert.ok(!html.includes('Copy request for my AI'))
     assert.ok(html.includes('id="drive-carousel"'))
   }
+})
+
+test('LifeTech is a branded entry to the shared organization and member login', () => {
+  const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+  const html = renderSiteBrand(template, siteBrand('lifetech'))
+  const navigation = html.match(/<nav id="primary-nav"[\s\S]*?<\/nav>/)[0]
+  assert.match(navigation, /href="\/orgs\/lifetech"/)
+  assert.match(navigation, /href="\/users\/login\?next=%2Forgs%2Flifetech"/)
+  assert.doesNotMatch(navigation, /href="\/(datasets|taxonomy|map|start|about|ecosystem)/)
+  assert.doesNotMatch(html, /technology-card|id="community-title"|\{\{home\./)
+  assert.match(html, /lifetech-hero\.png/)
+  assert.match(html, /id="drive-carousel"/)
+  assert.match(html, /data-theme-mode="dark"/)
 })

@@ -115,7 +115,7 @@ test('LifeTech is a branded entry to the shared organization and member login', 
   assert.match(navigation, /href="\/users\/login\?next=%2Forgs%2Flifetech"/)
   assert.doesNotMatch(navigation, /href="\/(datasets|taxonomy|map|start|about|ecosystem)/)
   assert.doesNotMatch(html, /technology-card|id="community-title"|\{\{home\./)
-  assert.match(html, /lifetech-hero\.png/)
+  assert.ok(html.includes(appearanceFallback.brandThemes.themes[0].imagery.background))
   assert.match(html, /id="drive-carousel"/)
   assert.match(html, /data-theme-mode="dark"/)
 })

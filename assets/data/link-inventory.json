@@ -45,6 +45,10 @@
     "medtech:need-availability-distortions.html",
     "medtech:start.html",
     "medtech:taxonomy.html",
+    "orgportal:.tmp/visitor-statistics-vite/deps/chunk-D7VTPM44.js",
+    "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
+    "orgportal:.tmp/visitor-statistics-vite/deps/react-markdown.js",
+    "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
     "orgportal:index.html",
     "orgportal:public/standalone.html",
     "orgportal:public/website-observatory/index.html",
@@ -192,7 +196,7 @@
     "pidp:tests/test_local_login.py",
     "pidp:tests/test_portal_sso.py"
   ],
-  "linkCount": 5204,
+  "linkCount": 5215,
   "links": [
     {
       "source": "medtech:about.html",
@@ -49916,6 +49920,127 @@
       "origin": "https://github.com"
     },
     {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourceRepo": "orgportal",
+      "href": "' + (null === props.href ? ",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "'%20+%20(null%20===%20props.href%20.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourceRepo": "orgportal",
+      "href": "' + escapeSelectorAttributeValueInsideDoubleQuotes(href) + '",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "'%20+%20escapeSelectorAttributeValueInsideDoubleQuotes(href)%20+%20'.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourceRepo": "orgportal",
+      "href": "' + limitedEscapedHref + '",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "'%20+%20limitedEscapedHref%20+%20'.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourceRepo": "orgportal",
+      "href": "' + props.href + '",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "'%20+%20props.href%20+%20'.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourceRepo": "orgportal",
+      "href": "%s",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "%s.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-dom_client.js",
+      "sourceRepo": "orgportal",
+      "href": "some unique resource identifier",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "some%20unique%20resource%20identifier.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-markdown.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-markdown.js",
+      "sourceRepo": "orgportal",
+      "href": "-",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "-.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-router-dom.js",
+      "sourceRepo": "orgportal",
+      "href": "...",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "....html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-router-dom.js",
+      "sourceRepo": "orgportal",
+      "href": "POP",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "POP.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-router-dom.js",
+      "sourceRepo": "orgportal",
+      "href": "PUSH",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "PUSH.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:.tmp/visitor-statistics-vite/deps/react-router-dom.js",
+      "sourcePath": ".tmp/visitor-statistics-vite/deps/react-router-dom.js",
+      "sourceRepo": "orgportal",
+      "href": "REPLACE",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "REPLACE.html",
+      "fragment": ""
+    },
+    {
       "source": "orgportal:public/standalone.html",
       "sourcePath": "public/standalone.html",
       "sourceRepo": "orgportal",
@@ -53132,7 +53257,7 @@
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "pidp",
-      "target": "([^.html",
+      "target": "([%5E.html",
       "fragment": ""
     },
     {
@@ -53164,7 +53289,7 @@
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "pidp",
-      "target": "([^.html",
+      "target": "([%5E.html",
       "fragment": ""
     },
     {
@@ -53175,7 +53300,7 @@
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "pidp",
-      "target": "([^.html",
+      "target": "([%5E.html",
       "fragment": ""
     },
     {
@@ -53216,7 +53341,7 @@
       "textRole": "",
       "kind": "internal-page",
       "targetRepo": "pidp",
-      "target": "([^.html",
+      "target": "([%5E.html",
       "fragment": ""
     },
     {

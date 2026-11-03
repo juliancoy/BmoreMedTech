@@ -1,3 +1,4 @@
+import {applyHomeTagline} from '../lib/home-tagline.js'
 import { parseOrganizationThemes } from '../../OrgPortal/shared/organizationThemes.ts'
 import { appearanceFallback, appearanceCss, normalizeAppearanceConfig, resolveAppearance, LAYOUT_STORAGE_KEY, modeStorageKey } from '../lib/lifetech-appearance.js'
 
@@ -113,7 +114,7 @@ export function setupLifeTechAppearance({getAccount = () => ({token:null})} = {}
  })
  // The public projection contains only approved organization presentation settings.
  if(!serverReady)fetch('/api/org/api/network/orgs/public/lifetech/branding',{cache:'no-store',signal:AbortSignal.timeout(8000)})
-  .then(async response=>{if(!response.ok)return;const data=await response.json();const next=data.portal?.feature_config;if(!next)return
+  .then(async response=>{if(!response.ok)return;const data=await response.json();applyHomeTagline(data.portal?.tagline);const next=data.portal?.feature_config;if(!next)return
    // Validate the whole configuration before it can reach generated CSS or image URLs.
    if(!parseOrganizationThemes(next.brandThemes))return
    config=normalizeAppearanceConfig({brandThemes:next.brandThemes,nameBannerUrl:typeof next.nameBannerUrl==='string'&&/^https:\/\//.test(next.nameBannerUrl)?next.nameBannerUrl:appearanceFallback.nameBannerUrl})

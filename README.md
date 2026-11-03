@@ -128,6 +128,13 @@ local theme preference key. The default `npm run build` produces MedTech in `dis
 changes. Deploy MedTech with `npm run deploy`, and LifeTech with
 `npm run deploy:lifetech`. The domain assignments live in `wrangler.jsonc`.
 
+LifeTech's homepage reads its tagline from the public OrgPortal branding response
+on each request, alongside the existing theme and imagery. Marked tagline slots
+are rendered as escaped text before HTML is served; the browser uses the same
+public response if server-side branding is unavailable. Successful dynamic HTML
+is not cached, and saved tagline changes appear on the next page load without a
+new static build. The shared LifeTech brand supplies the offline fallback.
+
 A separate LifeTech repository is unnecessary unless the sites need independent
 code ownership or release workflows. Their deployments are already separate.
 

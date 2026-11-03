@@ -271,7 +271,9 @@ function applyApiHeaders(request, response) {
 function applyStaticHeaders(request, path, response) {
   const headers = new Headers(response.headers)
 
-  if (path.startsWith('/assets/')) {
+  if (/\b(?:no-store|private)\b/i.test(headers.get('cache-control') || '')) {
+    // Dynamic homepage HTML must retain its stricter freshness policy.
+  } else if (path.startsWith('/assets/')) {
     headers.set('cache-control', 'public, max-age=31536000, immutable')
   } else if (path === '/' || path.endsWith('.html')) {
     headers.set('cache-control', 'public, max-age=0, must-revalidate')
@@ -455,8 +457,15 @@ const productionWorker = {
       return portalRootNavigationProxyResponse(request, env, url)
     }
 
-    let response = await env.ASSETS.fetch(request)
-    if (env.SITE_BRAND === 'lifetech' && ['/', '/index.html'].includes(url.pathname) && request.method === 'GET') {
+    const dynamicHome = env.SITE_BRAND === 'lifetech' && ['/', '/index.html'].includes(url.pathname) && request.method === 'GET'
+    let assetRequest = request
+    if (dynamicHome) {
+      const headers = new Headers(request.headers)
+      headers.delete('if-none-match'); headers.delete('if-modified-since')
+      assetRequest = new Request(request, { headers })
+    }
+    let response = await env.ASSETS.fetch(assetRequest)
+    if (dynamicHome) {
       response = await renderHomeBranding(response, env, url)
       response = await renderHomeEvent(response, env, url)
     }

@@ -372,6 +372,11 @@ const productionWorker = {
 
     if (url.pathname === '/llms.txt') return portalRootAssetProxyResponse(request, env, url)
 
+    if (url.pathname.startsWith('/api/ecosystem/')) {
+      if (env.ORGPORTAL_WEB) return env.ORGPORTAL_WEB.fetch(new Request(url, request))
+      return proxyResponse(request, env.PORTAL_SITE_ORIGIN || 'https://orgportal.cc', url, { rewriteCookieDomain: true })
+    }
+
     if (url.pathname.startsWith('/ecosystem-data/')) return portalRootAssetProxyResponse(request, env, url)
 
     if (url.pathname === '/specialty' || url.pathname.startsWith('/specialty/')) {

@@ -109,8 +109,9 @@ function upgradeProgressiveImages() {
 function organizeNavigation() {
   const header = document.querySelector('.site-header')
   const nav = header?.querySelector('nav[aria-label="Primary navigation"]')
-  if (!nav || document.querySelector('[data-organization-summary]')) return
-  const destinations = [
+  if (!nav) return
+  const summaryOnly = Boolean(document.querySelector('[data-organization-summary]'))
+  const destinations = summaryOnly ? [] : [
     ['/org-events', 'Events'],
     ['/calendar', 'Calendar'],
     ['/map', 'Event map'],
@@ -142,7 +143,7 @@ function organizeNavigation() {
   function group(label, children) {
     const details = document.createElement('details')
     details.className = 'nav-group'
-    details.dataset.navSection = label === 'About Us' ? 'about' : label === 'Events & calendar' ? 'events' : 'research'
+    details.dataset.navSection = label === 'Settings' ? 'settings' : label === 'About Us' ? 'about' : label === 'Events & calendar' ? 'events' : 'research'
     const summary = document.createElement('summary')
     summary.textContent = label
     if (children.some((link) => link.hasAttribute('aria-current'))) details.classList.add('has-current')
@@ -156,12 +157,14 @@ function organizeNavigation() {
     groups.push(details)
     return details
   }
-  links[10].textContent = 'About LifeTech'
-  links[5].textContent = 'Branding guide'
-  const about = group('About Us', [links[10], links[6], links[5], links[11]])
   const appearance = nav.querySelector('.appearance-control')
-  if (appearance) about.querySelector('.nav-group-links').append(appearance)
-  nav.prepend(group('Events & calendar', [links[0], links[1], links[2], links[9]]), group('Research', [links[3], links[4], links[7], links[8]]), about)
+  const settings = appearance ? group('Settings', [appearance]) : null
+  if (!summaryOnly) {
+    links[10].textContent = 'About LifeTech'
+    links[5].textContent = 'Branding guide'
+    nav.prepend(group('Events & calendar', [links[0], links[1], links[2], links[9]]), group('Research', [links[3], links[4], links[7], links[8]]), group('About Us', [links[10], links[6], links[5], links[11]]))
+  }
+  if (settings) nav.append(settings)
   document.addEventListener('click', (event) => {
     groups.forEach((group) => { if (!group.contains(event.target) || event.target.closest('a')) group.open = false })
   })

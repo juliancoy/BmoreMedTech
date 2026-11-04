@@ -44,13 +44,14 @@
 :root[data-site-brand='lifetech'] .home-body .hero-place {padding:18px 22px;border-color:var(--primary);background:color-mix(in srgb,var(--panel) 94%,transparent);color:var(--text-primary)}
 :root[data-site-brand='lifetech'] .home-body .hero-place span {color:var(--text-secondary)}
 
-/* Three compact navigation groups; theme previews live inside About Us. */
+/* Theme previews open only through Settings. */
+:root[data-site-brand='lifetech'] .site-header .nav-group:not([open])>.nav-group-links {display:none}
 :root[data-site-brand='lifetech'] .site-header-inner {gap:clamp(12px,2vw,28px)}
 :root[data-site-brand='lifetech'] .site-header .nav-group>summary {display:flex;align-items:center;gap:9px;list-style:none;white-space:nowrap;font-size:14px;min-height:44px}
 :root[data-site-brand='lifetech'] .site-header .nav-group>summary::-webkit-details-marker {display:none}
 :root[data-site-brand='lifetech'] .site-header .nav-group>summary::after {content:'';width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin-top:-4px}
 :root[data-site-brand='lifetech'] .site-header .nav-group[open]>summary::after {transform:rotate(225deg);margin-top:4px}
-:root[data-site-brand='lifetech'] .site-header .nav-group[data-nav-section='about']>.nav-group-links {left:auto;right:0;width:310px;max-width:calc(100vw - 32px);max-height:calc(100svh - 110px);overflow-y:auto}
+:root[data-site-brand='lifetech'] .site-header .nav-group[data-nav-section='settings']>.nav-group-links {left:auto;right:0;width:310px;max-width:calc(100vw - 32px);max-height:calc(100svh - 110px);overflow-y:auto}
 :root[data-site-brand='lifetech'] .appearance-control {margin:8px 4px 0;padding:14px 4px 4px;border-top:1px solid var(--border)}
 :root[data-site-brand='lifetech'] .appearance-title {margin:0 0 12px;color:var(--text-secondary);font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:700}
 :root[data-site-brand='lifetech'] .appearance-panel {display:grid;gap:12px;position:static;width:auto;padding:0;border:0;background:transparent;box-shadow:none}
@@ -67,7 +68,7 @@
 @media(max-width:720px){
  :root[data-site-brand='lifetech'] .site-header.has-account .nav-toggle {display:inline-flex}
  :root[data-site-brand='lifetech'] .site-header .nav-group>summary {justify-content:center}
- :root[data-site-brand='lifetech'] .site-header .nav-group[data-nav-section='about']>.nav-group-links {width:100%;max-width:none;max-height:none;overflow:visible}
+ :root[data-site-brand='lifetech'] .site-header .nav-group[data-nav-section='settings']>.nav-group-links {width:100%;max-width:none;max-height:none;overflow:visible}
  :root[data-site-brand='lifetech'] .appearance-panel .branding-layout-control {justify-items:stretch}
  :root[data-site-brand='lifetech'] .appearance-panel .theme-control {justify-self:center}
 }

@@ -144,3 +144,11 @@ LifeTech SEO copy for its principal public pages is configured in `lib/site-seo.
 
 Build the LifeTech Ubuntu installer with `npm run build:ubuntu`. See
 [Ubuntu installation and requirements](desktop/ubuntu/README.md).
+
+## Manual releases
+
+Pushes do not deploy or run remote tests. The GitHub deployment workflow is
+manual-only. Validate the selected commit locally, build the affected brand
+(`npm run build:lifetech` or `npx vite build`), then explicitly run
+`npm run deploy:lifetech` or `npm run deploy`. Keep the matching shared OrgPortal
+commit pinned while building. Do not dispatch remote checks merely to deploy.

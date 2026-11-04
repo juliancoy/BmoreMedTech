@@ -20,8 +20,8 @@ const workspaces = [
     root: new URL('../../OrgPortal/web/', import.meta.url),
     strict: false,
     extensions: new Set(['.html', '.tsx', '.ts', '.jsx', '.js']),
-    ignoredDirs: new Set(['.git', '.vite-local-check-cache', '.vite-playwright-cache', 'android', 'dist', 'dist-lifetech', 'node_modules', 'playwright-report', 'coverage']),
-    ignoredPathParts: ['public/specialty/baltimore-medtech'],
+    ignoredDirs: new Set(['.git', '.local', '.runtime', '.wrangler', '.cache', '.vite-local-check-cache', '.vite-playwright-cache', 'android', 'artifacts', 'dist', 'dist-lifetech', 'node_modules', 'playwright-report', 'test-results', 'coverage']),
+    ignoredPathParts: ['public/specialty/baltimore-medtech', 'public/ecosystem-data/query'],
   },
   {
     id: 'pidp',
@@ -188,8 +188,14 @@ for (const workspace of workspaces) {
   let files = []
   try {
     files = await walkFiles(workspace)
-  } catch {
-    continue
+  } catch (error) {
+    // A missing optional checkout is allowed; unreadable source inside an
+    // existing checkout must never erase that repository from the inventory.
+    try { await stat(workspace.root) } catch (missing) {
+      if (missing.code === 'ENOENT') continue
+      throw missing
+    }
+    throw new Error(`Could not scan ${workspace.id} link sources`, { cause: error })
   }
   for (const fileUrl of files) {
     const content = await readFile(fileUrl, 'utf8')

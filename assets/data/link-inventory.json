@@ -60,8 +60,14 @@
     "orgportal:src/features/ecosystem/markup.html",
     "orgportal:src/features/ecosystem/navigation-practice.js",
     "orgportal:src/features/ecosystem/nd-controls.js",
+    "orgportal:src/features/ecosystem/network-inspection.js",
     "orgportal:src/features/ecosystem/network-visibility.js",
     "orgportal:src/features/ecosystem/network-webgpu.js",
+    "orgportal:src/features/pqcoin/CurrencyCard.tsx",
+    "orgportal:src/features/pqcoin/MiningPage.tsx",
+    "orgportal:src/features/pqcoin/PqcoinPayment.tsx",
+    "orgportal:src/features/pqcoin/ProfileWallet.tsx",
+    "orgportal:src/features/pqcoin/paymentRequest.test.ts",
     "orgportal:src/infrastructure/platform/inAppBrowser.test.ts",
     "orgportal:src/ui/components/EventCompanyVotes.tsx",
     "orgportal:src/ui/components/EventDetailsEditor.tsx",
@@ -117,6 +123,8 @@
     "orgportal:src/ui/views/PeoplePage.tsx",
     "orgportal:src/ui/views/PlatformHomePage.tsx",
     "orgportal:src/ui/views/PublicFundingPerformancePage.tsx",
+    "orgportal:src/ui/views/ReceivePage.tsx",
+    "orgportal:src/ui/views/SendPage.tsx",
     "orgportal:src/ui/views/SeriesAFundingGapPage.tsx",
     "orgportal:src/ui/views/TenantBrandingPage.tsx",
     "orgportal:src/ui/views/TenantHomePage.tsx",
@@ -196,7 +204,7 @@
     "pidp:tests/test_local_login.py",
     "pidp:tests/test_portal_sso.py"
   ],
-  "linkCount": 5215,
+  "linkCount": 5234,
   "links": [
     {
       "source": "medtech:about.html",
@@ -50305,6 +50313,167 @@
       "fragment": ""
     },
     {
+      "source": "orgportal:src/features/ecosystem/network-inspection.js",
+      "sourcePath": "src/features/ecosystem/network-inspection.js",
+      "sourceRepo": "orgportal",
+      "href": "/ecosystem/network?",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/ecosystem/network"
+    },
+    {
+      "source": "orgportal:src/features/ecosystem/network-inspection.js",
+      "sourcePath": "src/features/ecosystem/network-inspection.js",
+      "sourceRepo": "orgportal",
+      "href": "https://www.maryland.gov/your-government/state-agencies-and-departments",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://www.maryland.gov"
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/CurrencyCard.tsx",
+      "sourcePath": "src/features/pqcoin/CurrencyCard.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/finance/qcash/mining",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "finance/qcash/mining.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/CurrencyCard.tsx",
+      "sourcePath": "src/features/pqcoin/CurrencyCard.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/receive?currency=QCash",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "receive.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/CurrencyCard.tsx",
+      "sourcePath": "src/features/pqcoin/CurrencyCard.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/send?currency=QCash",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "send.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/MiningPage.tsx",
+      "sourcePath": "src/features/pqcoin/MiningPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/finance",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "finance.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/MiningPage.tsx",
+      "sourcePath": "src/features/pqcoin/MiningPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/receive?currency=QCash",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "receive.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/MiningPage.tsx",
+      "sourcePath": "src/features/pqcoin/MiningPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/send?currency=QCash",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "send.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/MiningPage.tsx",
+      "sourcePath": "src/features/pqcoin/MiningPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "https://github.com/juliancoy/QCash",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://github.com"
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/MiningPage.tsx",
+      "sourcePath": "src/features/pqcoin/MiningPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "https://quantum.cloud.ibm.com/docs/en/tutorials/grovers-algorithm",
+      "textRole": "",
+      "kind": "external-handoff",
+      "targetRepo": "",
+      "origin": "https://quantum.cloud.ibm.com"
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/paymentRequest.test.ts",
+      "sourcePath": "src/features/pqcoin/paymentRequest.test.ts",
+      "sourceRepo": "orgportal",
+      "href": " + recipient,\n      link + ",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "+%20recipient,%20%20%20%20%20%20link%20+.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/paymentRequest.test.ts",
+      "sourcePath": "src/features/pqcoin/paymentRequest.test.ts",
+      "sourceRepo": "orgportal",
+      "href": " + recipient, ",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "+%20recipient,.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/PqcoinPayment.tsx",
+      "sourcePath": "src/features/pqcoin/PqcoinPayment.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/receive?currency=QCash",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "receive.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/PqcoinPayment.tsx",
+      "sourcePath": "src/features/pqcoin/PqcoinPayment.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/send?currency=QCash",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "send.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/features/pqcoin/ProfileWallet.tsx",
+      "sourcePath": "src/features/pqcoin/ProfileWallet.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/profile",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "profile.html",
+      "fragment": ""
+    },
+    {
       "source": "orgportal:src/ui/components/FloatingSocialDock.tsx",
       "sourcePath": "src/ui/components/FloatingSocialDock.tsx",
       "sourceRepo": "orgportal",
@@ -52106,6 +52275,27 @@
       "fragment": ""
     },
     {
+      "source": "orgportal:src/ui/views/public/PublicCalendarPage.tsx",
+      "sourcePath": "src/ui/views/public/PublicCalendarPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/orgs",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "orgs.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/public/PublicCalendarPage.tsx",
+      "sourcePath": "src/ui/views/public/PublicCalendarPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/people",
+      "textRole": "",
+      "kind": "portal-route",
+      "targetRepo": "orgportal",
+      "target": "/people"
+    },
+    {
       "source": "orgportal:src/ui/views/public/PublicContactPage.tsx",
       "sourcePath": "src/ui/views/public/PublicContactPage.tsx",
       "sourceRepo": "orgportal",
@@ -52210,6 +52400,28 @@
       "kind": "external-handoff",
       "targetRepo": "",
       "origin": "https://sam.gov"
+    },
+    {
+      "source": "orgportal:src/ui/views/ReceivePage.tsx",
+      "sourcePath": "src/ui/views/ReceivePage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/finance",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "finance.html",
+      "fragment": ""
+    },
+    {
+      "source": "orgportal:src/ui/views/SendPage.tsx",
+      "sourcePath": "src/ui/views/SendPage.tsx",
+      "sourceRepo": "orgportal",
+      "href": "/finance",
+      "textRole": "",
+      "kind": "internal-page",
+      "targetRepo": "orgportal",
+      "target": "finance.html",
+      "fragment": ""
     },
     {
       "source": "orgportal:src/ui/views/SeriesAFundingGapPage.tsx",
